@@ -28,6 +28,30 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
   const { title, load, reps } = req.body;
 
+  let emptyFields = [];
+
+  if (!title || title.trim() === "") {
+    emptyFields.push("title");
+  }
+  if (load === undefined) {
+    emptyFields.push("load");
+  }
+  if (reps === undefined) {
+    emptyFields.push("reps");
+  }
+
+  if (emptyFields.length > 0) {
+    return res.status(400).json({ error: "Please fill in all fields", emptyFields });
+  }
+
+  if (!Number.isFinite(load) || !Number.isFinite(reps)) {
+    return res.status(400).json({ error: "Load and reps must be numbers" });
+  }
+
+  if(load <= 0 || reps <= 0) {
+    return res.status(400).json({ error: "Load and reps must be positive numbers" });
+  }
+
   try {
     const workout = await Workout.create({ title, load, reps });
     res.status(201).json(workout);
