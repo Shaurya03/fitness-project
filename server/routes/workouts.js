@@ -1,6 +1,17 @@
 const express = require("express");
 const router = express.Router();
 
+const mongoose = require("mongoose");
+
+const validateObjectId = (req, res, next) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid workout ID" });
+  }
+  next();
+};
+
 // GET all workouts
 const Workout = require("../models/workoutModel");
 
@@ -26,7 +37,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET a single workout
-router.get("/:id", async (req, res) => {
+router.get("/:id", validateObjectId, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -43,7 +54,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // UPDATE a workout
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", validateObjectId, async (req, res) => {
   const { id } = req.params;
   
   try {
@@ -64,7 +75,7 @@ router.patch("/:id", async (req, res) => {
 });
 
 // DELETE a workout
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", validateObjectId, async (req, res) => {
   const { id } = req.params;
 
   try {
