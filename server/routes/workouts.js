@@ -80,11 +80,33 @@ router.get("/:id", validateObjectId, async (req, res) => {
 // UPDATE a workout
 router.patch("/:id", validateObjectId, async (req, res) => {
   const { id } = req.params;
-  
+  const { title, load, reps } = req.body;
+
+  if (title !== undefined && title.trim() === "") {
+    return res.status(400).json({ error: "Title cannot be empty" });
+  }
+  if (load !== undefined && !Number.isFinite(load)) {
+    return res.status(400).json({ error: "Load must be a number" });
+  }
+  if (reps !== undefined && !Number.isFinite(reps)) {
+    return res.status(400).json({ error: "Reps must be a number" });
+  }
+  if (load !== undefined && load <= 0) {
+    return res.status(400).json({ error: "Load must be a positive number" });
+  }
+  if (reps !== undefined && reps <= 0) {
+    return res.status(400).json({ error: "Reps must be a positive number" });
+  }
+
+  const updateFields = {};
+  if (title !== undefined) updateFields.title = title;
+  if (load !== undefined) updateFields.load = load;
+  if (reps !== undefined) updateFields.reps = reps;
+
   try {
     const workout = await Workout.findByIdAndUpdate(
       id,
-      { ...req.body },
+      updateFields,
       { new: true }
     );
 
