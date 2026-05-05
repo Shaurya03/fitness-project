@@ -6,16 +6,20 @@ const app = express();
 
 app.use(express.json());
 
-// Routes
-const workoutsRoutes = require("./routes/workouts");
-app.use("/api/workouts", workoutsRoutes);
-
 // Test route
 app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
+// Routes
+const workoutsRoutes = require("./routes/workouts");
+app.use("/api/workouts", workoutsRoutes);
+
 const PORT = 5000;
+
+// Error handling middleware
+const errorHandler = require("./middleware/errorHandler");
+app.use(errorHandler);
 
 // Connect to MongoDB and start the server
 mongoose.connect(process.env.MONGO_URI)
@@ -28,4 +32,6 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
   });
+
+
 
