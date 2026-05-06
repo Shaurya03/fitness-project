@@ -18,14 +18,14 @@ function Home() {
   }, []);
 
   return (
-    <div>
-      <h1>Home Page</h1>
-
-      {workouts.map((workout) => (
-        <WorkoutDetails key={workout._id} workout={workout} />
-      ))}
+    <div className="home">
+      <div className="workouts">
+        {workouts.map((workout) => (
+          <WorkoutDetails key={workout._id} workout={workout} />
+        ))}
+      </div>
     </div>
-  );
+      );
 }
 
-export default Home;
+      export default Home;

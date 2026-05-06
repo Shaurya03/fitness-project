@@ -1,6 +1,6 @@
 function WorkoutDetails({ workout }) {
   return (
-    <div>
+    <div className="workout-details">
       <h2>{workout.title}</h2>
       <p>Load: {workout.load} kg</p>
       <p>Reps: {workout.reps}</p>
