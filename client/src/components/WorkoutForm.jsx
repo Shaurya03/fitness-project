@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function WorkoutForm() {
+function WorkoutForm({ setWorkouts }) {
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
@@ -24,7 +24,9 @@ function WorkoutForm() {
 
     const json = await response.json();
 
-    console.log(json);
+    if (response.ok) {
+      setWorkouts(prevWorkouts => [json,...prevWorkouts]);
+    }  
   };
 
   return (
