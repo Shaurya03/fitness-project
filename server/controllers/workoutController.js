@@ -128,7 +128,7 @@ const deleteWorkout = async (req, res, next) => {
       throw createError("Workout not found", 404);
     }
 
-    res.status(200).json({ message: "Workout deleted successfully" });
+    res.status(200).json(workout);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
     next(error);

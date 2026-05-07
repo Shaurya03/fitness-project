@@ -22,7 +22,7 @@ function Home() {
     <div className="home">
       <div className="workouts">
         {workouts.map((workout) => (
-          <WorkoutDetails key={workout._id} workout={workout} />
+          <WorkoutDetails key={workout._id} workout={workout} setWorkouts={setWorkouts} />
         ))}
       </div>
       <WorkoutForm setWorkouts={setWorkouts} />
