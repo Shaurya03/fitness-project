@@ -54,7 +54,9 @@ const createWorkout = async (req, res, next) => {
     }
 
     if (emptyFields.length > 0) {
-      throw createError(`Missing required fields: ${emptyFields.join(", ")}`, 400 );
+      const error = createError(`Missing required fields: ${emptyFields.join(", ")}`, 400);
+      error.emptyFields = emptyFields;
+      throw error;
     }
 
     if (!Number.isFinite(load) || !Number.isFinite(reps)) {

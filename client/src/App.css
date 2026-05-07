@@ -23,3 +23,15 @@
   margin: 10px 0;
   font-size: 18px;
 }
+
+input.error {
+  border: 1px solid #e7195a;
+}
+
+div.error {
+  margin: 20px 0;
+  padding: 10px;
+  background: #ffefef;
+  border: 1px solid #e7195a;
+  color: #e7195a;
+}

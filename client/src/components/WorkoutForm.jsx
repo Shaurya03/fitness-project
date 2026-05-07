@@ -4,14 +4,16 @@ function WorkoutForm({ setWorkouts }) {
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
+  const [error, setError] = useState(null);
+  const [emptyFields, setEmptyFields] = useState([]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     
     const workout = { 
       title,
-      load: Number(load),
-      reps: Number(reps)
+      load: load === '' ? undefined : Number(load),
+      reps: reps === '' ? undefined : Number(reps)
     };
 
     const response = await fetch("http://localhost:5000/api/workouts", {
@@ -24,7 +26,17 @@ function WorkoutForm({ setWorkouts }) {
 
     const json = await response.json();
 
+    if (!response.ok) {
+      setError(json.error);
+      setEmptyFields(json.emptyFields || []);
+    }
+
     if (response.ok) {
+      setTitle('');
+      setLoad('');
+      setReps('');
+      setError(null);
+      setEmptyFields([]);
       setWorkouts(prevWorkouts => [json,...prevWorkouts]);
     }  
   };
@@ -35,6 +47,7 @@ function WorkoutForm({ setWorkouts }) {
 
       <label>Exercise Title:</label>
       <input 
+        className={emptyFields.includes("title") ? "error" : ""}
         type="text" 
         onChange={(event) => setTitle(event.target.value)} 
         value={title} 
@@ -42,6 +55,7 @@ function WorkoutForm({ setWorkouts }) {
 
       <label>Load (in kg):</label>
       <input 
+        className={emptyFields.includes("load") ? "error" : ""}
         type="number" 
         onChange={(event) => setLoad(event.target.value)} 
         value={load} 
@@ -49,12 +63,14 @@ function WorkoutForm({ setWorkouts }) {
 
       <label>Reps:</label>
       <input 
+        className={emptyFields.includes("reps") ? "error" : ""}
         type="number" 
         onChange={(event) => setReps(event.target.value)} 
         value={reps} 
       />
 
       <button>Add Workout</button>
+      {error && <div className="error">{error}</div>}
     </form>
   );
 }
