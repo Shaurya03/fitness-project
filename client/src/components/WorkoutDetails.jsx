@@ -1,4 +1,4 @@
-function WorkoutDetails({ workout, setWorkouts }) {
+function WorkoutDetails({ workout, setWorkouts, setEditingWorkout }) {
   const handleDelete = async () => {
     const response = await fetch(`http://localhost:5000/api/workouts/${workout._id}`, {
       method: "DELETE"
@@ -16,6 +16,7 @@ function WorkoutDetails({ workout, setWorkouts }) {
       <h2>{workout.title}</h2>
       <p>Load: {workout.load} kg</p>
       <p>Reps: {workout.reps}</p>
+      <button onClick={() => setEditingWorkout(workout)}>Edit</button>
       <button onClick={handleDelete}>Delete</button>
     </div>
   );
