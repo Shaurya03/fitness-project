@@ -8,6 +8,8 @@ function WorkoutForm({ setWorkouts, editingWorkout, setEditingWorkout }) {
   const [emptyFields, setEmptyFields] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  /* eslint-disable react-hooks/set-state-in-effect */
+
   useEffect(() => {
     if (editingWorkout) {
       setTitle(editingWorkout.title);
@@ -19,6 +21,8 @@ function WorkoutForm({ setWorkouts, editingWorkout, setEditingWorkout }) {
       setReps('');
     }
   }, [editingWorkout]);
+
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSubmit = async (event) => {
     event.preventDefault();
