@@ -12,6 +12,10 @@ function WorkoutForm({ setWorkouts, editingWorkout }) {
       setTitle(editingWorkout.title);
       setLoad(editingWorkout.load);
       setReps(editingWorkout.reps);
+    } else {
+      setTitle('');
+      setLoad('');
+      setReps('');
     }
   }, [editingWorkout]);
 
