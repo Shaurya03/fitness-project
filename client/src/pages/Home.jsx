@@ -34,6 +34,7 @@ function Home() {
       <WorkoutForm 
         setWorkouts={setWorkouts}
         editingWorkout={editingWorkout}
+        setEditingWorkout={setEditingWorkout}
       />
     </div>
       );

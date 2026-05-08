@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 
-function WorkoutForm({ setWorkouts, editingWorkout }) {
+function WorkoutForm({ setWorkouts, editingWorkout, setEditingWorkout }) {
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (editingWorkout) {
@@ -29,6 +30,8 @@ function WorkoutForm({ setWorkouts, editingWorkout }) {
     };
 
     if (editingWorkout) {
+      setIsLoading(true);
+
       const response = await fetch(`http://localhost:5000/api/workouts/${editingWorkout._id}`, {
         method: "PATCH",
         headers: {
@@ -50,9 +53,18 @@ function WorkoutForm({ setWorkouts, editingWorkout }) {
         setReps('');
         setError(null);
         setEmptyFields([]);
-        setWorkouts(prevWorkouts => prevWorkouts.map(workout => workout._id === json._id ? json : workout));
+        setWorkouts(prevWorkouts =>
+          prevWorkouts.map(workout =>
+            workout._id === json._id ? json : workout
+          )
+        );
+        setEditingWorkout(null);
       }
+
+      setIsLoading(false);
     } else {
+      setIsLoading(true);
+
       const response = await fetch("http://localhost:5000/api/workouts", {
         method: "POST",
         headers: {
@@ -76,11 +88,15 @@ function WorkoutForm({ setWorkouts, editingWorkout }) {
         setEmptyFields([]);
         setWorkouts(prevWorkouts => [json, ...prevWorkouts]);
       }
+
+      setIsLoading(false);
     };
   }
   return (
     <form onSubmit={handleSubmit}>
-      <h3>Add a New Workout</h3>
+      <h3>
+        {editingWorkout ? "Edit Workout" : "Add a New Workout"}
+      </h3>
 
       <label>Exercise Title:</label>
       <input
@@ -106,9 +122,20 @@ function WorkoutForm({ setWorkouts, editingWorkout }) {
         value={reps}
       />
 
-      <button>
-        {editingWorkout ? "Update Workout" : "Add Workout"}
+      <button disabled={isLoading}>
+        {isLoading ? "Saving..." : editingWorkout ? "Update Workout" : "Add Workout"}
       </button>
+      {editingWorkout && (
+        <button type="button"
+          onClick={() => {
+            setEditingWorkout(null);
+            setError(null);
+            setEmptyFields([]);
+          }}
+        >
+          Cancel
+        </button>
+      )}
       {error && <div className="error">{error}</div>}
     </form>
   );
