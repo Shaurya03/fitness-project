@@ -1,4 +1,8 @@
-function WorkoutDetails({ workout, setWorkouts, setEditingWorkout}) {
+import { useWorkoutContext } from "../hooks/useWorkoutContext";
+
+function WorkoutDetails({ workout, setEditingWorkout }) {
+  const { dispatch } = useWorkoutContext();
+
   const handleDelete = async () => {
     const response = await fetch(`http://localhost:5000/api/workouts/${workout._id}`, {
       method: "DELETE"
@@ -7,7 +11,10 @@ function WorkoutDetails({ workout, setWorkouts, setEditingWorkout}) {
     const json = await response.json();
 
     if (response.ok) {
-      setWorkouts(prevWorkouts => prevWorkouts.filter((workout) => workout._id !== json._id));
+      dispatch({
+        type: 'DELETE_WORKOUT',
+        payload: json
+      });
     }
   };
 

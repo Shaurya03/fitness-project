@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
+import { useWorkoutContext } from "../hooks/useWorkoutContext";
 
-function WorkoutForm({ setWorkouts, editingWorkout, setEditingWorkout }) {
+function WorkoutForm({ editingWorkout, setEditingWorkout }) {
+  const { dispatch } = useWorkoutContext();
+
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
@@ -24,6 +27,14 @@ function WorkoutForm({ setWorkouts, editingWorkout, setEditingWorkout }) {
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  const resetForm = () => {
+    setTitle('');
+    setLoad('');
+    setReps('');
+    setError(null);
+    setEmptyFields([]);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -33,69 +44,63 @@ function WorkoutForm({ setWorkouts, editingWorkout, setEditingWorkout }) {
       reps: reps === '' ? undefined : Number(reps)
     };
 
-    if (editingWorkout) {
-      setIsLoading(true);
+    setIsLoading(true);
+    try {
+      if (editingWorkout) {
+        const response = await fetch(`http://localhost:5000/api/workouts/${editingWorkout._id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(workout)
+        });
 
-      const response = await fetch(`http://localhost:5000/api/workouts/${editingWorkout._id}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(workout)
-      });
+        const json = await response.json();
 
-      const json = await response.json();
+        if (!response.ok) {
+          setError(json.error);
+          setEmptyFields(json.emptyFields || []);
+        }
 
-      if (!response.ok) {
-        setError(json.error);
-        setEmptyFields(json.emptyFields || []);
+        if (response.ok) {
+          resetForm();
+          dispatch({
+            type: 'UPDATE_WORKOUT',
+            payload: json
+          });
+          setEditingWorkout(null);
+        }
+
+      } else {
+
+        const response = await fetch("http://localhost:5000/api/workouts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(workout)
+        });
+
+        const json = await response.json();
+
+        if (!response.ok) {
+          setError(json.error);
+          setEmptyFields(json.emptyFields || []);
+        }
+
+        if (response.ok) {
+          resetForm();
+          dispatch({
+            type: 'CREATE_WORKOUT',
+            payload: json
+          });
+        }
       }
-
-      if (response.ok) {
-        setTitle('');
-        setLoad('');
-        setReps('');
-        setError(null);
-        setEmptyFields([]);
-        setWorkouts(prevWorkouts =>
-          prevWorkouts.map(workout =>
-            workout._id === json._id ? json : workout
-          )
-        );
-        setEditingWorkout(null);
-      }
-
+    } finally {
       setIsLoading(false);
-    } else {
-      setIsLoading(true);
-
-      const response = await fetch("http://localhost:5000/api/workouts", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(workout)
-      });
-
-      const json = await response.json();
-
-      if (!response.ok) {
-        setError(json.error);
-        setEmptyFields(json.emptyFields || []);
-      }
-
-      if (response.ok) {
-        setTitle('');
-        setLoad('');
-        setReps('');
-        setError(null);
-        setEmptyFields([]);
-        setWorkouts(prevWorkouts => [json, ...prevWorkouts]);
-      }
-
-      setIsLoading(false);
-    };
-  }
+    }
+  };
+  
   return (
     <form onSubmit={handleSubmit}>
       <h3>
