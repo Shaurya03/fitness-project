@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
+import "./Home.css";
 
 function Home() {
   const { workouts, dispatch } = useWorkoutContext();

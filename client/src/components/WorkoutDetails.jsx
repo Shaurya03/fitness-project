@@ -1,5 +1,6 @@
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { formatDistanceToNow } from "date-fns";
+import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();

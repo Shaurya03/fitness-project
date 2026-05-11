@@ -1,0 +1,16 @@
+.workout-details {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.workout-details h2 {
+  margin-top: 0;
+  color: #1aac83;
+}
+
+.workout-details p {
+  margin: 10px 0;
+  font-size: 18px;
+}
