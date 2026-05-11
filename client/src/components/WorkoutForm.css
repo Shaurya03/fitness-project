@@ -9,3 +9,49 @@ div.error {
   border: 1px solid #e7195a;
   color: #e7195a;
 }
+
+form {
+  position: sticky;
+  top: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+form h3 {
+  margin-top: 0;
+  color: #1aac83;
+}
+
+form label {
+  display: block;
+  margin: 20px 0 5px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+input:focus {
+  outline: none;
+  border: 1px solid #1aac83;
+  box-shadow: 0 0 0 3px rgba(26, 172, 131, 0.1);
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #1aac83;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}

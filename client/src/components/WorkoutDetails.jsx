@@ -27,11 +27,13 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
       <p>Reps: {workout.reps}</p>
       <p>
         {formatDistanceToNow(new Date(workout.createdAt), {
-          addSuffix: true 
+          addSuffix: true
         })}
       </p>
-      <button onClick={() => setEditingWorkout(workout)}>Edit</button>
-      <button onClick={handleDelete}>Delete</button>
+      <div className="workout-actions">
+        <button className="edit-button" onClick={() => setEditingWorkout(workout)}>Edit</button>
+        <button className="delete-button" onClick={handleDelete}>Delete</button>
+      </div>
     </div>
   );
 }
