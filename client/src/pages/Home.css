@@ -5,6 +5,12 @@
   padding: 40px;
 }
 
+@media (max-width: 900px) {
+  .home {
+    grid-template-columns: 1fr;
+  }
+}
+
 .workouts {
   display: grid;
   gap: 20px;
