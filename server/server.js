@@ -17,6 +17,9 @@ app.get("/", (req, res) => {
 const workoutsRoutes = require("./routes/workouts");
 app.use("/api/workouts", workoutsRoutes);
 
+const userRoutes = require("./routes/user");
+app.use("/api/users", userRoutes);
+
 const PORT = 5000;
 
 // Error handling middleware
