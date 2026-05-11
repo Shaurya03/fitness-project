@@ -1,8 +1,8 @@
-input.error {
+.workout-form input.error {
   border: 1px solid #e7195a;
 }
 
-div.error {
+.workout-form div.error {
   margin: 20px 0;
   padding: 10px;
   background: #ffefef;
@@ -10,7 +10,7 @@ div.error {
   color: #e7195a;
 }
 
-form {
+.workout-form {
   position: sticky;
   top: 20px;
   background-color: #fff;
@@ -19,30 +19,34 @@ form {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-form h3 {
+.workout-form h3 {
   margin-top: 0;
   color: #1aac83;
 }
 
-form label {
+.workout-form label {
   display: block;
   margin: 20px 0 5px;
 }
 
-input {
+.workout-form input {
   width: 100%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-input:focus {
+.workout-form input:focus {
   outline: none;
   border: 1px solid #1aac83;
   box-shadow: 0 0 0 3px rgba(26, 172, 131, 0.1);
 }
 
-button {
+.workout-form button {
   margin-top: 20px;
   padding: 10px;
   background-color: #1aac83;
@@ -50,8 +54,18 @@ button {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+
+  transition:
+    opacity 0.2s ease;
+    transform: 0.2s ease;
 }
 
-button:hover {
+.workout-form button:hover {
   opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.workout-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

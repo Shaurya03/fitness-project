@@ -1,5 +1,4 @@
 .workout-details {
-  min-height: auto;
   background-color: #fff;
   padding: 12px;
   border-radius: 10px;
@@ -9,6 +8,7 @@
 
 .workout-details:hover {
   transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
 }
 
 .workout-details h2 {
@@ -17,17 +17,36 @@
 }
 
 .workout-details p {
-  margin: 6px 0;
+  margin: 4px 0;
   font-size: 18px;
 }
 
-.workout-details button {
-  margin-right: 10px;
-  padding: 8px 12px;
-  color: #fff;
+.workout-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.workout-actions button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+  
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
+
   cursor: pointer;
+  font-size: 18px;
+  color: #fff;
+
+  transition: all 0.2s ease;
+}
+
+.workout-actions button:hover {
+  transform: scale(1.05);
 }
 
 .edit-button {
@@ -36,10 +55,4 @@
 
 .delete-button {
   background-color: #e7195a;
-}
-
-.workout-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 16px;
 }

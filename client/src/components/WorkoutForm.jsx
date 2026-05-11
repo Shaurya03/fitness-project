@@ -103,7 +103,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   };
   
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="workout-form" onSubmit={handleSubmit}>
       <h3>
         {editingWorkout ? "Edit Workout" : "Add a New Workout"}
       </h3>

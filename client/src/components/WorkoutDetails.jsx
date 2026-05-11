@@ -1,5 +1,6 @@
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { formatDistanceToNow } from "date-fns";
+import { FiEdit, FiTrash2 } from "react-icons/fi";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout }) {
@@ -31,8 +32,14 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
         })}
       </p>
       <div className="workout-actions">
-        <button className="edit-button" onClick={() => setEditingWorkout(workout)}>Edit</button>
-        <button className="delete-button" onClick={handleDelete}>Delete</button>
+        <button className="edit-button"
+          onClick={() => setEditingWorkout(workout)}>
+          <FiEdit />
+        </button>
+        <button className="delete-button"
+          onClick={handleDelete}>
+          <FiTrash2 />
+        </button>
       </div>
     </div>
   );
