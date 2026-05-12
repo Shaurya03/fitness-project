@@ -25,7 +25,8 @@ function Signup() {
     }
 
     if (response.ok) {
-      console.log("Signup successful");
+      localStorage.setItem("user", JSON.stringify(json));
+      console.log(JSON.parse(localStorage.getItem("user")));
     }
   };
 
