@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
+import { useAuthContext } from "../hooks/useAuthContext";
 import "./WorkoutForm.css";
 
 function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();
+  const { user } = useAuthContext();
 
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
@@ -39,6 +41,11 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (!user) {
+      setError("You must be logged in");
+      return;
+    }
+
     const workout = {
       title,
       load: load === '' ? undefined : Number(load),
@@ -51,7 +58,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         const response = await fetch(`http://localhost:5000/api/workouts/${editingWorkout._id}`, {
           method: "PATCH",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${user.token}`
           },
           body: JSON.stringify(workout)
         });
@@ -61,6 +69,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         if (!response.ok) {
           setError(json.error);
           setEmptyFields(json.emptyFields || []);
+          return;
         }
 
         if (response.ok) {
@@ -77,7 +86,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         const response = await fetch("http://localhost:5000/api/workouts", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${user.token}`
           },
           body: JSON.stringify(workout)
         });
@@ -87,6 +97,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         if (!response.ok) {
           setError(json.error);
           setEmptyFields(json.emptyFields || []);
+          return;
         }
 
         if (response.ok) {
@@ -137,6 +148,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       </button>
       {editingWorkout && (
         <button type="button"
+          disabled={isLoading}
           onClick={() => {
             setEditingWorkout(null);
             setError(null);
