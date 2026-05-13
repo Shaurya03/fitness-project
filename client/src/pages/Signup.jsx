@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuthContext } from "../hooks/useAuthContext";
 import "./Signup.css";
 
 function Signup() {
+  const { dispatch } = useAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -24,16 +26,13 @@ function Signup() {
 
     const json = await response.json();
 
-    console.log(json);
-
     if (!response.ok) {
-      console.log("Signup failed", json.error);
       setError(json.error);
     }
 
     if (response.ok) {
       localStorage.setItem("user", JSON.stringify(json));
-      console.log(JSON.parse(localStorage.getItem("user")));
+      dispatch({ type: "LOGIN", payload: json });
 
       setEmail("");
       setPassword("");
