@@ -1,4 +1,4 @@
-.signup {
+.login {
   max-width: 400px;
   margin: 60px auto;
   padding: 30px;
@@ -7,7 +7,7 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.signup input {
+.login input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
@@ -20,3 +20,4 @@
   color: red;
   font-size: 14px;
 }
+

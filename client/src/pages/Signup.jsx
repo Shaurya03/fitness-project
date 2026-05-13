@@ -4,6 +4,7 @@ import "./Signup.css";
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -21,12 +22,17 @@ function Signup() {
     console.log(json);
 
     if (!response.ok) {
-      console.log("Signup failed");
+      console.log("Signup failed", json.error);
+      setError(json.error);
     }
 
     if (response.ok) {
       localStorage.setItem("user", JSON.stringify(json));
       console.log(JSON.parse(localStorage.getItem("user")));
+
+      setEmail("");
+      setPassword("");
+      setError(null);
     }
   };
 
@@ -35,18 +41,22 @@ function Signup() {
       <h2>Signup</h2>
 
       <label>Email:</label>
-      <input
+      <input 
+        required
         type="email"
         value={email}
         onChange={(event) => setEmail(event.target.value)}
       />
 
       <label>Password:</label>
-      <input
+      <input 
+        required
         type="password"
         value={password}
         onChange={(event) => setPassword(event.target.value)}
       />
+
+      {error && <div className="error">{error}</div>}
 
       <button type="submit">Signup</button>
     </form>
