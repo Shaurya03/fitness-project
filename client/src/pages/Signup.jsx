@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 
 function Signup() {
@@ -6,8 +7,12 @@ function Signup() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    setError(null);
 
     const response = await fetch("http://localhost:5000/api/users/signup", {
       method: "POST",
@@ -33,6 +38,7 @@ function Signup() {
       setEmail("");
       setPassword("");
       setError(null);
+      navigate("/");
     }
   };
 

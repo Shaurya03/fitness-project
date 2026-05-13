@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
 function Login() {
@@ -6,8 +7,12 @@ function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
 
+  const navigate = useNavigate();
+
   const handleLogin = async (event) => {
     event.preventDefault();
+
+    setError(null);
 
     const response = await fetch("http://localhost:5000/api/users/login", {
       method: "POST",
@@ -30,9 +35,9 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(json));
       console.log(JSON.parse(localStorage.getItem("user")));
       setError(null);
-
       setEmail("");
       setPassword("");
+      navigate("/");
     }
   };
 
