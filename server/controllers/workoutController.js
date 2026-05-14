@@ -9,7 +9,8 @@ const createError = (message, statusCode) => {
 // GET all workouts
 const getWorkouts = async (req, res, next) => {
   try {
-    const workouts = await Workout.find({}).sort({ createdAt: -1 });
+    const user_id = req.user._id;
+    const workouts = await Workout.find({ user_id }).sort({ createdAt: -1 });
     res.status(200).json(workouts);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
@@ -22,7 +23,8 @@ const getWorkout = async (req, res, next) => {
   const { id } = req.params;
 
   try {
-    const workout = await Workout.findById(id);
+    const user_id = req.user._id;
+    const workout = await Workout.findOne({ _id: id, user_id });
 
     if (!workout) {
       throw createError("Workout not found", 404);
@@ -39,6 +41,7 @@ const getWorkout = async (req, res, next) => {
 // POST a new workout
 const createWorkout = async (req, res, next) => {
   try {
+    const user_id = req.user._id;
     const { title, load, reps } = req.body;
 
     let emptyFields = [];
@@ -67,7 +70,7 @@ const createWorkout = async (req, res, next) => {
       throw createError("Load and reps must be positive numbers", 400);
     }
 
-    const workout = await Workout.create({ title, load, reps });
+    const workout = await Workout.create({ title, load, reps, user_id });
     res.status(201).json(workout);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
@@ -80,6 +83,7 @@ const updateWorkout = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { title, load, reps } = req.body;
+    const user_id = req.user._id;
 
     if (title !== undefined && title.trim() === "") {
       throw createError("Title cannot be empty", 400);
@@ -102,8 +106,8 @@ const updateWorkout = async (req, res, next) => {
     if (load !== undefined) updateFields.load = load;
     if (reps !== undefined) updateFields.reps = reps;
 
-    const workout = await Workout.findByIdAndUpdate(
-      id,
+    const workout = await Workout.findOneAndUpdate(
+      { _id: id, user_id },
       updateFields,
       { new: true, runValidators: true }
     );
@@ -121,10 +125,11 @@ const updateWorkout = async (req, res, next) => {
 
 // DELETE a workout
 const deleteWorkout = async (req, res, next) => {
+  const user_id = req.user._id;
   const { id } = req.params;
 
   try {
-    const workout = await Workout.findByIdAndDelete(id);
+    const workout = await Workout.findOneAndDelete({ _id: id, user_id });
 
     if (!workout) {
       throw createError("Workout not found", 404);
