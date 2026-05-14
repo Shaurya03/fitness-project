@@ -1,42 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useSignup } from "../hooks/useSignup";
 import "./Signup.css";
 
 function Signup() {
-  const { dispatch } = useAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const { signup, error, isLoading } = useSignup();
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    setError(null);
+    const success = await signup(email, password);
 
-    const response = await fetch("http://localhost:5000/api/users/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const json = await response.json();
-
-    if (!response.ok) {
-      setError(json.error);
-    }
-
-    if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(json));
-      dispatch({ type: "LOGIN", payload: json });
-
+    if (success) {
       setEmail("");
       setPassword("");
-      setError(null);
       navigate("/");
     }
   };
@@ -63,7 +44,9 @@ function Signup() {
 
       {error && <div className="error">{error}</div>}
 
-      <button type="submit">Signup</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Signing up..." : "Signup"}
+      </button>
     </form>
   );
 }
