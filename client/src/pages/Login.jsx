@@ -1,39 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthContext } from "../hooks/useAuthContext";
+import { useLogin } from "../hooks/useLogin";
 import "./Login.css";
 
 function Login() {
-  const { dispatch } = useAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null);
+  const { login, error, isLoading } = useLogin();
 
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    setError(null);
+    const success = await login(email, password);
 
-    const response = await fetch("http://localhost:5000/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
-
-    const json = await response.json();
-
-    if (!response.ok) {
-      setError(json.error);
-    }
-
-    if (response.ok) {
-      localStorage.setItem("user", JSON.stringify(json));
-      dispatch({ type: "LOGIN", payload: json });
-      setError(null);
+    if (success) {
       setEmail("");
       setPassword("");
       navigate("/");
@@ -58,9 +40,12 @@ function Login() {
         onChange={(event) => setPassword(event.target.value)}
       />
       {error && <div className="error">{error}</div>}
-      <button type="submit">Login</button>
+      <button type="submit" disabled={isLoading}>
+        {isLoading ? "Logging in..." : "Login"}
+      </button>
     </form>
   );
 }
 
 export default Login;
+      
