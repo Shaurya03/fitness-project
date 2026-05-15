@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { API_BASE_URL } from "../services/api";
+import { toast } from "react-toastify";
 import "./WorkoutForm.css";
 
 function WorkoutForm({ editingWorkout, setEditingWorkout }) {
@@ -70,17 +71,17 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         if (!response.ok) {
           setError(json.error);
           setEmptyFields(json.emptyFields || []);
+          toast.error(json.error);
           return;
         }
 
-        if (response.ok) {
-          resetForm();
-          dispatch({
-            type: 'UPDATE_WORKOUT',
-            payload: json
-          });
-          setEditingWorkout(null);
-        }
+        resetForm();
+        dispatch({
+          type: 'UPDATE_WORKOUT',
+          payload: json
+        });
+        toast.success("Workout updated successfully!");
+        setEditingWorkout(null);
 
       } else {
 
@@ -98,22 +99,26 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         if (!response.ok) {
           setError(json.error);
           setEmptyFields(json.emptyFields || []);
+          toast.error(json.error);
           return;
         }
 
-        if (response.ok) {
-          resetForm();
-          dispatch({
-            type: 'CREATE_WORKOUT',
-            payload: json
-          });
-        }
+        resetForm();
+        dispatch({
+          type: 'CREATE_WORKOUT',
+          payload: json
+        });
+        toast.success("Workout added successfully!");
       }
+    } catch {
+      setError("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
+
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   return (
     <form className="workout-form" onSubmit={handleSubmit}>
       <h3>

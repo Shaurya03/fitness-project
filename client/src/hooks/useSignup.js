@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { API_BASE_URL } from "../services/api";
+import { toast } from "react-toastify";
 
 export const useSignup = () => {
   const { dispatch } = useAuthContext();
@@ -12,29 +13,38 @@ export const useSignup = () => {
     setIsLoading(true);
     setError(null);
 
-    const response = await fetch(`${API_BASE_URL}/users/signup`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/signup`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      });
 
-    const json = await response.json();
+      const json = await response.json();
 
-    if (!response.ok) {
-      setError(json.error);
-      setIsLoading(false);
+      if (!response.ok) {
+        setError(json.error);
+        toast.error(json.error);
 
-      return false;
-    }
+        return false;
+      }
 
-    if (response.ok) {
       localStorage.setItem("user", JSON.stringify(json));
       dispatch({ type: "LOGIN", payload: json });
-      setIsLoading(false);
-      
+      toast.success("Signup successful!");
+
       return true;
+
+    } catch {
+      setError("An error occurred. Please try again.");
+      toast.error("An error occurred. Please try again.");
+
+      return false;
+
+    } finally {
+      setIsLoading(false);
     }
   };
 

@@ -1,33 +1,49 @@
+import { useState } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { formatDistanceToNow } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { API_BASE_URL } from "../services/api";
+import { toast } from "react-toastify";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
     if (!user) {
       return;
     }
-    
-    const response = await fetch(`${API_BASE_URL}/workouts/${workout._id}`, {
-      method: "DELETE",
-      headers: {
-        'Authorization': `Bearer ${user.token}`
+
+    try {
+      setIsDeleting(true);
+
+      const response = await fetch(`${API_BASE_URL}/workouts/${workout._id}`, {
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${user.token}`
+        }
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        toast.error(json.error || "Failed to delete workout.");
+        return;
       }
-    });
 
-    const json = await response.json();
-
-    if (response.ok) {
       dispatch({
         type: 'DELETE_WORKOUT',
         payload: json
       });
+      toast.success("Workout deleted successfully!");
+
+    } catch {
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -47,8 +63,9 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
           <FiEdit />
         </button>
         <button className="delete-button"
-          onClick={handleDelete}>
-          <FiTrash2 />
+          onClick={handleDelete}
+          disabled={isDeleting}>
+          {isDeleting ? "Deleting..." : <FiTrash2 />}
         </button>
       </div>
     </div>
