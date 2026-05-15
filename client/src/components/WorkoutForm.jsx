@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { API_BASE_URL } from "../services/api";
 import "./WorkoutForm.css";
 
 function WorkoutForm({ editingWorkout, setEditingWorkout }) {
@@ -55,7 +56,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     setIsLoading(true);
     try {
       if (editingWorkout) {
-        const response = await fetch(`http://localhost:5000/api/workouts/${editingWorkout._id}`, {
+        const response = await fetch(`${API_BASE_URL}/workouts/${editingWorkout._id}`, {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
@@ -83,7 +84,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       } else {
 
-        const response = await fetch("http://localhost:5000/api/workouts", {
+        const response = await fetch(`${API_BASE_URL}/workouts`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

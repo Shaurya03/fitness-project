@@ -2,6 +2,7 @@ import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { formatDistanceToNow } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { API_BASE_URL } from "../services/api";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout }) {
@@ -13,7 +14,7 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
       return;
     }
     
-    const response = await fetch(`http://localhost:5000/api/workouts/${workout._id}`, {
+    const response = await fetch(`${API_BASE_URL}/workouts/${workout._id}`, {
       method: "DELETE",
       headers: {
         'Authorization': `Bearer ${user.token}`

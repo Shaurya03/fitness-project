@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { API_BASE_URL } from "../services/api";
 
 export function useLogin() {
   const { dispatch } = useAuthContext();
@@ -11,7 +12,7 @@ export function useLogin() {
     setIsLoading(true);
     setError(null);
 
-    const response = await fetch("http://localhost:5000/api/users/login", {
+    const response = await fetch(`${API_BASE_URL}/users/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

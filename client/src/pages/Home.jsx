@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { API_BASE_URL } from "../services/api";
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 import "./Home.css";
@@ -15,7 +16,7 @@ function Home() {
       return;
     }
     const fetchWorkouts = async () => {
-      const response = await fetch("http://localhost:5000/api/workouts", {
+      const response = await fetch(`${API_BASE_URL}/workouts`, {
         headers: {
           'Authorization': `Bearer ${user.token}`
         }
