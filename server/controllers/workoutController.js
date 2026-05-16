@@ -42,9 +42,13 @@ const getWorkout = async (req, res, next) => {
 const createWorkout = async (req, res, next) => {
   try {
     const user_id = req.user._id;
-    const { title, load, reps } = req.body;
+    const { category, title, load, reps } = req.body;
 
     let emptyFields = [];
+
+    if (!category || category.trim() === "") {
+      emptyFields.push("category");
+    }
 
     if (!title || title.trim() === "") {
       emptyFields.push("title");
@@ -70,7 +74,7 @@ const createWorkout = async (req, res, next) => {
       throw createError("Load and reps must be positive numbers", 400);
     }
 
-    const workout = await Workout.create({ title, load, reps, user_id });
+    const workout = await Workout.create({ category, title, load, reps, user_id });
     res.status(201).json(workout);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
@@ -82,8 +86,13 @@ const createWorkout = async (req, res, next) => {
 const updateWorkout = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { title, load, reps } = req.body;
+    const { category, title, load, reps } = req.body;
     const user_id = req.user._id;
+
+    if (category !== undefined &&
+      (typeof category === "string" && category.trim() === "")) {
+      throw createError("Category cannot be empty", 400);
+    }
 
     if (title !== undefined && title.trim() === "") {
       throw createError("Title cannot be empty", 400);
@@ -102,6 +111,7 @@ const updateWorkout = async (req, res, next) => {
     }
 
     const updateFields = {};
+    if (category !== undefined) updateFields.category = category;
     if (title !== undefined) updateFields.title = title;
     if (load !== undefined) updateFields.load = load;
     if (reps !== undefined) updateFields.reps = reps;

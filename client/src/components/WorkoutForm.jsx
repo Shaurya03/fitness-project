@@ -9,6 +9,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
 
+  const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
   const [load, setLoad] = useState('');
   const [reps, setReps] = useState('');
@@ -20,10 +21,12 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
   useEffect(() => {
     if (editingWorkout) {
+      setCategory(editingWorkout.category);
       setTitle(editingWorkout.title);
       setLoad(editingWorkout.load);
       setReps(editingWorkout.reps);
     } else {
+      setCategory('');
       setTitle('');
       setLoad('');
       setReps('');
@@ -33,6 +36,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const resetForm = () => {
+    setCategory('');
     setTitle('');
     setLoad('');
     setReps('');
@@ -49,6 +53,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     }
 
     const workout = {
+      category,
       title,
       load: load === '' ? undefined : Number(load),
       reps: reps === '' ? undefined : Number(reps)
@@ -125,8 +130,28 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         {editingWorkout ? "Edit Workout" : "Add a New Workout"}
       </h3>
 
+      <label>Category:</label>
+      <select
+        name="category"
+        className={emptyFields.includes("category") ? "error" : ""}
+        onChange={(event) => setCategory(event.target.value)}
+        value={category}
+      >
+        <option value="" disabled>Select a category</option>
+        <option value="Chest">Chest</option>
+        <option value="Back">Back</option>
+        <option value="Legs">Legs</option>
+        <option value="Shoulders">Shoulders</option>
+        <option value="Biceps">Biceps</option>
+        <option value="Triceps">Triceps</option>
+        <option value="Forearms">Forearms</option>
+        <option value="Core">Core</option>
+        <option value="Cardio">Cardio</option>
+      </select>
+
       <label>Exercise Title:</label>
       <input
+        name="title"
         className={emptyFields.includes("title") ? "error" : ""}
         type="text"
         onChange={(event) => setTitle(event.target.value)}
@@ -135,6 +160,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       <label>Load (in kg):</label>
       <input
+        name="load"
         className={emptyFields.includes("load") ? "error" : ""}
         type="number"
         onChange={(event) => setLoad(event.target.value)}
@@ -143,6 +169,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       <label>Reps:</label>
       <input
+        name="reps"
         className={emptyFields.includes("reps") ? "error" : ""}
         type="number"
         onChange={(event) => setReps(event.target.value)}

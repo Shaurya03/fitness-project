@@ -50,6 +50,9 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
   return (
     <div className="workout-details">
       <h2>{workout.title}</h2>
+      <p className="workout-category">
+        {workout.category}
+      </p>
       <p>Load: {workout.load} kg</p>
       <p>Reps: {workout.reps}</p>
       <p>
