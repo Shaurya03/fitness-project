@@ -16,12 +16,16 @@ function Navbar() {
 
         <nav>
           {user ? (
-            <div>
+            <div className="nav-links">
+              <Link to="/">Dashboard</Link>
+              <Link to="/workouts">Workouts</Link>
+
               <span>{user.email}</span>
+
               <button onClick={logout}>Logout</button>
             </div>
           ) : (
-            <div>
+            <div className="nav-links">
               <Link to="/login">Login</Link>
               <Link to="/signup">Signup</Link>
             </div>

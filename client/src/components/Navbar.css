@@ -61,3 +61,14 @@
   opacity: 0.9;
   transform: translateY(-1px);
 }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-links span {
+  color: #555;
+  font-size: 0.95rem;
+}
