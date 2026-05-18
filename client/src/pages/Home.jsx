@@ -6,6 +6,18 @@ import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 import "./Home.css";
 
+const categories = [
+  "All",
+  "Chest",
+  "Back",
+  "Legs",
+  "Shoulders",
+  "Biceps",
+  "Triceps",
+  "Core",
+  "Cardio"
+];
+
 function Home() {
   const { workouts, dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
@@ -64,7 +76,6 @@ function Home() {
     return matchesCategory && matchesSearch;
   });
 
-
   return (
     <div className="home">
       <div className="left-section">
@@ -77,42 +88,15 @@ function Home() {
           />
         </div>
         <div className="filters">
-          <button className={selectedCategory === "All" ? "active" : ""}
-            onClick={() => setSelectedCategory("All")}>
-            All
-          </button>
-          <button className={selectedCategory === "Chest" ? "active" : ""}
-            onClick={() => setSelectedCategory("Chest")}>
-            Chest
-          </button>
-          <button className={selectedCategory === "Back" ? "active" : ""}
-            onClick={() => setSelectedCategory("Back")}>
-            Back
-          </button>
-          <button className={selectedCategory === "Legs" ? "active" : ""}
-            onClick={() => setSelectedCategory("Legs")}>
-            Legs
-          </button>
-          <button className={selectedCategory === "Shoulders" ? "active" : ""}
-            onClick={() => setSelectedCategory("Shoulders")}>
-            Shoulders
-          </button>
-          <button className={selectedCategory === "Biceps" ? "active" : ""}
-            onClick={() => setSelectedCategory("Biceps")}>
-            Biceps
-          </button>
-          <button className={selectedCategory === "Triceps" ? "active" : ""}
-            onClick={() => setSelectedCategory("Triceps")}>
-            Triceps
-          </button>
-          <button className={selectedCategory === "Core" ? "active" : ""}
-            onClick={() => setSelectedCategory("Core")}>
-            Core
-          </button>
-          <button className={selectedCategory === "Cardio" ? "active" : ""}
-            onClick={() => setSelectedCategory("Cardio")}>
-            Cardio
-          </button>
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={selectedCategory === category ? "active" : ""}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
         </div>
         <div className="workouts">
           {isLoading ? (
