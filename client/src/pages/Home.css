@@ -5,6 +5,12 @@
   padding: 40px;
 }
 
+.left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .workouts {
   display: grid;
   gap: 20px;
@@ -17,4 +23,30 @@
   .workout-form {
     position: static;
   }
+}
+
+.filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filters button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 20px;
+  background: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.filters button:hover {
+  transform: translateY(-2px);
+}
+
+.filters .active {
+  background: #4caf50;
+  color: white;
 }
