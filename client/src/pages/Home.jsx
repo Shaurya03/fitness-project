@@ -1,7 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
-import { useAuthContext } from "../hooks/useAuthContext";
-import { API_BASE_URL } from "../services/api";
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 import "./Home.css";
@@ -19,49 +17,10 @@ const categories = [
 ];
 
 function Home() {
-  const { workouts, dispatch } = useWorkoutContext();
-  const { user } = useAuthContext();
+  const { workouts, isLoading, error } = useWorkoutContext();
   const [editingWorkout, setEditingWorkout] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
-
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
-    const fetchWorkouts = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/workouts`, {
-          headers: {
-            'Authorization': `Bearer ${user.token}`
-          }
-        });
-        const json = await response.json();
-
-        if (!response.ok) {
-          setError(json.error || "Failed to fetch workouts.");
-          return;
-        }
-
-        dispatch({
-          type: 'SET_WORKOUTS',
-          payload: json
-        });
-
-      } catch {
-        setError("An error occurred. Please try again.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchWorkouts();
-  }, [dispatch, user]);
 
   const filteredWorkouts = workouts?.filter((workout) => {
     const matchesCategory =
@@ -74,7 +33,7 @@ function Home() {
         .includes(searchTerm.toLowerCase());
 
     return matchesCategory && matchesSearch;
-  });
+  }) || [];
 
   return (
     <div className="home">
@@ -103,10 +62,10 @@ function Home() {
             <div className="loading">Loading workouts...</div>
           ) : error ? (
             <div className="error">{error}</div>
-          ) : filteredWorkouts?.length === 0 ? (
+          ) : filteredWorkouts.length === 0 ? (
             <div className="no-workouts">No workouts match your filters.</div>
           ) : (
-            filteredWorkouts?.map((workout) => (
+            filteredWorkouts.map((workout) => (
               <WorkoutDetails
                 key={workout._id}
                 workout={workout}
