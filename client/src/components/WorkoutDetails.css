@@ -4,7 +4,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease;
-  max-width: 800px;
+  overflow: hidden;
 }
 
 .workout-details:hover {
@@ -14,6 +14,7 @@
 
 .workout-details h2 {
   margin-top: 0;
+  margin-bottom: 10px;
   color: #1aac83;
 }
 
@@ -24,7 +25,7 @@
 
 .workout-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   margin-top: 14px;
 }
 
@@ -40,7 +41,7 @@
   border-radius: 10px;
 
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
   color: #fff;
 
   transition: all 0.2s ease;
@@ -61,7 +62,7 @@
 .workout-category {
   display: inline-block;
   margin-bottom: 12px;
-  padding: 4px 0px;
+  padding: 4px 10px;
   background: #e8f9f3;
   color: #1aac83;
   border-radius: 20px;

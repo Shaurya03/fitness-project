@@ -16,7 +16,7 @@
   background-color: #fff;
   padding: 20px;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .workout-form h3 {
@@ -26,7 +26,7 @@
 
 .workout-form label {
   display: block;
-  margin: 20px 0 5px;
+  margin: 18px 0 8px;
 }
 
 .workout-form input {
@@ -53,11 +53,12 @@
   color: #fff;
   border: none;
   border-radius: 5px;
+  font-weight: 600;
   cursor: pointer;
 
   transition:
-    opacity 0.2s ease;
-    transform: 0.2s ease;
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .workout-form button:hover {
@@ -68,4 +69,22 @@
 .workout-form button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+.workout-form select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background: #fff;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.workout-form select:focus {
+  outline: none;
+  border: 1px solid #1aac83;
+  box-shadow: 0 0 0 3px rgba(26, 172, 131, 0.1);
 }
