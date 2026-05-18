@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
-import "./Home.css";
+import "./Workouts.css";
 
 const categories = [
   "All",
@@ -16,7 +16,7 @@ const categories = [
   "Cardio"
 ];
 
-function Home() {
+function Workouts() {
   const { workouts, isLoading, error } = useWorkoutContext();
   const [editingWorkout, setEditingWorkout] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -36,7 +36,7 @@ function Home() {
   }) || [];
 
   return (
-    <div className="home">
+    <div className="workouts-page">
       <div className="left-section">
         <div className="search-bar">
           <input
@@ -83,4 +83,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Workouts;

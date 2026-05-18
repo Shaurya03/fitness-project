@@ -1,7 +1,7 @@
 import './App.css'
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthContext } from './hooks/useAuthContext';
-import Home from './pages/Home';
+import Workouts from './pages/Workouts';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -23,7 +23,7 @@ function App() {
 
           <Route
             path="/workouts"
-            element={user ? <Home /> : <Navigate to="/login" />}
+            element={user ? <Workouts /> : <Navigate to="/login" />}
           />
 
           <Route
