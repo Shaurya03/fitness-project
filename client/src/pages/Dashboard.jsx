@@ -16,6 +16,12 @@ function Dashboard() {
     0
   );
 
+  const categoryCounts = workouts?.reduce((acc, workout) => {
+    const category = workout.category;
+    acc[category] = (acc[category] || 0) + 1;
+    return acc;
+  }, {});
+
   return (
     <div className="dashboard">
 
@@ -30,12 +36,48 @@ function Dashboard() {
 
         <div className="stat-card">
           <h3>Total Load</h3>
-          <p>{totalLoad}</p>
+          <p>{totalLoad} kg</p>
         </div>
 
         <div className="stat-card">
           <h3>Total Reps</h3>
           <p>{totalReps}</p>
+        </div>
+
+      </div>
+      <div className="dashboard-section">
+
+        <h3>Workout Categories</h3>
+
+        <div className="category-stats">
+
+          {Object.entries(categoryCounts || {}).map(([category, count]) => (
+            <div key={category} className="category-card">
+              <h4>{category}</h4>
+              <p>{count} {count === 1 ? "workout" : "workouts"}</p>
+            </div>
+          ))}
+
+        </div>
+
+      </div>
+      <div className="dashboard-section">
+
+        <h3>Recent Workouts</h3>
+
+        <div className="recent-workouts">
+
+          {workouts?.length === 0 ? (
+            <p>No recent workouts.</p>
+          ) : (
+            workouts?.slice(0, 3).map((workout) => (
+              <div key={workout._id} className="recent-workout-card">
+                <h4>{workout.title}</h4>
+                <p>{workout.category}</p>
+                <p>{workout.load} kg x {workout.reps} reps</p>
+              </div>
+            )))}
+
         </div>
 
       </div>

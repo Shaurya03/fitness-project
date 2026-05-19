@@ -33,3 +33,42 @@
   font-weight: bold;
   color: #1aac83;
 }
+
+.dashboard-section {
+  margin-top: 40px;
+}
+
+.category-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+}
+
+.category-card {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.recent-workouts {
+  display: grid;
+  gap: 16px;
+}
+
+.recent-workout-card {
+  background: white;
+  padding: 18px;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.recent-workout-card h4 {
+  margin-bottom: 12px;
+}
+
+.recent-workout-card p {
+  margin: 6px 0;
+}
