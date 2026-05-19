@@ -2,6 +2,19 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const setSchema = new Schema(
+  {
+    load: {
+      type: Number,
+      required: true
+    },
+    reps: {
+      type: Number,
+      required: true
+    }
+  }
+);
+
 const exerciseSchema = new Schema(
   {
     name: {
@@ -13,15 +26,7 @@ const exerciseSchema = new Schema(
       required: true
     },
     sets: {
-      type: Number,
-      required: true
-    },
-    load: {
-      type: Number,
-      required: true
-    },
-    reps: {
-      type: Number,
+      type: [setSchema],
       required: true
     }
   }
