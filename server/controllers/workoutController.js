@@ -6,34 +6,105 @@ const createError = (message, statusCode) => {
   return err;
 };
 
-const validateExercises = (exercises) => {
-  for (const exercise of exercises) {
+const isPositiveNumber = (value) => {
+  return (
+    typeof value === "number" &&
+    Number.isFinite(value) &&
+    value > 0
+  );
+};
+
+const isPositiveInteger = (value) => {
+  return (
+    Number.isInteger(value) &&
+    value > 0
+  );
+};
+
+const validateSets = (sets) => {
+  if (!Array.isArray(sets)) {
+    throw createError(
+      "Sets must be an array",
+      400
+    );
+  }
+
+  if (sets.length === 0) {
+    throw createError(
+      "At least one set is required",
+      400
+    );
+  }
+
+  for (const set of sets) {
 
     if (
-      !exercise.name ||
-      !exercise.category ||
-      exercise.sets === undefined ||
-      exercise.load === undefined ||
-      exercise.reps === undefined
+      set.load === undefined ||
+      set.reps === undefined
     ) {
       throw createError(
-        "All exercise fields are required",
+        "Set load and reps are required",
         400
       );
     }
 
-    if (
-      exercise.sets <= 0 ||
-      exercise.load <= 0 ||
-      exercise.reps <= 0
-    ) {
+    if (!isPositiveNumber(set.load)) {
       throw createError(
-        "Sets, load and reps must be positive numbers",
+        "Set load must be a positive number",
+        400
+      );
+    }
+
+    if (!isPositiveInteger(set.reps)) {
+      throw createError(
+        "Set reps must be a positive integer",
         400
       );
     }
   }
-}
+};
+
+const validateExercises = (exercises) => {
+
+  if (!Array.isArray(exercises)) {
+    throw createError(
+      "Exercises must be an array",
+      400
+    );
+  }
+
+  if (exercises.length === 0) {
+    throw createError(
+      "At least one exercise is required",
+      400
+    );
+  }
+
+  for (const exercise of exercises) {
+
+    if (
+      !exercise.name ||
+      !exercise.name.trim()
+    ) {
+      throw createError(
+        "Exercise name is required",
+        400
+      );
+    }
+
+    if (
+      !exercise.category ||
+      !exercise.category.trim()
+    ) {
+      throw createError(
+        "Exercise category is required",
+        400
+      );
+    }
+
+    validateSets(exercise.sets);
+  }
+};
 
 // GET all workouts
 const getWorkouts = async (req, res, next) => {
@@ -75,22 +146,11 @@ const createWorkout = async (req, res, next) => {
 
     let emptyFields = [];
 
-    if (!title || title.trim() === "") {
+    if (
+      typeof title !== "string" ||
+      !title.trim()
+    ) {
       emptyFields.push("title");
-    }
-
-    if (!Array.isArray(exercises)) {
-      throw createError(
-        "Exercises must be an array",
-        400
-      );
-    }
-
-    if (exercises.length === 0) {
-      throw createError(
-        "At least one exercise is required",
-        400
-      );
     }
 
     if (emptyFields.length > 0) {
@@ -104,9 +164,15 @@ const createWorkout = async (req, res, next) => {
 
     validateExercises(exercises);
 
+    const sanitizedExercises = exercises.map((exercise) => ({
+      ...exercise,
+      name: exercise.name.trim(),
+      category: exercise.category.trim()
+    }));
+
     const workout = await Workout.create({
-      title,
-      exercises,
+      title: title.trim(),
+      exercises: sanitizedExercises,
       user_id
     });
     res.status(201).json(workout);
@@ -123,32 +189,36 @@ const updateWorkout = async (req, res, next) => {
     const { title, exercises } = req.body;
     const user_id = req.user._id;
 
-    if (title !== undefined && title.trim() === "") {
+    if (
+      title !== undefined &&
+      (
+        typeof title !== "string" ||
+        !title.trim()
+      )
+    ) {
       throw createError(
         "Title cannot be empty",
         400
       );
     }
 
-    if (!Array.isArray(exercises)) {
-      throw createError(
-        "Exercises must be an array",
-        400
-      );
+    if (exercises !== undefined) {
+      validateExercises(exercises);
     }
-
-    if (exercises.length === 0) {
-      throw createError(
-        "At least one exercise is required",
-        400
-      );
-    }
-
-    validateExercises(exercises);
 
     const updateFields = {};
-    if (title !== undefined) updateFields.title = title;
-    if (exercises !== undefined) updateFields.exercises = exercises;
+
+    if (title !== undefined) {
+      updateFields.title = title.trim();
+    }
+
+    if (exercises !== undefined) {
+      updateFields.exercises = exercises.map((exercise) => ({
+        ...exercise,
+        name: exercise.name.trim(),
+        category: exercise.category.trim()
+      }));
+    }
 
     const workout = await Workout.findOneAndUpdate(
       { _id: id, user_id },
