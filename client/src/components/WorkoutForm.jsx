@@ -9,40 +9,72 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
 
-  const [category, setCategory] = useState('');
   const [title, setTitle] = useState('');
-  const [load, setLoad] = useState('');
-  const [reps, setReps] = useState('');
+  const [exercises, setExercises] = useState([
+    {
+      name: '',
+      category: '',
+      sets: '',
+      load: '',
+      reps: ''
+    }
+  ]);
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const exercise = exercises[0];
+
+  const handleExerciseChange = (event) => {
+    const { name, value } = event.target;
+
+    setExercises([
+      {
+        ...exercise,
+        [name]: value
+      }
+    ]);
+  };
+
+  const resetForm = () => {
+    setTitle('');
+    setExercises([
+      {
+        name: '',
+        category: '',
+        sets: '',
+        load: '',
+        reps: ''
+      }
+    ]);
+    setError(null);
+    setEmptyFields([]);
+  };
+
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (editingWorkout) {
-      setCategory(editingWorkout.category);
       setTitle(editingWorkout.title);
-      setLoad(editingWorkout.load);
-      setReps(editingWorkout.reps);
+
+      setExercises(
+        editingWorkout.exercises || [
+          {
+            name: '',
+            category: '',
+            sets: '',
+            load: '',
+            reps: ''
+          }
+        ]
+      )
     } else {
-      setCategory('');
-      setTitle('');
-      setLoad('');
-      setReps('');
+      resetForm();
     }
   }, [editingWorkout]);
 
   /* eslint-enable react-hooks/set-state-in-effect */
-
-  const resetForm = () => {
-    setCategory('');
-    setTitle('');
-    setLoad('');
-    setReps('');
-    setError(null);
-    setEmptyFields([]);
-  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -52,11 +84,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       return;
     }
 
+    const formattedExercises = exercises.map((exercise) => ({
+      ...exercise,
+      sets: Number(exercise.sets),
+      load: Number(exercise.load),
+      reps: Number(exercise.reps)
+    }));
+
     const workout = {
-      category,
       title,
-      load: load === '' ? undefined : Number(load),
-      reps: reps === '' ? undefined : Number(reps)
+      exercises: formattedExercises,
     };
 
     setIsLoading(true);
@@ -130,12 +167,29 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         {editingWorkout ? "Edit Workout" : "Add a New Workout"}
       </h3>
 
+      <label>Workout Title:</label>
+      <input
+        name="title"
+        className={emptyFields.includes("title") ? "error" : ""}
+        type="text"
+        onChange={(event) => setTitle(event.target.value)}
+        value={title}
+      />
+
+      <label>Exercise Name:</label>
+      <input
+        type="text"
+        name="name"
+        onChange={handleExerciseChange}
+        value={exercise.name}
+      />
+
       <label>Category:</label>
       <select
         name="category"
         className={emptyFields.includes("category") ? "error" : ""}
-        onChange={(event) => setCategory(event.target.value)}
-        value={category}
+        onChange={handleExerciseChange}
+        value={exercise.category}
       >
         <option value="" disabled>Select a category</option>
         <option value="Chest">Chest</option>
@@ -149,13 +203,12 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         <option value="Cardio">Cardio</option>
       </select>
 
-      <label>Exercise Title:</label>
+      <label>Sets:</label>
       <input
-        name="title"
-        className={emptyFields.includes("title") ? "error" : ""}
-        type="text"
-        onChange={(event) => setTitle(event.target.value)}
-        value={title}
+        type="number"
+        name="sets"
+        onChange={handleExerciseChange}
+        value={exercise.sets}
       />
 
       <label>Load (in kg):</label>
@@ -163,8 +216,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         name="load"
         className={emptyFields.includes("load") ? "error" : ""}
         type="number"
-        onChange={(event) => setLoad(event.target.value)}
-        value={load}
+        onChange={handleExerciseChange}
+        value={exercise.load}
       />
 
       <label>Reps:</label>
@@ -172,8 +225,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         name="reps"
         className={emptyFields.includes("reps") ? "error" : ""}
         type="number"
-        onChange={(event) => setReps(event.target.value)}
-        value={reps}
+        onChange={handleExerciseChange}
+        value={exercise.reps}
       />
 
       <button disabled={isLoading}>
