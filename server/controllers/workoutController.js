@@ -6,6 +6,35 @@ const createError = (message, statusCode) => {
   return err;
 };
 
+const validateExercises = (exercises) => {
+  for (const exercise of exercises) {
+
+    if (
+      !exercise.name ||
+      !exercise.category ||
+      exercise.sets === undefined ||
+      exercise.load === undefined ||
+      exercise.reps === undefined
+    ) {
+      throw createError(
+        "All exercise fields are required",
+        400
+      );
+    }
+
+    if (
+      exercise.sets <= 0 ||
+      exercise.load <= 0 ||
+      exercise.reps <= 0
+    ) {
+      throw createError(
+        "Sets, load and reps must be positive numbers",
+        400
+      );
+    }
+  }
+}
+
 // GET all workouts
 const getWorkouts = async (req, res, next) => {
   try {
@@ -42,39 +71,44 @@ const getWorkout = async (req, res, next) => {
 const createWorkout = async (req, res, next) => {
   try {
     const user_id = req.user._id;
-    const { category, title, load, reps } = req.body;
+    const { title, exercises } = req.body;
 
     let emptyFields = [];
-
-    if (!category || category.trim() === "") {
-      emptyFields.push("category");
-    }
 
     if (!title || title.trim() === "") {
       emptyFields.push("title");
     }
-    if (load === undefined) {
-      emptyFields.push("load");
+
+    if (!Array.isArray(exercises)) {
+      throw createError(
+        "Exercises must be an array",
+        400
+      );
     }
-    if (reps === undefined) {
-      emptyFields.push("reps");
+
+    if (exercises.length === 0) {
+      throw createError(
+        "At least one exercise is required",
+        400
+      );
     }
 
     if (emptyFields.length > 0) {
-      const error = createError(`Missing required fields: ${emptyFields.join(", ")}`, 400);
+      const error = createError(
+        `Missing required fields: ${emptyFields.join(", ")}`,
+        400
+      );
       error.emptyFields = emptyFields;
       throw error;
     }
 
-    if (!Number.isFinite(load) || !Number.isFinite(reps)) {
-      throw createError("Load and reps must be numbers", 400);
-    }
+    validateExercises(exercises);
 
-    if (load <= 0 || reps <= 0) {
-      throw createError("Load and reps must be positive numbers", 400);
-    }
-
-    const workout = await Workout.create({ category, title, load, reps, user_id });
+    const workout = await Workout.create({
+      title,
+      exercises,
+      user_id
+    });
     res.status(201).json(workout);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
@@ -86,35 +120,35 @@ const createWorkout = async (req, res, next) => {
 const updateWorkout = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { category, title, load, reps } = req.body;
+    const { title, exercises } = req.body;
     const user_id = req.user._id;
 
-    if (category !== undefined &&
-      (typeof category === "string" && category.trim() === "")) {
-      throw createError("Category cannot be empty", 400);
+    if (title !== undefined && title.trim() === "") {
+      throw createError(
+        "Title cannot be empty",
+        400
+      );
     }
 
-    if (title !== undefined && title.trim() === "") {
-      throw createError("Title cannot be empty", 400);
+    if (!Array.isArray(exercises)) {
+      throw createError(
+        "Exercises must be an array",
+        400
+      );
     }
-    if (load !== undefined && !Number.isFinite(load)) {
-      throw createError("Load must be a number", 400);
+
+    if (exercises.length === 0) {
+      throw createError(
+        "At least one exercise is required",
+        400
+      );
     }
-    if (reps !== undefined && !Number.isFinite(reps)) {
-      throw createError("Reps must be a number", 400);
-    }
-    if (load !== undefined && load <= 0) {
-      throw createError("Load must be a positive number", 400);
-    }
-    if (reps !== undefined && reps <= 0) {
-      throw createError("Reps must be a positive number", 400);
-    }
+
+    validateExercises(exercises);
 
     const updateFields = {};
-    if (category !== undefined) updateFields.category = category;
     if (title !== undefined) updateFields.title = title;
-    if (load !== undefined) updateFields.load = load;
-    if (reps !== undefined) updateFields.reps = reps;
+    if (exercises !== undefined) updateFields.exercises = exercises;
 
     const workout = await Workout.findOneAndUpdate(
       { _id: id, user_id },
@@ -123,7 +157,10 @@ const updateWorkout = async (req, res, next) => {
     );
 
     if (!workout) {
-      throw createError("Workout not found", 404);
+      throw createError(
+        "Workout not found",
+        404
+      );
     }
 
     res.status(200).json(workout);
@@ -142,7 +179,10 @@ const deleteWorkout = async (req, res, next) => {
     const workout = await Workout.findOneAndDelete({ _id: id, user_id });
 
     if (!workout) {
-      throw createError("Workout not found", 404);
+      throw createError(
+        "Workout not found",
+        404
+      );
     }
 
     res.status(200).json(workout);
