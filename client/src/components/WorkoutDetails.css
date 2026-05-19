@@ -69,3 +69,16 @@
   font-size: 0.85rem;
   font-weight: 600;
 }
+
+.exercise-list {
+  margin: 16px 0;
+}
+
+.exercise-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.exercise-item:last-child {
+  border-bottom: none;
+}

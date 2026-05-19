@@ -49,18 +49,40 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
 
   return (
     <div className="workout-details">
+
       <h2>{workout.title}</h2>
-      <p className="workout-category">
-        {workout.category}
-      </p>
-      <p>Load: {workout.load} kg</p>
-      <p>Reps: {workout.reps}</p>
+
+      <div className="exercise-list">
+        {workout.exercises?.length > 0 ? (
+        workout.exercises.map((exercise, index) => (
+          <div
+            className="exercise-item"
+            key={`${exercise.name}-${index}`}
+          >
+            <h4>{exercise.name}</h4>
+
+            <p className="workout-category">
+              {exercise.category}
+            </p>
+
+            <p>Sets: {exercise.sets}</p>
+            <p>Load: {exercise.load} kg</p>
+            <p>Reps: {exercise.reps}</p>
+          </div>
+        ))
+      ) : (
+        <p>No exercises found.</p>
+      )}
+      </div>
+
       <p>
         {formatDistanceToNow(new Date(workout.createdAt), {
           addSuffix: true
         })}
       </p>
+
       <div className="workout-actions">
+
         <button className="edit-button"
           onClick={() => setEditingWorkout(workout)}>
           <FiEdit />
@@ -70,7 +92,9 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
           disabled={isDeleting}>
           {isDeleting ? "Deleting..." : <FiTrash2 />}
         </button>
+
       </div>
+
     </div>
   );
 }
