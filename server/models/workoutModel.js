@@ -25,9 +25,19 @@ const exerciseSchema = new Schema(
       type: String,
       required: true
     },
+    type: {
+      type: String,
+      enum: ["strength", "cardio"],
+      required: true
+    },
     sets: {
       type: [setSchema],
-      required: true
+    },
+    duration: {
+      type: Number
+    },
+    distance: {
+      type: Number
     }
   }
 );
