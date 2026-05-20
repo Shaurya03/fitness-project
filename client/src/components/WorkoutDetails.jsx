@@ -61,9 +61,11 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
             >
               <h4>{exercise.name}</h4>
 
-              <p className="workout-category">
-                {exercise.category}
-              </p>
+              {exercise.type === "strength" && (
+                <p className="workout-category">
+                  {exercise.category}
+                </p>
+              )}
 
               {exercise.type === "strength" && (
 

@@ -23,7 +23,10 @@ const exerciseSchema = new Schema(
     },
     category: {
       type: String,
-      required: true
+
+      required: function () {
+        return this.type === "strength";
+      }
     },
     type: {
       type: String,

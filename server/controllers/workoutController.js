@@ -119,14 +119,17 @@ const validateExercises = (exercises) => {
       );
     }
 
-    if (
-      !exercise.category ||
-      !exercise.category.trim()
-    ) {
-      throw createError(
-        "Exercise category is required",
-        400
-      );
+    if (exercise.type === "strength") {
+
+      if (
+        !exercise.category ||
+        !exercise.category.trim()
+      ) {
+        throw createError(
+          "Exercise category is required",
+          400
+        );
+      }
     }
 
     if (
@@ -210,7 +213,7 @@ const createWorkout = async (req, res, next) => {
     const sanitizedExercises = exercises.map((exercise) => ({
       ...exercise,
       name: exercise.name.trim(),
-      category: exercise.category.trim()
+      category: exercise.category?.trim()
     }));
 
     const workout = await Workout.create({
@@ -259,7 +262,7 @@ const updateWorkout = async (req, res, next) => {
       updateFields.exercises = exercises.map((exercise) => ({
         ...exercise,
         name: exercise.name.trim(),
-        category: exercise.category.trim()
+        category: exercise.category?.trim()
       }));
     }
 

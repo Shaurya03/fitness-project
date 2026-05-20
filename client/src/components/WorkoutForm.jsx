@@ -142,9 +142,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       return {
         name: exercise.name,
-        category: exercise.category,
         type: exercise.type,
-        
+
         duration: Number(exercise.duration),
         distance: Number(exercise.distance)
       };
@@ -252,16 +251,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         value={exercise.name}
       />
 
-      <label>Category:</label>
-      <select
-        name="category"
-        className={emptyFields.includes("category") ? "error" : ""}
-        onChange={handleExerciseChange}
-        value={exercise.category}
-      >
-        <option value="" disabled>Select a category</option>
-        {exercise.type === "strength" ? (
-          <>
+      {exercise.type === "strength" && (
+        <>
+          <label>Category:</label>
+          <select
+            name="category"
+            className={emptyFields.includes("category") ? "error" : ""}
+            onChange={handleExerciseChange}
+            value={exercise.category}
+          >
+            <option value="" disabled>Select a category</option>
             <option value="Chest">Chest</option>
             <option value="Back">Back</option>
             <option value="Legs">Legs</option>
@@ -270,18 +269,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
             <option value="Triceps">Triceps</option>
             <option value="Forearms">Forearms</option>
             <option value="Core">Core</option>
-          </>
-        ) : (
-          <>
-            <option value="Running">Running</option>
-            <option value="Walking">Walking</option>
-            <option value="Cycling">Cycling</option>
-            <option value="Treadmill">Treadmill</option>
-            <option value="Swimming">Swimming</option>
-            <option value="Rowing">Rowing</option>
-          </>
-        )}
-      </select>
+          </select>
+        </>
+      )}
 
       {exercise.type === "strength" && (
         <>
