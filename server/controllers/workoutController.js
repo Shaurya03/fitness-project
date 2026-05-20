@@ -64,6 +64,33 @@ const validateSets = (sets) => {
   }
 };
 
+const validateCardio = (exercise) => {
+
+  if (
+    exercise.duration === undefined ||
+    exercise.distance === undefined
+  ) {
+    throw createError(
+      "Cardio exercises require duration and distance",
+      400
+    );
+  }
+
+  if (!isPositiveNumber(exercise.duration)) {
+    throw createError(
+      "Duration must be a positive number",
+      400
+    );
+  }
+
+  if (!isPositiveNumber(exercise.distance)) {
+    throw createError(
+      "Distance must be a positive number",
+      400
+    );
+  }
+};
+
 const validateExercises = (exercises) => {
 
   if (!Array.isArray(exercises)) {
@@ -102,7 +129,23 @@ const validateExercises = (exercises) => {
       );
     }
 
-    validateSets(exercise.sets);
+    if (
+      !exercise.type ||
+      !["strength", "cardio"].includes(exercise.type)
+    ) {
+      throw createError(
+        "Exercise type must be strength or cardio",
+        400
+      );
+    }
+
+    if (exercise.type === "strength") {
+      validateSets(exercise.sets);
+    }
+
+    if (exercise.type === "cardio") {
+      validateCardio(exercise);
+    }
   }
 };
 
