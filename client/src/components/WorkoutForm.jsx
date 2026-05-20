@@ -141,7 +141,10 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       }
 
       return {
-        ...exercise,
+        name: exercise.name,
+        category: exercise.category,
+        type: exercise.type,
+        
         duration: Number(exercise.duration),
         distance: Number(exercise.distance)
       };

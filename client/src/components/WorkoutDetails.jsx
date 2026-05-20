@@ -54,25 +54,54 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
 
       <div className="exercise-list">
         {workout.exercises?.length > 0 ? (
-        workout.exercises.map((exercise, index) => (
-          <div
-            className="exercise-item"
-            key={`${exercise.name}-${index}`}
-          >
-            <h4>{exercise.name}</h4>
+          workout.exercises.map((exercise, index) => (
+            <div
+              className="exercise-item"
+              key={`${exercise.name}-${index}`}
+            >
+              <h4>{exercise.name}</h4>
 
-            <p className="workout-category">
-              {exercise.category}
-            </p>
+              <p className="workout-category">
+                {exercise.category}
+              </p>
 
-            <p>Sets: {exercise.sets}</p>
-            <p>Load: {exercise.load} kg</p>
-            <p>Reps: {exercise.reps}</p>
-          </div>
-        ))
-      ) : (
-        <p>No exercises found.</p>
-      )}
+              {exercise.type === "strength" && (
+
+                <div className="sets-list">
+
+                  {exercise.sets?.map((set, setIndex) => (
+
+                    <div
+                      className="set-item"
+                      key={set._id || setIndex}
+                    >
+                      <p>
+                        Set {setIndex + 1}: {set.load} kg × {set.reps} reps
+                      </p>
+                    </div>
+                  ))}
+
+                </div>
+              )}
+
+              {exercise.type === "cardio" && (
+
+                <div className="cardio-details">
+                  <p>
+                    Duration: {exercise.duration} min
+                  </p>
+                  <p>
+                    Distance: {exercise.distance} km
+                  </p>
+                </div>
+
+              )}
+
+            </div>
+          ))
+        ) : (
+          <p>No exercises found.</p>
+        )}
       </div>
 
       <p>
