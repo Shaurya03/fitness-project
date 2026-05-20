@@ -68,22 +68,62 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     setEmptyFields([]);
   };
 
-  const handleSetChange = (event) => {
+  const handleSetChange = (event, setIndex) => {
     const { name, value } = event.target;
 
-    const updatedSets = [
-      {
-        ...exercise.sets[0],
-        [name]: value
-      }
-    ];
+    const updatedSets = exercises[0].sets.map((set, index) => {
 
-    setExercises([
-      {
-        ...exercise,
-        sets: updatedSets
+      if (index === setIndex) {
+        return {
+          ...set,
+          [name]: value
+        };
       }
-    ]);
+
+      return set;
+    });
+
+    const updatedExercise = {
+      ...exercises[0],
+      sets: updatedSets
+    };
+
+    setExercises([updatedExercise]);
+  };
+
+  const addSet = () => {
+
+    const updatedExercise = {
+      ...exercises[0],
+
+      sets: [
+        ...exercises[0].sets,
+        {
+          load: '',
+          reps: ''
+        }
+      ]
+    };
+
+    setExercises([updatedExercise]);
+  };
+
+  const removeSet = (setIndex) => {
+
+    if (exercises[0].sets.length === 1) {
+      return;
+    }
+
+    const updatedSets = exercises[0].sets.filter(
+      (_, index) => index !== setIndex
+    );
+
+    const updatedExercise = {
+      ...exercises[0],
+      sets: updatedSets
+    };
+
+    setExercises([updatedExercise]);
   };
 
 
@@ -275,22 +315,57 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       {exercise.type === "strength" && (
         <>
-          <label>Load (kg):</label>
-          <input
-            name="load"
-            type="number"
-            step="0.01"
-            onChange={handleSetChange}
-            value={exercise.sets[0].load}
-          />
+          {exercise.sets.map((set, setIndex) => (
 
-          <label>Reps:</label>
-          <input
-            name="reps"
-            type="number"
-            onChange={handleSetChange}
-            value={exercise.sets[0].reps}
-          />
+            <div
+              className="set-row"
+              key={setIndex}
+            >
+
+              <h4>
+                Set {setIndex + 1}
+              </h4>
+
+              <label>Load (kg):</label>
+              <input
+                name="load"
+                type="number"
+                step="0.01"
+                onChange={(event) =>
+                  handleSetChange(event, setIndex)
+                }
+                value={set.load}
+              />
+
+              <label>Reps:</label>
+              <input
+                name="reps"
+                type="number"
+                onChange={(event) =>
+                  handleSetChange(event, setIndex)
+                }
+                value={set.reps}
+              />
+
+              {exercise.sets.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeSet(setIndex)}
+                >
+                  Remove Set
+                </button>
+              )}
+
+            </div>
+
+          ))}
+
+          <button
+            type="button"
+            onClick={addSet}
+          >
+            Add Set
+          </button>
         </>
       )}
 
