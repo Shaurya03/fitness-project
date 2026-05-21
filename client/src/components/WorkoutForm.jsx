@@ -5,125 +5,165 @@ import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import "./WorkoutForm.css";
 
+const emptyExercise = {
+  name: '',
+  category: '',
+  type: 'strength',
+
+  sets: [
+    {
+      load: '',
+      reps: ''
+    }
+  ],
+
+  duration: '',
+  distance: ''
+};
+
 function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
 
   const [title, setTitle] = useState('');
   const [exercises, setExercises] = useState([
-    {
-      name: '',
-      category: '',
-      type: 'strength',
-
-      sets: [
-        {
-          load: '',
-          reps: ''
-        }
-      ],
-
-      duration: '',
-      distance: ''
-    }
+    { ...emptyExercise }
   ]);
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const exercise = exercises[0];
-
-  const handleExerciseChange = (event) => {
+  const handleExerciseChange = (event, exerciseIndex) => {
     const { name, value } = event.target;
 
-    setExercises([
-      {
-        ...exercise,
-        [name]: value
+    setExercises(
+
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+          return {
+            ...exercise,
+            [name]: value
+          };
+        }
+
+        return exercise;
       }
-    ]);
+      )
+    );
   };
 
   const resetForm = () => {
     setTitle('');
     setExercises([
-      {
-        name: '',
-        category: '',
-        type: 'strength',
-
-
-        sets: [
-          {
-            load: '',
-            reps: ''
-          }
-        ],
-
-        duration: '',
-        distance: ''
-      }
+      { ...emptyExercise }
     ]);
     setError(null);
     setEmptyFields([]);
   };
 
-  const handleSetChange = (event, setIndex) => {
+  const handleSetChange = (event, exerciseIndex, setIndex) => {
     const { name, value } = event.target;
 
-    const updatedSets = exercises[0].sets.map((set, index) => {
+    setExercises(
 
-      if (index === setIndex) {
-        return {
-          ...set,
-          [name]: value
-        };
-      }
+      exercises.map((exercise, index) => {
 
-      return set;
-    });
+        if (index === exerciseIndex) {
+          return {
+            ...exercise,
 
-    const updatedExercise = {
-      ...exercises[0],
-      sets: updatedSets
-    };
+            sets: exercise.sets.map((set, currentSetIndex) => {
 
-    setExercises([updatedExercise]);
-  };
+              if (currentSetIndex === setIndex) {
+                return {
+                  ...set,
+                  [name]: value
+                };
+              }
 
-  const addSet = () => {
-
-    const updatedExercise = {
-      ...exercises[0],
-
-      sets: [
-        ...exercises[0].sets,
-        {
-          load: '',
-          reps: ''
+              return set;
+            }
+            )
+          };
         }
-      ]
-    };
 
-    setExercises([updatedExercise]);
+        return exercise;
+      }
+      )
+    );
   };
 
-  const removeSet = (setIndex) => {
+  const addSet = (exerciseIndex) => {
 
-    if (exercises[0].sets.length === 1) {
+    setExercises(
+
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+          return {
+            ...exercise,
+
+            sets: [
+              ...exercise.sets,
+              {
+                load: '',
+                reps: ''
+              }
+            ]
+          };
+        }
+
+        return exercise;
+      })
+    );
+  };
+
+  const removeSet = (exerciseIndex, setIndex) => {
+
+    setExercises(
+
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+
+          if (exercise.sets.length === 1) {
+            return exercise;
+          }
+
+          return {
+            ...exercise,
+
+            sets: exercise.sets.filter((_, currentSetIndex) =>
+              currentSetIndex !== setIndex
+            )
+          };
+        }
+
+        return exercise;
+      })
+    );
+  };
+
+  const addExercise = () => {
+
+    setExercises([
+      ...exercises,
+      {
+        ...emptyExercise
+      }
+    ]);
+  };
+
+  const removeExercise = (exerciseIndex) => {
+
+    if (exercises.length === 1) {
       return;
     }
 
-    const updatedSets = exercises[0].sets.filter(
-      (_, index) => index !== setIndex
-    );
-
-    const updatedExercise = {
-      ...exercises[0],
-      sets: updatedSets
-    };
-
-    setExercises([updatedExercise]);
+    setExercises(exercises.filter((_, index) =>
+      index !== exerciseIndex
+    ));
   };
 
 
@@ -135,23 +175,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       setExercises(
         editingWorkout.exercises || [
-          {
-            name: '',
-            category: '',
-            type: 'strength',
-
-            sets: [
-              {
-                load: '',
-                reps: ''
-              }
-            ],
-
-            duration: '',
-            distance: ''
-          }
+          { ...emptyExercise }
         ]
-      )
+      );
     } else {
       resetForm();
     }
@@ -265,15 +291,6 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         {editingWorkout ? "Edit Workout" : "Add a New Workout"}
       </h3>
 
-      <select
-        name="type"
-        onChange={handleExerciseChange}
-        value={exercise.type}
-      >
-        <option value="strength">Strength</option>
-        <option value="cardio">Cardio</option>
-      </select>
-
       <label>Workout Title:</label>
       <input
         name="title"
@@ -283,113 +300,168 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         value={title}
       />
 
-      <label>Exercise Name:</label>
-      <input
-        type="text"
-        name="name"
-        onChange={handleExerciseChange}
-        value={exercise.name}
-      />
+      {exercises.map((exercise, exerciseIndex) => (
 
-      {exercise.type === "strength" && (
-        <>
-          <label>Category:</label>
+        <div
+          className="exercise-block"
+          key={exerciseIndex}
+        >
+
+          <h4>Exercise {exerciseIndex + 1}</h4>
+
           <select
-            name="category"
-            className={emptyFields.includes("category") ? "error" : ""}
-            onChange={handleExerciseChange}
-            value={exercise.category}
+            name="type"
+            onChange={(event) =>
+              handleExerciseChange(event, exerciseIndex)
+            }
+            value={exercise.type}
           >
-            <option value="" disabled>Select a category</option>
-            <option value="Chest">Chest</option>
-            <option value="Back">Back</option>
-            <option value="Legs">Legs</option>
-            <option value="Shoulders">Shoulders</option>
-            <option value="Biceps">Biceps</option>
-            <option value="Triceps">Triceps</option>
-            <option value="Forearms">Forearms</option>
-            <option value="Core">Core</option>
+            <option value="strength">Strength</option>
+            <option value="cardio">Cardio</option>
           </select>
-        </>
-      )}
 
-      {exercise.type === "strength" && (
-        <>
-          {exercise.sets.map((set, setIndex) => (
+          <label>Exercise Name:</label>
+          <input
+            type="text"
+            name="name"
+            onChange={(event) =>
+              handleExerciseChange(event, exerciseIndex)
+            }
+            value={exercise.name}
+          />
 
-            <div
-              className="set-row"
-              key={setIndex}
-            >
+          {exercise.type === "strength" && (
+            <>
+              <label>Category:</label>
+              <select
+                name="category"
+                className={emptyFields.includes("category") ? "error" : ""}
+                onChange={(event) =>
+                  handleExerciseChange(event, exerciseIndex)
+                }
+                value={exercise.category}
+              >
+                <option value="" disabled>Select a category</option>
+                <option value="Chest">Chest</option>
+                <option value="Back">Back</option>
+                <option value="Legs">Legs</option>
+                <option value="Shoulders">Shoulders</option>
+                <option value="Biceps">Biceps</option>
+                <option value="Triceps">Triceps</option>
+                <option value="Forearms">Forearms</option>
+                <option value="Core">Core</option>
+              </select>
+            </>
+          )}
 
-              <h4>
-                Set {setIndex + 1}
-              </h4>
+          {exercise.type === "strength" && (
+            <>
+              {exercise.sets.map((set, setIndex) => (
 
-              <label>Load (kg):</label>
+                <div
+                  className="set-row"
+                  key={setIndex}
+                >
+
+                  <h4>
+                    Set {setIndex + 1}
+                  </h4>
+
+                  <label>Load (kg):</label>
+                  <input
+                    name="load"
+                    type="number"
+                    step="0.01"
+                    onChange={(event) =>
+                      handleSetChange(event, exerciseIndex, setIndex)
+                    }
+                    value={set.load}
+                  />
+
+                  <label>Reps:</label>
+                  <input
+                    name="reps"
+                    type="number"
+                    onChange={(event) =>
+                      handleSetChange(event, exerciseIndex, setIndex)
+                    }
+                    value={set.reps}
+                  />
+
+                  {exercise.sets.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        removeSet(exerciseIndex, setIndex)
+                      }
+                    >
+                      Remove Set
+                    </button>
+                  )}
+
+                </div>
+
+              ))}
+
+              <button
+                type="button"
+                onClick={() =>
+                  addSet(exerciseIndex)
+                }
+              >
+                Add Set
+              </button>
+            </>
+          )}
+
+          {exercise.type === "cardio" && (
+            <>
+              <label>Duration (minutes):</label>
               <input
-                name="load"
+                name="duration"
                 type="number"
                 step="0.01"
                 onChange={(event) =>
-                  handleSetChange(event, setIndex)
+                  handleExerciseChange(event, exerciseIndex)
                 }
-                value={set.load}
+                value={exercise.duration}
               />
 
-              <label>Reps:</label>
+              <label>Distance (km):</label>
               <input
-                name="reps"
+                name="distance"
                 type="number"
+                step="0.01"
                 onChange={(event) =>
-                  handleSetChange(event, setIndex)
+                  handleExerciseChange(event, exerciseIndex)
                 }
-                value={set.reps}
+                value={exercise.distance}
               />
+            </>
+          )}
 
-              {exercise.sets.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeSet(setIndex)}
-                >
-                  Remove Set
-                </button>
-              )}
+          {exercises.length > 1 && (
 
-            </div>
+            <button
+              type="button"
+              onClick={() =>
+                removeExercise(exerciseIndex)
+              }
+            >
+              Remove Exercise
+            </button>
+          )}
 
-          ))}
+        </div>
 
-          <button
-            type="button"
-            onClick={addSet}
-          >
-            Add Set
-          </button>
-        </>
-      )}
+      ))}
 
-      {exercise.type === "cardio" && (
-        <>
-          <label>Duration (minutes):</label>
-          <input
-            name="duration"
-            type="number"
-            step="0.01"
-            onChange={handleExerciseChange}
-            value={exercise.duration}
-          />
-
-          <label>Distance (km):</label>
-          <input
-            name="distance"
-            type="number"
-            step="0.01"
-            onChange={handleExerciseChange}
-            value={exercise.distance}
-          />
-        </>
-      )}
+      <button
+        type="button"
+        onClick={addExercise}
+      >
+        Add Exercise
+      </button>
 
       <button disabled={isLoading}>
         {isLoading ? "Saving..." : editingWorkout ? "Update Workout" : "Add Workout"}
@@ -399,14 +471,14 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           disabled={isLoading}
           onClick={() => {
             setEditingWorkout(null);
-            setError(null);
-            setEmptyFields([]);
+            resetForm();
           }}
         >
           Cancel
         </button>
       )}
       {error && <div className="error">{error}</div>}
+
     </form>
   );
 }
