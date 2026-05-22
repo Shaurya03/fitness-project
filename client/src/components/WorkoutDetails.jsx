@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
-import { formatDistanceToNow } from "date-fns";
+import { format } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
@@ -11,6 +11,14 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const exerciseCount = workout.exercises?.length || 0;
+
+  const totalSets = workout.exercises?.reduce((total, exercise) =>
+    total + (exercise.sets?.length || 0), 0
+  );
+
+  const formattedDate = format(new Date(workout.date), "EEEE, d MMM yyyy");
 
   const handleDelete = async () => {
     if (!user) {
@@ -52,6 +60,15 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
 
       <h2>{workout.title}</h2>
 
+      <p>{formattedDate}</p>
+
+      <p>
+        {exerciseCount}{" "}
+        {exerciseCount === 1 ? "Exercise" : "Exercises"}
+        {" • "}{totalSets}{" "}
+        {totalSets === 1 ? "Set" : "Sets"}
+      </p>
+
       <div className="exercise-list">
         {workout.exercises?.length > 0 ? (
           workout.exercises.map((exercise, index) => (
@@ -59,13 +76,14 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
               className="exercise-item"
               key={`${exercise.name}-${index}`}
             >
-              <h4>{exercise.name}</h4>
 
               {exercise.type === "strength" && (
                 <p className="workout-category">
                   {exercise.category}
                 </p>
               )}
+
+              <h4>{exercise.name}</h4>
 
               {exercise.type === "strength" && (
 
@@ -90,10 +108,8 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
 
                 <div className="cardio-details">
                   <p>
-                    Duration: {exercise.duration} min
-                  </p>
-                  <p>
-                    Distance: {exercise.distance} km
+                    {exercise.duration}{" min • "}
+                    {exercise.distance}{" km"}
                   </p>
                 </div>
 
@@ -105,12 +121,6 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
           <p>No exercises found.</p>
         )}
       </div>
-
-      <p>
-        {formatDistanceToNow(new Date(workout.createdAt), {
-          addSuffix: true
-        })}
-      </p>
 
       <div className="workout-actions">
 
