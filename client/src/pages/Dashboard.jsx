@@ -48,6 +48,28 @@ function Dashboard() {
     ), 0
   ) || 0
 
+  const cardioExercises = workouts?.flatMap(workout =>
+    workout.exercises?.filter(exercise =>
+      exercise.type === "cardio"
+    ) || []
+  ) || [];
+
+  const totalDistance = cardioExercises.reduce((total, exercise) =>
+    total + (exercise.distance || 0), 0
+  );
+
+  const totalDuration = cardioExercises.reduce((total, exercise) =>
+    total + (exercise.duration || 0), 0
+  );
+
+  const longestDistance = cardioExercises.reduce((max, exercise) =>
+    exercise.distance > max ? exercise.distance : max, 0
+  );
+
+  const longestDuration = cardioExercises.reduce((max, exercise) =>
+    exercise.duration > max ? exercise.duration : max, 0
+  );
+
   return (
     <div className="dashboard">
 
@@ -78,6 +100,26 @@ function Dashboard() {
         <div className="stat-card">
           <h3>Volume</h3>
           <p>{totalVolume} kg</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>Total Distance</h3>
+          <p>{totalDistance} km</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>Total Duration</h3>
+          <p>{totalDuration} min</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>Longest Distance</h3>
+          <p>{longestDistance} km</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>Longest Duration</h3>
+          <p>{longestDuration} min</p>
         </div>
 
       </div>
