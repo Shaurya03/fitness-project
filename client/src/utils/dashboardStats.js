@@ -1,3 +1,5 @@
+import { getWorkoutVolume } from "./workoutHelpers";
+
 export const getDashboardStats = (workouts) => {
 
   workouts = workouts || [];
@@ -35,16 +37,8 @@ export const getDashboardStats = (workouts) => {
     );
 
   const totalVolume = workouts.reduce((total, workout) =>
-    total +
-    (workout.exercises?.reduce((exerciseTotal, exercise) =>
-      exerciseTotal +
-      (exercise.sets?.reduce((setTotal, set) =>
-        setTotal +
-        (set.load * set.reps), 0) || 0
-      ), 0
-    ) || 0
-    ), 0
-  ) || 0
+    total + getWorkoutVolume(workout), 0
+  );
 
   const cardioExercises = workouts.flatMap(workout =>
     workout.exercises?.filter(exercise =>
