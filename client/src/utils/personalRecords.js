@@ -22,10 +22,10 @@ export const getPersonalRecords = (workouts) => {
   const highestWeightSet = strengthSets.reduce((maxSet, set) =>
     set.load > maxSet.load
       ? set
-      : maxSet, 
-      {
-        load: 0
-      }
+      : maxSet,
+    {
+      load: 0
+    }
   );
 
   const highestWeightRecord = {
@@ -39,29 +39,77 @@ export const getPersonalRecords = (workouts) => {
   };
 
   const cardioExercises = workouts.flatMap(workout =>
-    workout.exercises?.filter(exercise =>
+    workout.exercises?.flatMap(exercise =>
       exercise.type === "cardio"
+        ? [{
+          ...exercise,
+          workoutTitle: workout.title,
+          workoutDate: workout.date,
+          workoutId: workout._id,
+          exerciseName: exercise.name
+        }]
+        : []
     ) || []
   );
 
-  const longestDistance = cardioExercises.reduce((max, exercise) =>
-    exercise.distance > max ? exercise.distance : max, 0
+  const longestDistanceExercise = cardioExercises.reduce((maxExercise, exercise) =>
+
+    exercise.distance > maxExercise.distance
+      ? exercise
+      : maxExercise,
+    {
+      distance: 0
+    }
   );
 
-  const longestDuration = cardioExercises.reduce((max, exercise) =>
-    exercise.duration > max ? exercise.duration : max, 0
+  const longestDistanceRecord = {
+
+    value: longestDistanceExercise.distance,
+    title: longestDistanceExercise.workoutTitle,
+    exerciseName: longestDistanceExercise.name,
+    date: longestDistanceExercise.workoutDate,
+    id: longestDistanceExercise.workoutId
+  };
+
+  const longestDurationExercise = cardioExercises.reduce((maxExercise, exercise) =>
+
+    exercise.duration > maxExercise.duration
+      ? exercise
+      : maxExercise,
+    {
+      duration: 0
+    }
   );
 
-  const workoutWithMostExercises = workouts.reduce((maxWorkout, workout) =>
+  const longestDurationRecord = {
 
-    (workout.exercises?.length || 0) > (maxWorkout.exercises?.length || 0)
+    value: longestDurationExercise.duration,
+    title: longestDurationExercise.workoutTitle,
+    exerciseName: longestDurationExercise.name,
+    date: longestDurationExercise.workoutDate,
+    id: longestDurationExercise.workoutId
+  };
+
+  const workoutWithMostExercises = workouts.reduce((maxWorkout, workout) => {
+
+    const currentWorkoutExercises = workout.exercises?.length || 0;
+
+    const maxWorkoutExercises = maxWorkout.exercises?.length || 0;
+
+    return currentWorkoutExercises > maxWorkoutExercises
       ? workout
-      : maxWorkout, {}
+      : maxWorkout;
+
+  }, {}
   );
 
-  const mostExercises = workoutWithMostExercises.exercises?.length || 0;
+  const mostExercisesRecord = {
 
-  const mostExercisesWorkout = workoutWithMostExercises.title || "None";
+    value: workoutWithMostExercises.exercises?.length || 0,
+    title: workoutWithMostExercises.title || "None",
+    date: workoutWithMostExercises.date || null,
+    id: workoutWithMostExercises._id || null
+  };
 
   const workoutWithHighestVolume = workouts.reduce((maxWorkout, workout) => {
 
@@ -86,10 +134,9 @@ export const getPersonalRecords = (workouts) => {
 
   return {
     highestWeightRecord,
-    longestDistance,
-    longestDuration,
-    mostExercises,
-    mostExercisesWorkout,
+    longestDistanceRecord,
+    longestDurationRecord,
+    mostExercisesRecord,
     highestVolumeRecord
   };
 };

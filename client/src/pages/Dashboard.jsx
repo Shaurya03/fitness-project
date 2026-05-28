@@ -75,20 +75,45 @@ function Dashboard() {
           }
         />
 
-        <StatCard
+        <PersonalRecordCard
           title="Longest Distance"
-          value={`${prs.longestDistance} km`}
+          value={`${prs.longestDistanceRecord?.value || 0} km`}
+          exercise={prs.longestDistanceRecord.exerciseName || "None"}
+          workout={prs.longestDistanceRecord?.title || "None"}
+          date={
+            prs.longestDistanceRecord.date
+              ?
+              format(new Date(prs.longestDistanceRecord?.date), "d MMM yyyy")
+              :
+              "No Date"
+          }
         />
 
-        <StatCard
+        <PersonalRecordCard
           title="Longest Duration"
-          value={`${prs.longestDuration} min`}
+          value={`${prs.longestDurationRecord?.value || 0} min`}
+          exercise={prs.longestDurationRecord.exerciseName || "None"}
+          workout={prs.longestDurationRecord?.title || "None"}
+          date={
+            prs.longestDurationRecord.date
+              ?
+              format(new Date(prs.longestDurationRecord?.date), "d MMM yyyy")
+              :
+              "No Date"
+          }
         />
 
-        <StatCard
+        <PersonalRecordCard
           title="Most Exercises"
-          value={prs.mostExercises}
-          subtitle={prs.mostExercisesWorkout}
+          value={prs.mostExercisesRecord?.value || 0}
+          workout={prs.mostExercisesRecord?.title || "None"}
+          date={
+            prs.mostExercisesRecord.date
+              ?
+              format(new Date(prs.mostExercisesRecord?.date), "d MMM yyyy")
+              :
+              "No Date"
+          }
         />
 
         <PersonalRecordCard
