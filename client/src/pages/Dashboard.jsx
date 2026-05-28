@@ -1,3 +1,4 @@
+import StatCard from "../components/StatCard";
 import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
@@ -18,40 +19,40 @@ function Dashboard() {
 
       <div className="stats-grid">
 
-        <div className="stat-card">
-          <h3>Total Workouts</h3>
-          <p>{stats.totalWorkouts}</p>
-        </div>
+        <StatCard
+          title="Total Workouts"
+          value={stats.totalWorkouts}
+        />
 
-        <div className="stat-card">
-          <h3>Exercises</h3>
-          <p>{stats.totalExercises}</p>
-        </div>
+        <StatCard
+          title="Exercises"
+          value={stats.totalExercises}
+        />
 
-        <div className="stat-card">
-          <h3>Sets</h3>
-          <p>{stats.totalSets}</p>
-        </div>
+        <StatCard
+          title="Sets"
+          value={stats.totalSets}
+        />
 
-        <div className="stat-card">
-          <h3>Top Body Part</h3>
-          <p>{stats.mostTrainedCategory}</p>
-        </div>
+        <StatCard
+          title="Top Body Part"
+          value={stats.mostTrainedCategory}
+        />
 
-        <div className="stat-card">
-          <h3>Volume</h3>
-          <p>{stats.totalVolume} kg</p>
-        </div>
+        <StatCard
+          title="Volume"
+          value={`${stats.totalVolume} kg`}
+        />
 
-        <div className="stat-card">
-          <h3>Total Distance</h3>
-          <p>{stats.totalDistance} km</p>
-        </div>
+        <StatCard
+          title="Total Distance"
+          value={`${stats.totalDistance} km`}
+        />
 
-        <div className="stat-card">
-          <h3>Total Duration</h3>
-          <p>{stats.totalDuration} min</p>
-        </div>
+        <StatCard
+          title="Total Duration"
+          value={`${stats.totalDuration} min`}
+        />
 
       </div>
 
@@ -59,45 +60,39 @@ function Dashboard() {
 
       <div className="stats-grid">
 
-        <div className="stat-card">
-          <h3>Highest Weight</h3>
-          <p>{prs.highestWeight} kg</p>
-        </div>
+        <StatCard
+          title="Highest Weight"
+          value={`${prs.highestWeight} kg`}
+        />
 
-        <div className="stat-card">
-          <h3>Longest Distance</h3>
-          <p>{prs.longestDistance} km</p>
-        </div>
+        <StatCard
+          title="Longest Distance"
+          value={`${prs.longestDistance} km`}
+        />
 
-        <div className="stat-card">
-          <h3>Longest Duration</h3>
-          <p>{prs.longestDuration} min</p>
-        </div>
+        <StatCard
+          title="Longest Duration"
+          value={`${prs.longestDuration} min`}
+        />
 
-        <div className="stat-card">
-          <h3>Most Exercises</h3>
-          <p>{prs.mostExercises}</p>
-          <p>{prs.mostExercisesWorkout}</p>
-        </div>
+        <StatCard
+          title="Most Exercises"
+          value={prs.mostExercises}
+          subtitle={prs.mostExercisesWorkout}
+        />
 
-        <div className="stat-card">
-
-          <h3>Highest Volume Workout</h3>
-
-          <p>{prs.highestVolumeRecord.volume} kg</p>
-
-          <small>{prs.highestVolumeRecord.title}</small>
-
-          <small>
-            {prs.highestVolumeRecord.date
+        <StatCard
+          title="Highest Volume Workout"
+          value={`${prs.highestVolumeRecord?.volume || 0} kg`}
+          subtitle={prs.highestVolumeRecord?.title || "None"}
+          extra={
+            prs.highestVolumeRecord.date
               ?
-              format(new Date(prs.highestVolumeRecord.date), "d MMM yyyy")
+              format(new Date(prs.highestVolumeRecord?.date), "d MMM yyyy")
               :
               "No Date"
-            }
-          </small>
-
-        </div>
+          }
+        />
 
       </div>
 
