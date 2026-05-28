@@ -1,3 +1,5 @@
+import { getWorkoutVolume } from "./workoutHelpers";
+
 export const getPersonalRecords = (workouts) => {
   workouts = workouts || [];
 
@@ -42,11 +44,30 @@ export const getPersonalRecords = (workouts) => {
 
   const mostExercisesWorkout = workoutWithMostExercises.title || "None";
 
+  const workoutWithHighestVolume = workouts.reduce((maxWorkout, workout) => {
+
+    const currentWorkoutVolume = getWorkoutVolume(workout);
+
+    const maxWorkoutVolume = getWorkoutVolume(maxWorkout);
+
+    return currentWorkoutVolume > maxWorkoutVolume
+      ? workout
+      : maxWorkout;
+
+  }, {}
+  );
+
+  const highestWorkoutVolume = getWorkoutVolume(workoutWithHighestVolume);
+
+  const highestVolumeWorkout = workoutWithHighestVolume.title || "None";
+
   return {
     highestWeight,
     longestDistance,
     longestDuration,
     mostExercises,
-    mostExercisesWorkout
+    mostExercisesWorkout,
+    highestWorkoutVolume,
+    highestVolumeWorkout
   };
 };

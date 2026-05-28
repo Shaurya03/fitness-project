@@ -79,6 +79,12 @@ function Dashboard() {
           <p>{prs.mostExercisesWorkout}</p>
         </div>
 
+        <div className="stat-card">
+          <h3>Highest Volume Workout</h3>
+          <p>{prs.highestWorkoutVolume} kg</p>
+          <p>{prs.highestVolumeWorkout}</p>
+        </div>
+
       </div>
 
     </div>
