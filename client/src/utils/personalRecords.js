@@ -57,9 +57,13 @@ export const getPersonalRecords = (workouts) => {
   }, {}
   );
 
-  const highestWorkoutVolume = getWorkoutVolume(workoutWithHighestVolume);
+  const highestVolumeRecord = {
 
-  const highestVolumeWorkout = workoutWithHighestVolume.title || "None";
+    id: workoutWithHighestVolume._id || null,
+    title: workoutWithHighestVolume.title || "None",
+    volume: getWorkoutVolume(workoutWithHighestVolume),
+    date: workoutWithHighestVolume.date || null
+  };
 
   return {
     highestWeight,
@@ -67,7 +71,6 @@ export const getPersonalRecords = (workouts) => {
     longestDuration,
     mostExercises,
     mostExercisesWorkout,
-    highestWorkoutVolume,
-    highestVolumeWorkout
+    highestVolumeRecord
   };
 };

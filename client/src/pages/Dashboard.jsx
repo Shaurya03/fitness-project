@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
 import { getPersonalRecords } from "../utils/personalRecords";
@@ -80,9 +81,22 @@ function Dashboard() {
         </div>
 
         <div className="stat-card">
+
           <h3>Highest Volume Workout</h3>
-          <p>{prs.highestWorkoutVolume} kg</p>
-          <p>{prs.highestVolumeWorkout}</p>
+
+          <p>{prs.highestVolumeRecord.volume} kg</p>
+
+          <small>{prs.highestVolumeRecord.title}</small>
+
+          <small>
+            {prs.highestVolumeRecord.date
+              ?
+              format(new Date(prs.highestVolumeRecord.date), "d MMM yyyy")
+              :
+              "No Date"
+            }
+          </small>
+
         </div>
 
       </div>

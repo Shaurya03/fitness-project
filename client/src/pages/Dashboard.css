@@ -34,6 +34,14 @@
   color: #1aac83;
 }
 
+.stat-card small {
+  margin-top: 12px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1aac83;
+  display: block;
+}
+
 .dashboard-section {
   margin-top: 40px;
 }
