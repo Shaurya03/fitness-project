@@ -1,11 +1,14 @@
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
+import { getPersonalRecords } from "../utils/personalRecords";
 import "./Dashboard.css";
 
 function Dashboard() {
   const { workouts } = useWorkoutContext();
 
   const stats = getDashboardStats(workouts);
+
+  const prs = getPersonalRecords(workouts);
 
   return (
     <div className="dashboard">
@@ -57,6 +60,17 @@ function Dashboard() {
         <div className="stat-card">
           <h3>Longest Duration</h3>
           <p>{stats.longestDuration} min</p>
+        </div>
+
+      </div>
+
+      <h2>Personal Records</h2>
+
+      <div className="stats-grid">
+
+        <div className="stat-card">
+          <h3>Highest Weight</h3>
+          <p>{prs.highestWeight} kg</p>
         </div>
 
       </div>
