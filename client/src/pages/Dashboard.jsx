@@ -73,6 +73,12 @@ function Dashboard() {
           <p>{prs.longestDuration} min</p>
         </div>
 
+        <div className="stat-card">
+          <h3>Most Exercises</h3>
+          <p>{prs.mostExercises}</p>
+          <p>{prs.mostExercisesWorkout}</p>
+        </div>
+
       </div>
 
     </div>

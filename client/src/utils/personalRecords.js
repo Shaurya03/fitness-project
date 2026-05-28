@@ -23,7 +23,7 @@ export const getPersonalRecords = (workouts) => {
     ) || []
   );
 
-   const longestDistance = cardioExercises.reduce((max, exercise) =>
+  const longestDistance = cardioExercises.reduce((max, exercise) =>
     exercise.distance > max ? exercise.distance : max, 0
   );
 
@@ -31,9 +31,22 @@ export const getPersonalRecords = (workouts) => {
     exercise.duration > max ? exercise.duration : max, 0
   );
 
+  const workoutWithMostExercises = workouts.reduce((maxWorkout, workout) =>
+
+    (workout.exercises?.length || 0) > (maxWorkout.exercises?.length || 0)
+      ? workout
+      : maxWorkout, {}
+  );
+
+  const mostExercises = workoutWithMostExercises.exercises?.length || 0;
+
+  const mostExercisesWorkout = workoutWithMostExercises.title || "None";
+
   return {
     highestWeight,
     longestDistance,
-    longestDuration
+    longestDuration,
+    mostExercises,
+    mostExercisesWorkout
   };
 };
