@@ -1,0 +1,28 @@
+.pr-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.pr-card h3 {
+  margin: 0;
+  color: #666;
+  font-size: 1rem;
+}
+
+.pr-card p {
+  margin-top: 12px;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #1aac83;
+}
+
+.pr-card small {
+  margin-top: 12px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1aac83;
+  display: block;
+}

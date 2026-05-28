@@ -8,16 +8,35 @@ export const getPersonalRecords = (workouts) => {
     workout.exercises?.flatMap(exercise =>
 
       exercise.type === "strength"
-        ? exercise.sets || []
+        ? (exercise.sets || []).map((set) => ({
+          ...set,
+          workoutTitle: workout.title,
+          workoutDate: workout.date,
+          workoutId: workout._id,
+          exerciseName: exercise.name
+        }))
         : []
     ) || []
   );
 
-  const highestWeight = strengthSets.reduce((max, set) =>
-    set.load > max
-      ? set.load
-      : max, 0
+  const highestWeightSet = strengthSets.reduce((maxSet, set) =>
+    set.load > maxSet.load
+      ? set
+      : maxSet, 
+      {
+        load: 0
+      }
   );
+
+  const highestWeightRecord = {
+
+    value: highestWeightSet.load,
+    reps: highestWeightSet.reps,
+    title: highestWeightSet.workoutTitle,
+    exerciseName: highestWeightSet.exerciseName,
+    date: highestWeightSet.workoutDate,
+    id: highestWeightSet.workoutId
+  };
 
   const cardioExercises = workouts.flatMap(workout =>
     workout.exercises?.filter(exercise =>
@@ -66,7 +85,7 @@ export const getPersonalRecords = (workouts) => {
   };
 
   return {
-    highestWeight,
+    highestWeightRecord,
     longestDistance,
     longestDuration,
     mostExercises,

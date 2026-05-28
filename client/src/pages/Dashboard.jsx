@@ -1,4 +1,5 @@
 import StatCard from "../components/StatCard";
+import PersonalRecordCard from "../components/PersonalRecordCard";
 import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
@@ -60,9 +61,18 @@ function Dashboard() {
 
       <div className="stats-grid">
 
-        <StatCard
+        <PersonalRecordCard
           title="Highest Weight"
-          value={`${prs.highestWeight} kg`}
+          value={`${prs.highestWeightRecord?.value || 0} kg`}
+          exercise={prs.highestWeightRecord?.exerciseName || "None"}
+          workout={prs.highestWeightRecord?.title || "None"}
+          date={
+            prs.highestWeightRecord.date
+              ?
+              format(new Date(prs.highestWeightRecord?.date), "d MMM yyyy")
+              :
+              "No Date"
+          }
         />
 
         <StatCard
@@ -81,11 +91,11 @@ function Dashboard() {
           subtitle={prs.mostExercisesWorkout}
         />
 
-        <StatCard
+        <PersonalRecordCard
           title="Highest Volume Workout"
           value={`${prs.highestVolumeRecord?.volume || 0} kg`}
-          subtitle={prs.highestVolumeRecord?.title || "None"}
-          extra={
+          workout={prs.highestVolumeRecord?.title || "None"}
+          date={
             prs.highestVolumeRecord.date
               ?
               format(new Date(prs.highestVolumeRecord?.date), "d MMM yyyy")

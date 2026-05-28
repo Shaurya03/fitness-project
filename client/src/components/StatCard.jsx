@@ -4,7 +4,8 @@ function StatCard({
   title,
   value,
   subtitle,
-  extra
+  extra,
+  children
 }) {
 
   return (
@@ -21,6 +22,7 @@ function StatCard({
         extra &&
         <small>{extra}</small>
       }
+      {children}
 
     </div>
   );
