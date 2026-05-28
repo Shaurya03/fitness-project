@@ -17,7 +17,23 @@ export const getPersonalRecords = (workouts) => {
       : max, 0
   );
 
+  const cardioExercises = workouts.flatMap(workout =>
+    workout.exercises?.filter(exercise =>
+      exercise.type === "cardio"
+    ) || []
+  );
+
+   const longestDistance = cardioExercises.reduce((max, exercise) =>
+    exercise.distance > max ? exercise.distance : max, 0
+  );
+
+  const longestDuration = cardioExercises.reduce((max, exercise) =>
+    exercise.duration > max ? exercise.duration : max, 0
+  );
+
   return {
-    highestWeight
+    highestWeight,
+    longestDistance,
+    longestDuration
   };
 };

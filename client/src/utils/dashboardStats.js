@@ -2,7 +2,7 @@ export const getDashboardStats = (workouts) => {
 
   workouts = workouts || [];
 
-  const totalWorkouts = workouts.length || 0;
+  const totalWorkouts = workouts.length;
 
   const totalExercises = workouts.reduce((total, workout) =>
     total + (workout.exercises?.length || 0), 0
@@ -50,7 +50,7 @@ export const getDashboardStats = (workouts) => {
     workout.exercises?.filter(exercise =>
       exercise.type === "cardio"
     ) || []
-  ) || [];
+  );
 
   const totalDistance = cardioExercises.reduce((total, exercise) =>
     total + (exercise.distance || 0), 0
@@ -60,16 +60,7 @@ export const getDashboardStats = (workouts) => {
     total + (exercise.duration || 0), 0
   );
 
-  const longestDistance = cardioExercises.reduce((max, exercise) =>
-    exercise.distance > max ? exercise.distance : max, 0
-  );
-
-  const longestDuration = cardioExercises.reduce((max, exercise) =>
-    exercise.duration > max ? exercise.duration : max, 0
-  );
-
   return {
-
     totalWorkouts,
     totalExercises,
     totalSets,
@@ -77,7 +68,5 @@ export const getDashboardStats = (workouts) => {
     totalVolume,
     totalDistance,
     totalDuration,
-    longestDistance,
-    longestDuration,
   };
 };

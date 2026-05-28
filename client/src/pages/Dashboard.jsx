@@ -52,16 +52,6 @@ function Dashboard() {
           <p>{stats.totalDuration} min</p>
         </div>
 
-        <div className="stat-card">
-          <h3>Longest Distance</h3>
-          <p>{stats.longestDistance} km</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Longest Duration</h3>
-          <p>{stats.longestDuration} min</p>
-        </div>
-
       </div>
 
       <h2>Personal Records</h2>
@@ -71,6 +61,16 @@ function Dashboard() {
         <div className="stat-card">
           <h3>Highest Weight</h3>
           <p>{prs.highestWeight} kg</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>Longest Distance</h3>
+          <p>{prs.longestDistance} km</p>
+        </div>
+
+        <div className="stat-card">
+          <h3>Longest Duration</h3>
+          <p>{prs.longestDuration} min</p>
         </div>
 
       </div>
