@@ -5,9 +5,10 @@ import { getDashboardStats } from "../utils/dashboardStats";
 import { getPersonalRecords } from "../utils/personalRecords";
 import StatCard from "../components/StatCard";
 import PersonalRecordCard from "../components/PersonalRecordCard";
-import "./Dashboard.css";
 import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
 import WorkoutDetails from "../components/WorkoutDetails";
+import VolumeChart from "../components/VolumeChart";
+import "./Dashboard.css";
 
 function Dashboard() {
   const { workouts } = useWorkoutContext();
@@ -170,7 +171,14 @@ function Dashboard() {
         </WorkoutPreviewModal>
       )}
 
+      <h2>Progress Charts</h2>
+
+      <div className="charts-section">
+        <VolumeChart workouts={workouts} /> 
+      </div>
+
     </div>
+
   );
 }
 
