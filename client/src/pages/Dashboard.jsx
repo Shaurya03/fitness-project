@@ -8,6 +8,7 @@ import PersonalRecordCard from "../components/PersonalRecordCard";
 import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
 import WorkoutDetails from "../components/WorkoutDetails";
 import VolumeChart from "../components/VolumeChart";
+import CategoryBreakdownChart from "../components/CategoryBreakdownChart";
 import "./Dashboard.css";
 
 function Dashboard() {
@@ -174,6 +175,7 @@ function Dashboard() {
       <h2>Progress Charts</h2>
 
       <div className="charts-section">
+        <CategoryBreakdownChart workouts={workouts} />
         <VolumeChart workouts={workouts} /> 
       </div>
 
