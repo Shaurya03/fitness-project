@@ -25,12 +25,35 @@ function Workouts() {
   const filteredWorkouts = workouts?.filter((workout) => {
     const matchesCategory =
       selectedCategory === "All" ||
-      workout.category === selectedCategory;
+      workout.exercises?.some(
+        exercise => exercise.category === selectedCategory ||
+          (
+            selectedCategory === "Cardio" &&
+            exercise.type === "cardio"
+          )
+      );
+
+    const normalizedSearch = searchTerm.toLowerCase();
 
     const matchesSearch =
       workout.title
         .toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        .includes(normalizedSearch) ||
+
+      workout.exercises?.some(
+        exercise =>
+          exercise.name
+            .toLowerCase()
+            .includes(normalizedSearch) ||
+
+          exercise.category
+            ?.toLowerCase()
+            .includes(normalizedSearch) ||
+
+          exercise.type
+            .toLowerCase()
+            .includes(normalizedSearch)
+      );
 
     return matchesCategory && matchesSearch;
   }) || [];

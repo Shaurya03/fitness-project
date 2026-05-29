@@ -77,11 +77,11 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
               key={`${exercise.name}-${index}`}
             >
 
-              {exercise.type === "strength" && (
                 <p className="workout-category">
-                  {exercise.category}
+                  {exercise.type === "cardio"
+                    ? "Cardio"
+                    : exercise.category}
                 </p>
-              )}
 
               <h4>{exercise.name}</h4>
 
