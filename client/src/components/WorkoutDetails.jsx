@@ -7,7 +7,7 @@ import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import "./WorkoutDetails.css";
 
-function WorkoutDetails({ workout, setEditingWorkout }) {
+function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -122,19 +122,21 @@ function WorkoutDetails({ workout, setEditingWorkout }) {
         )}
       </div>
 
-      <div className="workout-actions">
+      {!preview && (
+        <div className="workout-actions">
 
-        <button className="edit-button"
-          onClick={() => setEditingWorkout(workout)}>
-          <FiEdit />
-        </button>
-        <button className="delete-button"
-          onClick={handleDelete}
-          disabled={isDeleting}>
-          {isDeleting ? "Deleting..." : <FiTrash2 />}
-        </button>
+          <button className="edit-button"
+            onClick={() => setEditingWorkout(workout)}>
+            <FiEdit />
+          </button>
+          <button className="delete-button"
+            onClick={handleDelete}
+            disabled={isDeleting}>
+            {isDeleting ? "Deleting..." : <FiTrash2 />}
+          </button>
 
-      </div>
+        </div>
+      )}
 
     </div>
   );

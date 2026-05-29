@@ -1,17 +1,30 @@
-import StatCard from "../components/StatCard";
-import PersonalRecordCard from "../components/PersonalRecordCard";
+import { useState } from "react";
 import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
 import { getPersonalRecords } from "../utils/personalRecords";
+import StatCard from "../components/StatCard";
+import PersonalRecordCard from "../components/PersonalRecordCard";
 import "./Dashboard.css";
+import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
+import WorkoutDetails from "../components/WorkoutDetails";
 
 function Dashboard() {
   const { workouts } = useWorkoutContext();
 
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
+
   const stats = getDashboardStats(workouts);
 
   const prs = getPersonalRecords(workouts);
+
+  const openWorkoutPreview = (workoutId) => {
+    const workout = workouts.find(
+      workout => workout._id === workoutId
+    );
+
+    setSelectedWorkout(workout);
+  }
 
   return (
     <div className="dashboard">
@@ -73,6 +86,9 @@ function Dashboard() {
               :
               "No Date"
           }
+          onViewWorkout={() =>
+            openWorkoutPreview(prs.highestWeightRecord?.id)
+          }
         />
 
         <PersonalRecordCard
@@ -86,6 +102,9 @@ function Dashboard() {
               format(new Date(prs.longestDistanceRecord?.date), "d MMM yyyy")
               :
               "No Date"
+          }
+          onViewWorkout={() =>
+            openWorkoutPreview(prs.longestDistanceRecord?.id)
           }
         />
 
@@ -101,6 +120,9 @@ function Dashboard() {
               :
               "No Date"
           }
+          onViewWorkout={() =>
+            openWorkoutPreview(prs.longestDurationRecord?.id)
+          }
         />
 
         <PersonalRecordCard
@@ -113,6 +135,9 @@ function Dashboard() {
               format(new Date(prs.mostExercisesRecord?.date), "d MMM yyyy")
               :
               "No Date"
+          }
+          onViewWorkout={() =>
+            openWorkoutPreview(prs.mostExercisesRecord?.id)
           }
         />
 
@@ -127,9 +152,23 @@ function Dashboard() {
               :
               "No Date"
           }
+          onViewWorkout={() =>
+            openWorkoutPreview(prs.highestVolumeRecord?.id)
+          }
         />
 
       </div>
+
+      {selectedWorkout && (
+        <WorkoutPreviewModal
+          onClose={() => setSelectedWorkout(null)}
+        >
+          <WorkoutDetails
+            workout={selectedWorkout}
+            preview={true}
+          />
+        </WorkoutPreviewModal>
+      )}
 
     </div>
   );

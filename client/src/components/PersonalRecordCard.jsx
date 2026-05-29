@@ -5,7 +5,8 @@ function PersonalRecordCard({
   value,
   exercise,
   workout,
-  date
+  date,
+  onViewWorkout
 }) {
 
   return (
@@ -25,6 +26,12 @@ function PersonalRecordCard({
         date &&
         <small>{date}</small>
       }
+      <button
+        className="view-workout-btn"
+        onClick={onViewWorkout}
+      >
+        View Workout
+      </button>
 
     </div>
   );
