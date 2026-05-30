@@ -20,6 +20,9 @@ app.use("/api/workouts", workoutsRoutes);
 const userRoutes = require("./routes/user");
 app.use("/api/users", userRoutes);
 
+const exerciseRoutes = require("./routes/exercise");
+app.use("/api/exercises", exerciseRoutes);
+
 const PORT = 5000;
 
 // Error handling middleware
