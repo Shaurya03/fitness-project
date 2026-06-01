@@ -34,7 +34,10 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const [emptyFields, setEmptyFields] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { exercises: exerciseCatalog, fetchExercises } = useExercises();
+  const { exercises: exerciseCatalog, fetchExercises, createExercise } = useExercises();
+
+  const [showCreateExercise, setShowCreateExercise] = useState(false);
+  const [newExerciseName, setNewExerciseName] = useState("");
 
   const handleExerciseChange = (event, exerciseIndex) => {
     const { name, value } = event.target;
@@ -60,6 +63,15 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
               category: "",
               name: ""
             };
+          }
+
+          if (
+            name === "name" &&
+            value === "__CREATE_NEW__"
+          ) {
+            setShowCreateExercise(true);
+
+            return exercise;
           }
 
           return {
@@ -183,6 +195,44 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
             : ""
       }
     ]);
+  };
+
+  const handleCreateExercise = async (exercise, exerciseIndex) => {
+    if (!newExerciseName.trim()) {
+      return;
+    }
+
+    try {
+      const createdExercise = await createExercise({
+        name: newExerciseName,
+        type: exercise.type,
+        category: exercise.category
+      });
+
+      if(!createdExercise) {
+        return;
+      }
+
+      setExercises(
+        exercises.map((currentExercise, index) => {
+
+          if (index === exerciseIndex) {
+            return {
+              ...currentExercise,
+              name: createdExercise.name
+            };
+          }
+
+          return currentExercise;
+        })
+      );
+
+      setShowCreateExercise(false);
+      setNewExerciseName("");
+
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   const removeExercise = (exerciseIndex) => {
@@ -424,7 +474,43 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                 {catalogExercise.name}
               </option>
             ))}
+            <option value="__CREATE_NEW__">
+              + Create New Exercise
+            </option>
           </select>
+
+          {showCreateExercise && (
+            <div>
+              <input
+                type="text"
+                placeholder="Exercise Name"
+                value={newExerciseName}
+                onChange={(event) =>
+                  setNewExerciseName(event.target.value)
+                }
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  handleCreateExercise(exercise, exerciseIndex)
+                }
+              >
+                Save
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowCreateExercise(false);
+                  setNewExerciseName("")
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+
+          )}
 
           {exercise.type === "strength" && (
             <>

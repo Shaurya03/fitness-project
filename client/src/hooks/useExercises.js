@@ -25,11 +25,41 @@ export const useExercises = () => {
       }
     } catch (error) {
       console.error(error);
+      throw error;
     }
+  };
+
+  const createExercise = async (exerciseData) => {
+    if (!user) return;
+
+      const response = await fetch("/api/exercises", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${user.token}`
+        },
+        body: JSON.stringify(exerciseData)
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        throw new Error(json.error);
+      }
+
+      if (response.ok) {
+        dispatch({
+          type: "CREATE_EXERCISE",
+          payload: json
+        });
+
+        return json;
+      }
   };
 
   return {
     exercises,
-    fetchExercises
+    fetchExercises,
+    createExercise
   };
 };
