@@ -9,7 +9,7 @@ import "./WorkoutForm.css";
 const emptyExercise = {
   name: '',
   category: '',
-  type: 'strength',
+  type: '',
 
   sets: [
     {
@@ -44,6 +44,24 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       exercises.map((exercise, index) => {
 
         if (index === exerciseIndex) {
+
+          if (name === "category") {
+            return {
+              ...exercise,
+              category: value,
+              name: ""
+            };
+          }
+
+          if (name === "type") {
+            return {
+              ...exercise,
+              type: value,
+              category: "",
+              name: ""
+            };
+          }
+
           return {
             ...exercise,
             [name]: value
@@ -148,12 +166,21 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     );
   };
 
+  const lastExercise = exercises[exercises.length - 1];
+
   const addExercise = () => {
 
     setExercises([
       ...exercises,
       {
-        ...emptyExercise
+        ...emptyExercise,
+
+        type: lastExercise.type,
+
+        category:
+          lastExercise.type === "strength"
+            ? lastExercise.category
+            : ""
       }
     ]);
   };
@@ -298,6 +325,21 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     }
   };
 
+  const getFilteredExercises = (exercise) => {
+
+    if (exercise.type === "cardio") {
+      return exerciseCatalog?.filter(
+        item => item.type === "cardio"
+      ) || [];
+    }
+
+    return exerciseCatalog?.filter(
+      item =>
+        item.type === "strength" &&
+        item.category === exercise.category
+    ) || [];
+  };
+
   return (
     <form className="workout-form" onSubmit={handleSubmit}>
       <h3>
@@ -329,30 +371,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
             }
             value={exercise.type}
           >
+            <option value="">Select type of exercise</option>
             <option value="strength">Strength</option>
             <option value="cardio">Cardio</option>
-          </select>
-
-          <label>Exercise Name:</label>
-          <select
-            name="name"
-            onChange={(event) =>
-              handleExerciseChange(event, exerciseIndex)
-            }
-            value={exercise.name}
-          >
-            <option value="">
-              Select an exercise
-            </option>
-
-            {exerciseCatalog?.map((catalogExercise) => (
-              <option
-                key={catalogExercise._id}
-                value={catalogExercise.name}
-              >
-                {catalogExercise.name}
-              </option>
-            ))}
           </select>
 
           {exercise.type === "strength" && (
@@ -366,7 +387,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                 }
                 value={exercise.category}
               >
-                <option value="" disabled>Select a category</option>
+                <option value="">Select a category</option>
                 <option value="Chest">Chest</option>
                 <option value="Back">Back</option>
                 <option value="Legs">Legs</option>
@@ -378,6 +399,32 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
               </select>
             </>
           )}
+
+          <label>Exercise Name:</label>
+          <select
+            name="name"
+            onChange={(event) =>
+              handleExerciseChange(event, exerciseIndex)
+            }
+            value={exercise.name}
+            disabled={
+              exercise.type === "strength" &&
+              !exercise.category
+            }
+          >
+            <option value="">
+              Select an exercise
+            </option>
+
+            {getFilteredExercises(exercise)?.map((catalogExercise) => (
+              <option
+                key={catalogExercise._id}
+                value={catalogExercise.name}
+              >
+                {catalogExercise.name}
+              </option>
+            ))}
+          </select>
 
           {exercise.type === "strength" && (
             <>
