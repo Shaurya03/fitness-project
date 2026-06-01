@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useExercises } from '../hooks/useExercises';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import "./WorkoutForm.css";
@@ -32,6 +33,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const [error, setError] = useState(null);
   const [emptyFields, setEmptyFields] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { exercises: exerciseCatalog, fetchExercises } = useExercises();
 
   const handleExerciseChange = (event, exerciseIndex) => {
     const { name, value } = event.target;
@@ -185,6 +188,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  /* eslint-disable react-hooks/exhaustive-deps */
+
+  useEffect(() => {
+    if (user) {
+      fetchExercises();
+    }
+  }, [user]);
+
+  /* eslint-enable react-hooks/exhaustive-deps */
+
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -321,14 +334,26 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           </select>
 
           <label>Exercise Name:</label>
-          <input
-            type="text"
+          <select
             name="name"
             onChange={(event) =>
               handleExerciseChange(event, exerciseIndex)
             }
             value={exercise.name}
-          />
+          >
+            <option value="">
+              Select an exercise
+            </option>
+
+            {exerciseCatalog?.map((catalogExercise) => (
+              <option
+                key={catalogExercise._id}
+                value={catalogExercise.name}
+              >
+                {catalogExercise.name}
+              </option>
+            ))}
+          </select>
 
           {exercise.type === "strength" && (
             <>
