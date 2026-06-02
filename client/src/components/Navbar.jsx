@@ -19,6 +19,7 @@ function Navbar() {
             <div className="nav-links">
               <Link to="/">Dashboard</Link>
               <Link to="/workouts">Workouts</Link>
+              <Link to="/exercises">Exercises</Link>
 
               <span>{user.email}</span>
 
