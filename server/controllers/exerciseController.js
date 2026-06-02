@@ -56,4 +56,54 @@ const createExercise = async (req, res) => {
   res.status(201).json(exercise);
 };
 
-module.exports = { getExercises, createExercise };
+const updateExercise = async (req, res) => {
+  const user_id = req.user._id;
+  const { id } = req.params;
+  const { name } = req.body;
+
+  if (!name) {
+    return res.status(400).json({
+      error: "Exercise name is required"
+    });
+  }
+
+  const exercise = await Exercise.findOneAndUpdate(
+    {
+      user_id,
+      _id: id
+    },
+    {
+      name
+    },
+    {
+      new: true
+    }
+  );
+
+  if (!exercise) {
+    return res.status(400).json({
+      error: "Exercise does not exist"
+    });
+  }
+
+  res.status(200).json(exercise);
+};
+
+const deleteExercise = async (req, res) => {
+  const user_id = req.user._id;
+  const { id } = req.params;
+
+  const exercise = await Exercise.findOneAndDelete(
+    { _id: id, user_id }
+  );
+
+  if (!exercise) {
+    return res.status(400).json({
+      error: "Exercise does not exist"
+    });
+  }
+
+  res.status(200).json(exercise);
+};
+
+module.exports = { getExercises, createExercise, updateExercise, deleteExercise };
