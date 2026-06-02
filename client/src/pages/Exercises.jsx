@@ -13,7 +13,7 @@ const categoryOrder = [
 ];
 
 function Exercises() {
-  const { exercises, fetchExercises } = useExercises();
+  const { exercises, fetchExercises, updateExercise, deleteExercise } = useExercises();
   const [searchTerm, setSearchTerm] = useState("");
 
   /* eslint-disable react-hooks/exhaustive-deps */
@@ -48,6 +48,36 @@ function Exercises() {
     }, {}
   );
 
+  const handleEditExercise = async (exercise) => {
+  const newName = prompt(
+    "Enter new exercise name",
+    exercise.name
+  );
+
+  if (!newName) {
+    return;
+  }
+
+  await updateExercise(
+    exercise._id,
+    {
+      name: newName
+    }
+  );
+};
+
+const handleDeleteExercise = async (exercise) => {
+  const confirmed = window.confirm(
+    `Delete ${exercise.name}?`
+  );
+
+  if (!confirmed) {
+    return;
+  }
+
+  await deleteExercise(exercise._id);
+};
+
   return (
     <div>
       <h2>Exercises</h2>
@@ -73,7 +103,13 @@ function Exercises() {
 
             {categoryExercises.map((exercise) => (
               <div key={exercise._id}>
-                {exercise.name}
+                {exercise.name} 
+                <button
+                  onClick={() => handleEditExercise(exercise)}
+                >Edit</button>
+                <button
+                  onClick={() => handleDeleteExercise(exercise)}
+                >Delete</button>
               </div>
             ))}
 
