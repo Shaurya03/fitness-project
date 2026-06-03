@@ -1,0 +1,23 @@
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+
+.category-add-btn {
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 50%;
+  font-size: 25px;
+
+  cursor: pointer;
+}
+
+.category-section {
+  margin-bottom: 32px;
+}

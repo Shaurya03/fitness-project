@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { useExercises } from "../hooks/useExercises";
+import ExerciseCard from "../components/ExerciseCard";
+import "./Exercises.css";
 
 const categoryOrder = [
   "Chest",
@@ -49,34 +51,34 @@ function Exercises() {
   );
 
   const handleEditExercise = async (exercise) => {
-  const newName = prompt(
-    "Enter new exercise name",
-    exercise.name
-  );
+    const newName = prompt(
+      "Enter new exercise name",
+      exercise.name
+    );
 
-  if (!newName) {
-    return;
-  }
-
-  await updateExercise(
-    exercise._id,
-    {
-      name: newName
+    if (!newName) {
+      return;
     }
-  );
-};
 
-const handleDeleteExercise = async (exercise) => {
-  const confirmed = window.confirm(
-    `Delete ${exercise.name}?`
-  );
+    await updateExercise(
+      exercise._id,
+      {
+        name: newName
+      }
+    );
+  };
 
-  if (!confirmed) {
-    return;
-  }
+  const handleDeleteExercise = async (exercise) => {
+    const confirmed = window.confirm(
+      `Delete ${exercise.name}?`
+    );
 
-  await deleteExercise(exercise._id);
-};
+    if (!confirmed) {
+      return;
+    }
+
+    await deleteExercise(exercise._id);
+  };
 
   return (
     <div>
@@ -99,18 +101,22 @@ const handleDeleteExercise = async (exercise) => {
         return (
           <div key={category}>
 
-            <h3>{category}</h3>
+            <div className="category-section">
+              <div className="category-header">
+                <h3>{category}</h3>
+                <button className="category-add-btn">
+                  +
+                </button>
+              </div>
+            </div>
 
             {categoryExercises.map((exercise) => (
-              <div key={exercise._id}>
-                {exercise.name} 
-                <button
-                  onClick={() => handleEditExercise(exercise)}
-                >Edit</button>
-                <button
-                  onClick={() => handleDeleteExercise(exercise)}
-                >Delete</button>
-              </div>
+              <ExerciseCard
+                key={exercise._id}
+                exercise={exercise}
+                onEdit={() => handleEditExercise(exercise)}
+                onDelete={() => handleDeleteExercise(exercise)}
+              />
             ))}
 
           </div>
