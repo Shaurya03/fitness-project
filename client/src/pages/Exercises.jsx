@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useExercises } from "../hooks/useExercises";
 import ExerciseCard from "../components/ExerciseCard";
 import "./Exercises.css";
+import CreateExerciseModal from "../components/CreateExerciseModal";
 
 const categoryOrder = [
   "Chest",
@@ -15,8 +16,10 @@ const categoryOrder = [
 ];
 
 function Exercises() {
-  const { exercises, fetchExercises, updateExercise, deleteExercise } = useExercises();
+  const { exercises, fetchExercises, createExercise, updateExercise, deleteExercise } = useExercises();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -80,6 +83,25 @@ function Exercises() {
     await deleteExercise(exercise._id);
   };
 
+  const handleCloseModal = () => {
+    setIsCreateModalOpen(false);
+    setSelectedCategory(null);
+  };
+
+  const handleCreateExercise = async (exerciseName) => {
+    await createExercise({
+      name: exerciseName,
+      type: selectedCategory === "Cardio"
+        ? "cardio"
+        : "strength",
+      category: selectedCategory === "Cardio"
+        ? null
+        : selectedCategory
+    });
+
+    handleCloseModal();
+  };
+
   return (
     <div>
       <h2>Exercises</h2>
@@ -104,7 +126,13 @@ function Exercises() {
             <div className="category-section">
               <div className="category-header">
                 <h3>{category}</h3>
-                <button className="category-add-btn">
+                <button
+                  className="category-add-btn"
+                  onClick={() => {
+                    setSelectedCategory(category);
+                    setIsCreateModalOpen(true);
+                  }}
+                >
                   +
                 </button>
               </div>
@@ -122,6 +150,13 @@ function Exercises() {
           </div>
         );
       })}
+
+      <CreateExerciseModal
+        isOpen={isCreateModalOpen}
+        selectedCategory={selectedCategory}
+        onClose={handleCloseModal}
+        onCreate={handleCreateExercise}
+      />
 
     </div>
   );
