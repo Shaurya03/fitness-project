@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useExercises } from "../hooks/useExercises";
 import ExerciseCard from "../components/ExerciseCard";
-import "./Exercises.css";
 import CreateExerciseModal from "../components/CreateExerciseModal";
+import EditExerciseModal from "../components/EditExerciseModal";
+import "./Exercises.css";
 
 const categoryOrder = [
   "Chest",
@@ -20,6 +21,8 @@ function Exercises() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedExercise, setSelectedExercise] = useState(null);
 
   /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -53,22 +56,21 @@ function Exercises() {
     }, {}
   );
 
-  const handleEditExercise = async (exercise) => {
-    const newName = prompt(
-      "Enter new exercise name",
-      exercise.name
-    );
+  const handleEditExercise = (exercise) => {
+    setSelectedExercise(exercise);
+    setIsEditModalOpen(true);
+  };
 
-    if (!newName) {
-      return;
-    }
-
+  const handleSaveExercise = async (updatedName) => {
     await updateExercise(
-      exercise._id,
+      selectedExercise._id,
       {
-        name: newName
+        name: updatedName
       }
     );
+
+    setIsEditModalOpen(false);
+    setSelectedExercise(null);
   };
 
   const handleDeleteExercise = async (exercise) => {
@@ -156,6 +158,16 @@ function Exercises() {
         selectedCategory={selectedCategory}
         onClose={handleCloseModal}
         onCreate={handleCreateExercise}
+      />
+
+      <EditExerciseModal
+        isOpen={isEditModalOpen}
+        exercise={selectedExercise}
+        onClose={() => {
+          setIsEditModalOpen(false)
+          setSelectedExercise(null)
+        }}
+        onSave={handleSaveExercise}
       />
 
     </div>
