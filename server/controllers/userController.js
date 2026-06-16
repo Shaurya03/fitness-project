@@ -1,5 +1,9 @@
 const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
+const Category = require("../models/categoryModel");
+const Exercise = require("../models/exerciseModel");
+const DEFAULT_CATEGORIES = require("../utils/defaultCategories");
+const DEFAULT_EXERCISES = require("../utils/defaultExercises");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' });
@@ -10,6 +14,25 @@ const signupUser = async (req, res) => {
 
   try {
     const user = await User.signup(email, password);
+
+    await Category.insertMany(
+      DEFAULT_CATEGORIES.map(
+        (category) => ({
+          ...category,
+          user_id: user._id
+        })
+      )
+    );
+
+    await Exercise.insertMany(
+      DEFAULT_EXERCISES.map(
+        (exercise) => ({
+          ...exercise,
+          user_id: user._id
+        })
+      )
+    );
+
     const token = createToken(user._id);
 
     res.status(200).json({
