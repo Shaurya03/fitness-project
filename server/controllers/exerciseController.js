@@ -4,19 +4,14 @@ const getExercises = async (req, res) => {
   const user_id = req.user._id;
 
   const exercises = await Exercise
-    .find({
-      $or: [
-        { isDefault: true },
-        { user_id }
-      ]
-    })
+    .find({ user_id })
     .sort({ name: 1 });
 
   res.status(200).json(exercises);
 };
 
 const createExercise = async (req, res) => {
-  const { name, type, category } = req.body;
+  const { name, category } = req.body;
   const user_id = req.user._id;
 
   if (!name) {
@@ -25,22 +20,19 @@ const createExercise = async (req, res) => {
     });
   }
 
-  if (!type) {
-    return res.status(400).json({
-      error: "Exercise type is required"
-    });
-  }
-
-  if (type === "strength" && !category) {
+  if (!category) {
     return res.status(400).json({
       error: "Category is required"
     });
   }
 
-  const existingExercise = await Exercise
-    .findOne({
-      name: { $regex: `^${name}$`, $options: "i" }
-    });
+  const existingExercise = await Exercise.findOne({
+    user_id,
+    name: {
+      $regex: `^${name}$`,
+      $options: "i"
+    }
+  });
 
   if (existingExercise) {
     return res.status(400).json({
@@ -59,24 +51,17 @@ const createExercise = async (req, res) => {
 const updateExercise = async (req, res) => {
   const user_id = req.user._id;
   const { id } = req.params;
-  const { name } = req.body;
-
-  if (!name) {
-    return res.status(400).json({
-      error: "Exercise name is required"
-    });
-  }
+  const updates = req.body;
 
   const exercise = await Exercise.findOneAndUpdate(
     {
       user_id,
       _id: id
     },
+    updates,
     {
-      name
-    },
-    {
-      new: true
+      new: true,
+      runValidators: true
     }
   );
 
