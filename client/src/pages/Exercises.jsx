@@ -3,6 +3,7 @@ import { useExercises } from "../hooks/useExercises";
 import ExerciseCard from "../components/ExerciseCard";
 import CreateExerciseModal from "../components/CreateExerciseModal";
 import EditExerciseModal from "../components/EditExerciseModal";
+import DeleteExerciseModal from "../components/DeleteExerciseModal";
 import "./Exercises.css";
 
 const categoryOrder = [
@@ -23,6 +24,7 @@ function Exercises() {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -73,16 +75,20 @@ function Exercises() {
     setSelectedExercise(null);
   };
 
-  const handleDeleteExercise = async (exercise) => {
-    const confirmed = window.confirm(
-      `Delete ${exercise.name}?`
-    );
+  const handleDeleteExercise = (exercise) => {
+    setSelectedExercise(exercise);
+    setIsDeleteModalOpen(true);
+  };
 
-    if (!confirmed) {
+  const handleConfirmDelete = async () => {
+    if (!selectedExercise) {
       return;
     }
 
-    await deleteExercise(exercise._id);
+    await deleteExercise(selectedExercise._id);
+
+    setIsDeleteModalOpen(false);
+    setSelectedExercise(null);
   };
 
   const handleCloseModal = () => {
@@ -168,6 +174,16 @@ function Exercises() {
           setSelectedExercise(null)
         }}
         onSave={handleSaveExercise}
+      />
+
+      <DeleteExerciseModal
+        isOpen={isDeleteModalOpen}
+        exercise={selectedExercise}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedExercise(null);
+        }}
+        onDelete={handleConfirmDelete}
       />
 
     </div>
