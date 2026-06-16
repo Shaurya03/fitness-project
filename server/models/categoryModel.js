@@ -1,19 +1,14 @@
 const mongoose = require("mongoose");
 const METRICS = require("../utils/metrics");
 
-const exerciseSchema = new mongoose.Schema({
+const categorySchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
     trim: true
   },
 
-  category: {
-    type: String,
-    required: true
-  },
-
-  metrics: {
+  defaultMetrics: {
     type: [String],
     enum: METRICS,
     default: []
@@ -21,15 +16,10 @@ const exerciseSchema = new mongoose.Schema({
 
   user_id: {
     type: String,
-    default: null
-  },
-
-  isDefault: {
-    type: Boolean,
-    default: false
+    required: true
   }
 }, {
   timestamps: true
 });
 
-module.exports = mongoose.model("Exercise", exerciseSchema);
+module.exports = mongoose.model("Category", categorySchema);

@@ -13,6 +13,7 @@ const categoryOrder = [
   "Shoulders",
   "Biceps",
   "Triceps",
+  "Forearms",
   "Core",
   "Cardio"
 ];
