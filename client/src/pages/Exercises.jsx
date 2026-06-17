@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useCategories } from "../hooks/useCategories";
 import { useExercises } from "../hooks/useExercises";
 import ExerciseCard from "../components/ExerciseCard";
 import CreateExerciseModal from "../components/CreateExerciseModal";
@@ -6,19 +7,8 @@ import EditExerciseModal from "../components/EditExerciseModal";
 import DeleteExerciseModal from "../components/DeleteExerciseModal";
 import "./Exercises.css";
 
-const categoryOrder = [
-  "Chest",
-  "Back",
-  "Legs",
-  "Shoulders",
-  "Biceps",
-  "Triceps",
-  "Forearms",
-  "Core",
-  "Cardio"
-];
-
 function Exercises() {
+  const { categories, fetchCategories } = useCategories();
   const { exercises, fetchExercises, createExercise, updateExercise, deleteExercise } = useExercises();
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -31,6 +21,7 @@ function Exercises() {
 
   useEffect(() => {
     fetchExercises();
+    fetchCategories();
   }, []);
 
   /* eslint-enable react-hooks/exhaustive-deps */
@@ -44,10 +35,7 @@ function Exercises() {
   const groupedExercises = filteredExercises.reduce(
     (groups, exercise) => {
 
-      const category =
-        exercise.type === "cardio"
-          ? "Cardio"
-          : exercise.category;
+      const category = exercise.categoryId?.name;
 
       if (!groups[category]) {
         groups[category] = [];
@@ -100,16 +88,15 @@ function Exercises() {
   const handleCreateExercise = async (exerciseName) => {
     await createExercise({
       name: exerciseName,
-      type: selectedCategory === "Cardio"
-        ? "cardio"
-        : "strength",
-      category: selectedCategory === "Cardio"
-        ? null
-        : selectedCategory
+      categoryId: selectedCategory._id
     });
 
     handleCloseModal();
   };
+
+  console.log(categories);
+  console.log(exercises);
+  console.log(groupedExercises);
 
   return (
     <div>
@@ -124,17 +111,17 @@ function Exercises() {
         }
       />
 
-      {categoryOrder.map((category) => {
-        const categoryExercises = groupedExercises[category];
+      {categories?.map((category) => {
+        const categoryExercises = groupedExercises[category.name];
 
         if (!categoryExercises) return null;
 
         return (
-          <div key={category}>
+          <div key={category._id}>
 
             <div className="category-section">
               <div className="category-header">
-                <h3>{category}</h3>
+                <h3>{category.name}</h3>
                 <button
                   className="category-add-btn"
                   onClick={() => {

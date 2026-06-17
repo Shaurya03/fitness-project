@@ -40,7 +40,7 @@ function CreateExerciseModal({
         <h2>Create Exercise</h2>
 
         <p>
-          Category: {selectedCategory}
+          Category: {selectedCategory?.name}
         </p>
 
         <input

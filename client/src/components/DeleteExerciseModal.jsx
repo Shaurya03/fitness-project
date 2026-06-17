@@ -32,7 +32,7 @@ function DeleteExerciseModal({
 
         <p>
           Are you sure you want to delete
-          <strong>{exercise?.name}</strong>?
+          <strong> {exercise?.name}</strong>?
         </p>
 
         <div className="modal-actions">

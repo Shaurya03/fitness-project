@@ -20,6 +20,9 @@ app.use("/api/workouts", workoutsRoutes);
 const userRoutes = require("./routes/user");
 app.use("/api/users", userRoutes);
 
+const categoryRoutes = require("./routes/category");
+app.use("/api/categories", categoryRoutes);
+
 const exerciseRoutes = require("./routes/exercise");
 app.use("/api/exercises", exerciseRoutes);
 
