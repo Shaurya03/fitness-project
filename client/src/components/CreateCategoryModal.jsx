@@ -1,13 +1,12 @@
 import { useState } from "react";
 import "./Modal.css";
 
-function CreateExerciseModal({
+function CreateCategoryModal({
   isOpen,
-  selectedCategory,
   onClose,
   onCreate
 }) {
-  const [name, setName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
 
   if (!isOpen) {
     return null;
@@ -15,16 +14,16 @@ function CreateExerciseModal({
 
   const handleSubmit = () => {
 
-    if (!name.trim()) {
+    if (!categoryName.trim()) {
       return;
     }
 
-    onCreate(name.trim());
-    setName("");
-  }
+    onCreate(categoryName.trim());
+    setCategoryName("");
+  };
 
   const handleClose = () => {
-    setName("");
+    setCategoryName("");
     onClose();
   };
 
@@ -37,16 +36,12 @@ function CreateExerciseModal({
         className="modal"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2>Create Exercise</h2>
-
-        <p>
-          Category: {selectedCategory?.name}
-        </p>
+        <h2>Create Category</h2>
 
         <input
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Exercise name"
+          value={categoryName}
+          onChange={(event) => setCategoryName(event.target.value)}
+          placeholder="Category name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               handleSubmit();
@@ -68,4 +63,4 @@ function CreateExerciseModal({
   );
 };
 
-export default CreateExerciseModal;
+export default CreateCategoryModal;

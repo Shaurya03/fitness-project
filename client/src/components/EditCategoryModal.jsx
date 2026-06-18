@@ -1,13 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Modal.css";
 
-function CreateExerciseModal({
+function EditCategoryModal({
   isOpen,
-  selectedCategory,
+  category,
   onClose,
-  onCreate
+  onSave
 }) {
-  const [name, setName] = useState("");
+  const [categoryName, setCategoryName] = useState("");
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    if (category) {
+      setCategoryName(category.name);
+    }
+  }, [category]);
+
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   if (!isOpen) {
     return null;
@@ -15,16 +25,16 @@ function CreateExerciseModal({
 
   const handleSubmit = () => {
 
-    if (!name.trim()) {
+    if (!categoryName.trim()) {
       return;
     }
 
-    onCreate(name.trim());
-    setName("");
-  }
+    onSave(categoryName.trim());
+    setCategoryName("");
+  };
 
   const handleClose = () => {
-    setName("");
+    setCategoryName("");
     onClose();
   };
 
@@ -37,16 +47,12 @@ function CreateExerciseModal({
         className="modal"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2>Create Exercise</h2>
-
-        <p>
-          Category: {selectedCategory?.name}
-        </p>
+        <h2>Edit Category</h2>
 
         <input
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          placeholder="Exercise name"
+          value={categoryName}
+          onChange={(event) => setCategoryName(event.target.value)}
+          placeholder="Enter Category name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               handleSubmit();
@@ -56,7 +62,7 @@ function CreateExerciseModal({
 
         <div className="modal-actions">
           <button onClick={handleSubmit}>
-            Create
+            Save
           </button>
 
           <button onClick={handleClose}>
@@ -68,4 +74,4 @@ function CreateExerciseModal({
   );
 };
 
-export default CreateExerciseModal;
+export default EditCategoryModal;

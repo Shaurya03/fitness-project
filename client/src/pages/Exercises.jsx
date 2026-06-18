@@ -1,21 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useCategories } from "../hooks/useCategories";
 import { useExercises } from "../hooks/useExercises";
+import CategoryHeader from "../components/CategoryHeader";
 import ExerciseCard from "../components/ExerciseCard";
 import CreateExerciseModal from "../components/CreateExerciseModal";
 import EditExerciseModal from "../components/EditExerciseModal";
 import DeleteExerciseModal from "../components/DeleteExerciseModal";
+import CreateCategoryModal from "../components/CreateCategoryModal";
+import EditCategoryModal from "../components/EditCategoryModal";
+import DeleteCategoryModal from "../components/DeleteCategoryModal";
 import "./Exercises.css";
 
 function Exercises() {
-  const { categories, fetchCategories } = useCategories();
+  const { categories, fetchCategories, createCategory, updateCategory, deleteCategory } = useCategories();
   const { exercises, fetchExercises, createExercise, updateExercise, deleteExercise } = useExercises();
+
   const [searchTerm, setSearchTerm] = useState("");
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [isCreateCategoryModalOpen, setIsCreateCategoryModalOpen] = useState(false);
+  const [openCategoryMenu, setOpenCategoryMenu] = useState(null);
+  const [isEditCategoryModalOpen, setIsEditCategoryModalOpen] = useState(false);
+  const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false);
+  const [selectedCategoryForEdit, setSelectedCategoryForEdit] = useState(null);
+  const [selectedCategoryForDelete, setSelectedCategoryForDelete] = useState(null);
+  const categoryMenuRef = useRef(null);
 
   /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -25,6 +39,29 @@ function Exercises() {
   }, []);
 
   /* eslint-enable react-hooks/exhaustive-deps */
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      categoryMenuRef.current &&
+      !categoryMenuRef.current.contains(event.target)
+    ) {
+      setOpenCategoryMenu(null);
+    }
+  };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  };
+}, []);
 
   const filteredExercises = exercises?.filter((exercise) =>
     exercise.name
@@ -94,15 +131,69 @@ function Exercises() {
     handleCloseModal();
   };
 
-  console.log(categories);
-  console.log(exercises);
-  console.log(groupedExercises);
+  const handleCreateCategory = async (categoryName) => {
+    await createCategory({
+      name: categoryName
+    });
+
+    setIsCreateCategoryModalOpen(false);
+  };
+
+  const handleEditCategory = (category) => {
+    setOpenCategoryMenu(null);
+
+    setSelectedCategoryForEdit(category);
+    setIsEditCategoryModalOpen(true);
+  };
+
+  const handleDeleteCategory = (category) => {
+    setOpenCategoryMenu(null);
+
+    setSelectedCategoryForDelete(category);
+    setIsDeleteCategoryModalOpen(true);
+  };
+
+  const handleSaveCategory = async (updatedName) => {
+    await updateCategory(
+      selectedCategoryForEdit._id,
+      {
+        name: updatedName
+      }
+    );
+
+    setIsEditCategoryModalOpen(false);
+    setSelectedCategoryForEdit(null);
+  };
+
+  const handleConfirmDeleteCategory = async () => {
+
+    if (!selectedCategoryForDelete) {
+      return;
+    }
+
+    await deleteCategory(selectedCategoryForDelete._id);
+
+    setIsDeleteCategoryModalOpen(false);
+    setSelectedCategoryForDelete(null);
+  };
 
   return (
     <div>
-      <h2>Exercises</h2>
+      <div className="page-header">
+        <h2>Exercises</h2>
+
+        <button
+          className="add-category-btn"
+          onClick={() =>
+            setIsCreateCategoryModalOpen(true)
+          }
+        >
+          + Category
+        </button>
+      </div>
 
       <input
+        className="search-input"
         type="text"
         placeholder="Search exercises..."
         value={searchTerm}
@@ -111,27 +202,25 @@ function Exercises() {
         }
       />
 
+        <div ref={categoryMenuRef}>
       {categories?.map((category) => {
-        const categoryExercises = groupedExercises[category.name];
-
-        if (!categoryExercises) return null;
+        const categoryExercises = groupedExercises[category.name] || [];
 
         return (
           <div key={category._id}>
 
             <div className="category-section">
-              <div className="category-header">
-                <h3>{category.name}</h3>
-                <button
-                  className="category-add-btn"
-                  onClick={() => {
-                    setSelectedCategory(category);
-                    setIsCreateModalOpen(true);
-                  }}
-                >
-                  +
-                </button>
-              </div>
+              <CategoryHeader
+                category={category}
+                openCategoryMenu={openCategoryMenu}
+                setOpenCategoryMenu={setOpenCategoryMenu}
+                onAddExercise={(category) => {
+                  setSelectedCategory(category);
+                  setIsCreateModalOpen(true);
+                }}
+                onEditCategory={handleEditCategory}
+                onDeleteCategory={handleDeleteCategory}
+              />
             </div>
 
             {categoryExercises.map((exercise) => (
@@ -146,6 +235,7 @@ function Exercises() {
           </div>
         );
       })}
+      </div>
 
       <CreateExerciseModal
         isOpen={isCreateModalOpen}
@@ -172,6 +262,34 @@ function Exercises() {
           setSelectedExercise(null);
         }}
         onDelete={handleConfirmDelete}
+      />
+
+      <CreateCategoryModal
+        isOpen={isCreateCategoryModalOpen}
+        onClose={() =>
+          setIsCreateCategoryModalOpen(false)
+        }
+        onCreate={handleCreateCategory}
+      />
+
+      <EditCategoryModal
+        isOpen={isEditCategoryModalOpen}
+        category={selectedCategoryForEdit}
+        onClose={() => {
+          setIsEditCategoryModalOpen(false)
+          setSelectedCategoryForEdit(null);
+        }}
+        onSave={handleSaveCategory}
+      />
+
+      <DeleteCategoryModal
+        isOpen={isDeleteCategoryModalOpen}
+        category={selectedCategoryForDelete}
+        onClose={() => {
+          setIsDeleteCategoryModalOpen(false)
+          setSelectedCategoryForDelete(null)
+        }}
+        onDelete={handleConfirmDeleteCategory}
       />
 
     </div>

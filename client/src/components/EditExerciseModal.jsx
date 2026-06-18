@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "./EditExerciseModal.css";
+import "./Modal.css";
 
 function EditExerciseModal({
   isOpen,

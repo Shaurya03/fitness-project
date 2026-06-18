@@ -1,8 +1,8 @@
 import "./Modal.css";
 
-function DeleteExerciseModal({
+function DeleteCategoryModal({
   isOpen,
-  exercise,
+  category,
   onClose,
   onDelete
 }) {
@@ -28,11 +28,11 @@ function DeleteExerciseModal({
         className="modal"
         onClick={(event) => event.stopPropagation()}
       >
-        <h2>Delete Exercise</h2>
+        <h2>Delete Category</h2>
 
         <p>
           Are you sure you want to delete
-          <strong> {exercise?.name}</strong>?
+          <strong> {category?.name}</strong>?
         </p>
 
         <div className="modal-actions">
@@ -49,4 +49,4 @@ function DeleteExerciseModal({
   );
 };
 
-export default DeleteExerciseModal;
+export default DeleteCategoryModal;

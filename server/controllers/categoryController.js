@@ -1,4 +1,5 @@
 const Category = require("../models/categoryModel");
+const Exercise = require("../models/exerciseModel");
 
 const getCategories = async (req, res) => {
   const user_id = req.user._id;
@@ -44,7 +45,63 @@ const createCategory = async (req, res) => {
   res.status(201).json(category);
 };
 
+const updateCategory = async (req, res) => {
+  const user_id = req.user._id;
+  const { id } = req.params;
+  const updates = req.body;
+
+  const category = await Category.findOneAndUpdate(
+    {
+      user_id,
+      _id: id
+    },
+    updates,
+    {
+      new: true,
+      runValidators: true
+    }
+  );
+
+  if (!category) {
+    return res.status(400).json({
+      error: "Category does not exist"
+    });
+  }
+
+  res.status(200).json(category);
+};
+
+const deleteCategory = async (req, res) => {
+  const user_id = req.user._id;
+  const { id } = req.params;
+
+  const exercises = await Exercise.findOne({
+    categoryId: id,
+    user_id
+  });
+
+  if (exercises) {
+    return res.status(400).json({
+      error: "Cannot delete category with exercises"
+    });
+  }
+
+  const category = await Category.findOneAndDelete(
+    { _id: id, user_id }
+  );
+
+  if (!category) {
+    return res.status(400).json({
+      error: "Category does not exist"
+    });
+  }
+
+  res.status(200).json(category);
+};
+
 module.exports = {
   getCategories,
-  createCategory
+  createCategory,
+  updateCategory,
+  deleteCategory
 };
