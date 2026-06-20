@@ -1,5 +1,4 @@
 const METRICS = [
-  "sets",
   "reps",
   "weight",
   "duration",

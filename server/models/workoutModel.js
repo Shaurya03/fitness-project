@@ -17,16 +17,10 @@ const setSchema = new Schema(
 
 const exerciseSchema = new Schema(
   {
-    name: {
-      type: String,
+    exerciseId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Exercise",
       required: true
-    },
-    category: {
-      type: String,
-
-      required: function () {
-        return this.type === "strength";
-      }
     },
     type: {
       type: String,

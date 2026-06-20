@@ -2,7 +2,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Chest",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -11,7 +10,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Back",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -20,7 +18,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Legs",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -29,7 +26,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Shoulders",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -38,7 +34,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Biceps",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -47,7 +42,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Triceps",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -56,7 +50,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Forearms",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -65,7 +58,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Core",
     defaultMetrics: [
-      "sets",
       "reps",
       "weight"
     ]
@@ -74,7 +66,6 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Cardio",
     defaultMetrics: [
-      "sets",
       "distance",
       "duration"
     ]

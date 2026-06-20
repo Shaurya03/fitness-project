@@ -1,4 +1,5 @@
 const Workout = require('../models/workoutModel');
+const Exercise = require("../models/exerciseModel");
 
 const createError = (message, statusCode) => {
   const err = new Error(message);
@@ -109,27 +110,11 @@ const validateExercises = (exercises) => {
 
   for (const exercise of exercises) {
 
-    if (
-      !exercise.name ||
-      !exercise.name.trim()
-    ) {
+    if (!exercise.exerciseId) {
       throw createError(
-        "Exercise name is required",
+        "Exercise is required",
         400
       );
-    }
-
-    if (exercise.type === "strength") {
-
-      if (
-        !exercise.category ||
-        !exercise.category.trim()
-      ) {
-        throw createError(
-          "Exercise category is required",
-          400
-        );
-      }
     }
 
     if (
@@ -156,7 +141,10 @@ const validateExercises = (exercises) => {
 const getWorkouts = async (req, res, next) => {
   try {
     const user_id = req.user._id;
-    const workouts = await Workout.find({ user_id }).sort({ createdAt: -1 });
+    const workouts = await Workout
+      .find({ user_id })
+      .populate("exercises.exerciseId")
+      .sort({ createdAt: -1 });
     res.status(200).json(workouts);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
@@ -170,7 +158,12 @@ const getWorkout = async (req, res, next) => {
 
   try {
     const user_id = req.user._id;
-    const workout = await Workout.findOne({ _id: id, user_id });
+    const workout = await Workout
+      .findOne({
+        _id: id,
+        user_id 
+      })
+      .populate("exercises.exerciseId");
 
     if (!workout) {
       throw createError("Workout not found", 404);
@@ -210,18 +203,17 @@ const createWorkout = async (req, res, next) => {
 
     validateExercises(exercises);
 
-    const sanitizedExercises = exercises.map((exercise) => ({
-      ...exercise,
-      name: exercise.name.trim(),
-      category: exercise.category?.trim()
-    }));
-
     const workout = await Workout.create({
       title: title.trim(),
-      exercises: sanitizedExercises,
+      exercises,
       user_id
     });
-    res.status(201).json(workout);
+
+    const populatedWorkout = await Workout
+      .findById(workout._id)
+      .populate("exercises.exerciseId");
+
+    res.status(201).json(populatedWorkout);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
     next(error);
@@ -259,11 +251,7 @@ const updateWorkout = async (req, res, next) => {
     }
 
     if (exercises !== undefined) {
-      updateFields.exercises = exercises.map((exercise) => ({
-        ...exercise,
-        name: exercise.name.trim(),
-        category: exercise.category?.trim()
-      }));
+      updateFields.exercises = exercises;
     }
 
     const workout = await Workout.findOneAndUpdate(
@@ -279,7 +267,11 @@ const updateWorkout = async (req, res, next) => {
       );
     }
 
-    res.status(200).json(workout);
+    const populatedWorkout = await Workout
+      .findById(workout._id)
+      .populate("exercises.exerciseId");
+
+    res.status(200).json(populatedWorkout);
   } catch (error) {
     error.statusCode = error.statusCode || 500;
     next(error);
