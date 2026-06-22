@@ -1,95 +1,9 @@
 const Workout = require('../models/workoutModel');
-const Exercise = require("../models/exerciseModel");
 
 const createError = (message, statusCode) => {
   const err = new Error(message);
   err.statusCode = statusCode;
   return err;
-};
-
-const isPositiveNumber = (value) => {
-  return (
-    typeof value === "number" &&
-    Number.isFinite(value) &&
-    value > 0
-  );
-};
-
-const isPositiveInteger = (value) => {
-  return (
-    Number.isInteger(value) &&
-    value > 0
-  );
-};
-
-const validateSets = (sets) => {
-  if (!Array.isArray(sets)) {
-    throw createError(
-      "Sets must be an array",
-      400
-    );
-  }
-
-  if (sets.length === 0) {
-    throw createError(
-      "At least one set is required",
-      400
-    );
-  }
-
-  for (const set of sets) {
-
-    if (
-      set.load === undefined ||
-      set.reps === undefined
-    ) {
-      throw createError(
-        "Set load and reps are required",
-        400
-      );
-    }
-
-    if (!isPositiveNumber(set.load)) {
-      throw createError(
-        "Set load must be a positive number",
-        400
-      );
-    }
-
-    if (!isPositiveInteger(set.reps)) {
-      throw createError(
-        "Set reps must be a positive integer",
-        400
-      );
-    }
-  }
-};
-
-const validateCardio = (exercise) => {
-
-  if (
-    exercise.duration === undefined ||
-    exercise.distance === undefined
-  ) {
-    throw createError(
-      "Cardio exercises require duration and distance",
-      400
-    );
-  }
-
-  if (!isPositiveNumber(exercise.duration)) {
-    throw createError(
-      "Duration must be a positive number",
-      400
-    );
-  }
-
-  if (!isPositiveNumber(exercise.distance)) {
-    throw createError(
-      "Distance must be a positive number",
-      400
-    );
-  }
 };
 
 const validateExercises = (exercises) => {
