@@ -1,0 +1,44 @@
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    2,
+    minmax(0, 1fr)
+  );
+  gap: 12px;
+}
+
+.metric-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  padding: 10px 12px;
+
+  border: 1px solid #ddd;
+  border-radius: 8px;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.metric-chip:hover {
+  border-color: #1aac83;
+  transform: translateY(-1px);
+}
+
+.metric-chip.selected {
+  background-color: #1aac83;
+  border-color: #1aac83;
+  color: white;
+}
+
+.metric-chip input {
+  display: none;
+}
+
+.metric-check {
+  margin-right: 8px;
+  font-weight: bold;
+}

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import MetricSelector from "./MetricSelector";
 import "./Modal.css";
 
 function CreateCategoryModal({
@@ -7,10 +8,19 @@ function CreateCategoryModal({
   onCreate
 }) {
   const [categoryName, setCategoryName] = useState("");
+  const [metrics, setMetrics] = useState([]);
 
   if (!isOpen) {
     return null;
   }
+
+  const toggleMetric = (metric) => {
+    setMetrics(current =>
+      current.includes(metric)
+        ? current.filter(item => item !== metric)
+        : [...current, metric]
+    );
+  };
 
   const handleSubmit = () => {
 
@@ -18,12 +28,21 @@ function CreateCategoryModal({
       return;
     }
 
-    onCreate(categoryName.trim());
+    if (metrics.length === 0) {
+      return;
+    }
+
+    onCreate({
+      name: categoryName.trim(),
+      defaultMetrics: metrics
+    });
     setCategoryName("");
+    setMetrics([]);
   };
 
   const handleClose = () => {
     setCategoryName("");
+    setMetrics([]);
     onClose();
   };
 
@@ -47,6 +66,13 @@ function CreateCategoryModal({
               handleSubmit();
             }
           }}
+        />
+
+        <h3>Metrics</h3>
+
+        <MetricSelector
+          selectedMetrics={metrics}
+          onToggle={toggleMetric}
         />
 
         <div className="modal-actions">

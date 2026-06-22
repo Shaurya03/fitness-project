@@ -27,14 +27,15 @@ const signupUser = async (req, res) => {
     const categoryMap = {};
 
     categories.forEach((category) => {
-      categoryMap[category.name] = category._id;
+      categoryMap[category.name] = category;
     });
 
     await Exercise.insertMany(
       DEFAULT_EXERCISES.map(
         (exercise) => ({
           name: exercise.name,
-          categoryId: categoryMap[exercise.category],
+          categoryId: categoryMap[exercise.category]._id,
+          metrics: categoryMap[exercise.category].defaultMetrics,
           user_id: user._id
         })
       )

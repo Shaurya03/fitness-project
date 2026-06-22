@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import MetricSelector from "./MetricSelector";
 import "./Modal.css";
 
 function EditExerciseModal({
@@ -8,11 +9,13 @@ function EditExerciseModal({
   onSave
 }) {
   const [name, setName] = useState("");
+  const [metrics, setMetrics] = useState([]);
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (exercise) {
+      setMetrics(exercise.metrics || []);
       setName(exercise.name);
     }
   }, [exercise]);
@@ -23,18 +26,36 @@ function EditExerciseModal({
     return null;
   }
 
+  const toggleMetric = (metric) => {
+    setMetrics(current =>
+      current.includes(metric)
+        ? current.filter(item => item !== metric)
+        : [...current, metric]
+    );
+  };
+
   const handleSubmit = () => {
 
     if (!name.trim()) {
       return;
     }
 
-    onSave(name.trim());
+    if (metrics.length === 0) {
+      return;
+    }
+
+    onSave({
+      name: name.trim(),
+      metrics
+    });
+
     setName("");
   }
 
   const handleClose = () => {
     setName("");
+    setMetrics(exercise?.metrics || []);
+
     onClose();
   };
 
@@ -58,6 +79,13 @@ function EditExerciseModal({
               handleSubmit();
             }
           }}
+        />
+
+        <h3>Metrics</h3>
+
+        <MetricSelector
+          selectedMetrics={metrics}
+          onToggle={toggleMetric}
         />
 
         <div className="modal-actions">

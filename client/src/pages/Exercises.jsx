@@ -89,12 +89,10 @@ function Exercises() {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveExercise = async (updatedName) => {
+  const handleSaveExercise = async (exerciseData) => {
     await updateExercise(
       selectedExercise._id,
-      {
-        name: updatedName
-      }
+      exerciseData
     );
 
     setIsEditModalOpen(false);
@@ -122,19 +120,17 @@ function Exercises() {
     setSelectedCategory(null);
   };
 
-  const handleCreateExercise = async (exerciseName) => {
+  const handleCreateExercise = async (exerciseData) => {
     await createExercise({
-      name: exerciseName,
+      ...exerciseData,
       categoryId: selectedCategory._id
     });
 
     handleCloseModal();
   };
 
-  const handleCreateCategory = async (categoryName) => {
-    await createCategory({
-      name: categoryName
-    });
+  const handleCreateCategory = async (categoryData) => {
+    await createCategory(categoryData);
 
     setIsCreateCategoryModalOpen(false);
   };
@@ -153,12 +149,10 @@ function Exercises() {
     setIsDeleteCategoryModalOpen(true);
   };
 
-  const handleSaveCategory = async (updatedName) => {
+  const handleSaveCategory = async (updatedCategory) => {
     await updateCategory(
       selectedCategoryForEdit._id,
-      {
-        name: updatedName
-      }
+      updatedCategory
     );
 
     setIsEditCategoryModalOpen(false);

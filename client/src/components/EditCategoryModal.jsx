@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import MetricSelector from "./MetricSelector";
 import "./Modal.css";
 
 function EditCategoryModal({
@@ -8,12 +9,14 @@ function EditCategoryModal({
   onSave
 }) {
   const [categoryName, setCategoryName] = useState("");
+  const [metrics, setMetrics] = useState([]);
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (category) {
       setCategoryName(category.name);
+      setMetrics(category.defaultMetrics || []);
     }
   }, [category]);
 
@@ -23,18 +26,35 @@ function EditCategoryModal({
     return null;
   }
 
+  const toggleMetric = (metric) => {
+    setMetrics(current =>
+      current.includes(metric)
+        ? current.filter(item => item !== metric)
+        : [...current, metric]
+    );
+  };
+
   const handleSubmit = () => {
 
     if (!categoryName.trim()) {
       return;
     }
 
-    onSave(categoryName.trim());
+    if (metrics.length === 0) {
+      return;
+    }
+
+    onSave({
+      name: categoryName.trim(),
+      defaultMetrics: metrics
+    });
     setCategoryName("");
+    setMetrics([]);
   };
 
   const handleClose = () => {
-    setCategoryName("");
+    setCategoryName(category?.name || "");
+    setMetrics(category?.defaultMetrics || []);
     onClose();
   };
 
@@ -58,6 +78,13 @@ function EditCategoryModal({
               handleSubmit();
             }
           }}
+        />
+
+        <h3>Metrics</h3>
+
+        <MetricSelector
+          selectedMetrics={metrics}
+          onToggle={toggleMetric}
         />
 
         <div className="modal-actions">
