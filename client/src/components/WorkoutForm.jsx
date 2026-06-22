@@ -1,25 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useCategories } from '../hooks/useCategories';
 import { useExercises } from '../hooks/useExercises';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import "./WorkoutForm.css";
 
 const emptyExercise = {
-  name: '',
-  category: '',
-  type: '',
-
-  sets: [
-    {
-      load: '',
-      reps: ''
-    }
-  ],
-
-  duration: '',
-  distance: ''
+  categoryId: '',
+  exerciseId: '',
+  metrics: {}
 };
 
 function WorkoutForm({ editingWorkout, setEditingWorkout }) {
@@ -39,6 +30,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const [showCreateExercise, setShowCreateExercise] = useState(false);
   const [newExerciseName, setNewExerciseName] = useState("");
 
+  const { categories, fetchCategories } = useCategories();
+
   const handleExerciseChange = (event, exerciseIndex) => {
     const { name, value } = event.target;
 
@@ -48,20 +41,11 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
         if (index === exerciseIndex) {
 
-          if (name === "category") {
+          if (name === "categoryId") {
             return {
               ...exercise,
-              category: value,
-              name: ""
-            };
-          }
-
-          if (name === "type") {
-            return {
-              ...exercise,
-              type: value,
-              category: "",
-              name: ""
+              categoryId: value,
+              exerciseId: ""
             };
           }
 
@@ -83,6 +67,27 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         return exercise;
       }
       )
+    );
+  };
+
+  const handleMetricChange = (event, exerciseIndex) => {
+    const { name, value } = event.target;
+
+    setExercises(
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+          return {
+            ...exercise,
+            metrics: {
+              ...exercise.metrics,
+              [name]: value
+            }
+          };
+        }
+
+        return exercise;
+      })
     );
   };
 
@@ -186,13 +191,6 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       ...exercises,
       {
         ...emptyExercise,
-
-        type: lastExercise.type,
-
-        category:
-          lastExercise.type === "strength"
-            ? lastExercise.category
-            : ""
       }
     ]);
   };
@@ -205,11 +203,10 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     try {
       const createdExercise = await createExercise({
         name: newExerciseName,
-        type: exercise.type,
-        category: exercise.category
+        categoryId: exercise.categoryId
       });
 
-      if(!createdExercise) {
+      if (!createdExercise) {
         return;
       }
 
@@ -219,7 +216,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           if (index === exerciseIndex) {
             return {
               ...currentExercise,
-              name: createdExercise.name
+              exerciseId: createdExercise._id
             };
           }
 
@@ -254,9 +251,10 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       setTitle(editingWorkout.title);
 
       setExercises(
-        editingWorkout.exercises || [
-          { ...emptyExercise }
-        ]
+        editingWorkout.exercises.map(exercise => ({
+          ...exercise,
+          exerciseId: exercise.exerciseId._id
+        }))
       );
     } else {
       resetForm();
@@ -270,6 +268,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   useEffect(() => {
     if (user) {
       fetchExercises();
+      fetchCategories();
     }
   }, [user]);
 
@@ -283,27 +282,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       return;
     }
 
-    const formattedExercises = exercises.map((exercise) => {
+    const formattedExercises = exercises.map((exercise) => ({
+      categoryId: exercise.categoryId,
+      exerciseId: exercise.exerciseId,
 
-      if (exercise.type === "strength") {
-        return {
-          ...exercise,
-
-          sets: exercise.sets.map((set) => ({
-            load: Number(set.load),
-            reps: Number(set.reps)
-          }))
-        };
-      }
-
-      return {
-        name: exercise.name,
-        type: exercise.type,
-
-        duration: Number(exercise.duration),
-        distance: Number(exercise.distance)
-      };
-    });
+      metrics: Object.fromEntries(
+        Object.entries(
+          exercise.metrics || {}
+        ).map(([key, value]) => [key, Number(value)])
+      )
+    }));
 
     const workout = {
       title,
@@ -376,18 +364,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   };
 
   const getFilteredExercises = (exercise) => {
-
-    if (exercise.type === "cardio") {
-      return exerciseCatalog?.filter(
-        item => item.type === "cardio"
-      ) || [];
-    }
-
     return exerciseCatalog?.filter(
       item =>
-        item.type === "strength" &&
-        item.category === exercise.category
+        item.categoryId?._id === exercise.categoryId
     ) || [];
+  };
+
+  const getSelectedExercise = (exerciseId) => {
+    return exerciseCatalog?.find(
+      exercise => exercise._id === exerciseId
+    );
   };
 
   return (
@@ -405,214 +391,144 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         value={title}
       />
 
-      {exercises.map((exercise, exerciseIndex) => (
+      {exercises.map((exercise, exerciseIndex) => {
+        const selectedExercise =
+          getSelectedExercise(exercise.exerciseId);
 
-        <div
-          className="exercise-block"
-          key={exerciseIndex}
-        >
+        const exerciseMetrics = 
+          selectedExercise?.metrics || [];
 
-          <h4>Exercise {exerciseIndex + 1}</h4>
+        return (
 
-          <select
-            name="type"
-            onChange={(event) =>
-              handleExerciseChange(event, exerciseIndex)
-            }
-            value={exercise.type}
+          <div
+            className="exercise-block"
+            key={exerciseIndex}
           >
-            <option value="">Select type of exercise</option>
-            <option value="strength">Strength</option>
-            <option value="cardio">Cardio</option>
-          </select>
 
-          {exercise.type === "strength" && (
-            <>
-              <label>Category:</label>
-              <select
-                name="category"
-                className={emptyFields.includes("category") ? "error" : ""}
-                onChange={(event) =>
-                  handleExerciseChange(event, exerciseIndex)
-                }
-                value={exercise.category}
-              >
-                <option value="">Select a category</option>
-                <option value="Chest">Chest</option>
-                <option value="Back">Back</option>
-                <option value="Legs">Legs</option>
-                <option value="Shoulders">Shoulders</option>
-                <option value="Biceps">Biceps</option>
-                <option value="Triceps">Triceps</option>
-                <option value="Forearms">Forearms</option>
-                <option value="Core">Core</option>
-              </select>
-            </>
-          )}
+            <h4>Exercise {exerciseIndex + 1}</h4>
 
-          <label>Exercise Name:</label>
-          <select
-            name="name"
-            onChange={(event) =>
-              handleExerciseChange(event, exerciseIndex)
-            }
-            value={exercise.name}
-            disabled={
-              exercise.type === "strength" &&
-              !exercise.category
-            }
-          >
-            <option value="">
-              Select an exercise
-            </option>
-
-            {getFilteredExercises(exercise)?.map((catalogExercise) => (
-              <option
-                key={catalogExercise._id}
-                value={catalogExercise.name}
-              >
-                {catalogExercise.name}
+            <select
+              name="categoryId"
+              onChange={(event) =>
+                handleExerciseChange(event, exerciseIndex)
+              }
+              value={exercise.categoryId}
+            >
+              <option value="">
+                Select a category
               </option>
-            ))}
-            <option value="__CREATE_NEW__">
-              + Create New Exercise
-            </option>
-          </select>
 
-          {showCreateExercise && (
-            <div>
-              <input
-                type="text"
-                placeholder="Exercise Name"
-                value={newExerciseName}
-                onChange={(event) =>
-                  setNewExerciseName(event.target.value)
-                }
-              />
-
-              <button
-                type="button"
-                onClick={() =>
-                  handleCreateExercise(exercise, exerciseIndex)
-                }
-              >
-                Save
-              </button>
-
-              <button
-                type="button"
-                onClick={() => {
-                  setShowCreateExercise(false);
-                  setNewExerciseName("")
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-
-          )}
-
-          {exercise.type === "strength" && (
-            <>
-              {exercise.sets.map((set, setIndex) => (
-
-                <div
-                  className="set-row"
-                  key={setIndex}
+              {categories?.map((category) => (
+                <option
+                  key={category._id}
+                  value={category._id}
                 >
+                  {category.name}
+                </option>
+              ))}
+            </select>
 
-                  <h4>
-                    Set {setIndex + 1}
-                  </h4>
+            <label>Exercise Name:</label>
+            <select
+              name="exerciseId"
+              onChange={(event) =>
+                handleExerciseChange(event, exerciseIndex)
+              }
+              value={exercise.exerciseId}
+              disabled={!exercise.categoryId}
+            >
+              <option value="">
+                Select an exercise
+              </option>
 
-                  <label>Load (kg):</label>
-                  <input
-                    name="load"
-                    type="number"
-                    step="0.01"
-                    onChange={(event) =>
-                      handleSetChange(event, exerciseIndex, setIndex)
-                    }
-                    value={set.load}
-                  />
+              {getFilteredExercises(exercise)?.map((catalogExercise) => (
+                <option
+                  key={catalogExercise._id}
+                  value={catalogExercise._id}
+                >
+                  {catalogExercise.name}
+                </option>
+              ))}
+              <option value="__CREATE_NEW__">
+                + Create New Exercise
+              </option>
+            </select>
 
-                  <label>Reps:</label>
-                  <input
-                    name="reps"
-                    type="number"
-                    onChange={(event) =>
-                      handleSetChange(event, exerciseIndex, setIndex)
-                    }
-                    value={set.reps}
-                  />
+            {showCreateExercise && (
+              <div>
+                <input
+                  type="text"
+                  placeholder="Exercise Name"
+                  value={newExerciseName}
+                  onChange={(event) =>
+                    setNewExerciseName(event.target.value)
+                  }
+                />
 
-                  {exercise.sets.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        removeSet(exerciseIndex, setIndex)
-                      }
-                    >
-                      Remove Set
-                    </button>
-                  )}
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleCreateExercise(exercise, exerciseIndex)
+                  }
+                >
+                  Save
+                </button>
 
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowCreateExercise(false);
+                    setNewExerciseName("")
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+
+            )}
+
+           <div className="metric-container">
+
+            {exerciseMetrics.map(metric => (
+
+              <div
+                key={metric}
+                className="metric-input"
+              >
+                <label>{metric}</label>
+
+                <input
+                  type="number"
+                  name={metric}
+                  value={
+                    exercise.metrics?.[metric] || ""
+                  }
+                  onChange={(event) => 
+                    handleMetricChange(event, exerciseIndex)
+                  }
+                />
                 </div>
 
-              ))}
+            ))}
+            
+           </div>
+
+            {exercises.length > 1 && (
 
               <button
                 type="button"
                 onClick={() =>
-                  addSet(exerciseIndex)
+                  removeExercise(exerciseIndex)
                 }
               >
-                Add Set
+                Remove Exercise
               </button>
-            </>
-          )}
+            )}
 
-          {exercise.type === "cardio" && (
-            <>
-              <label>Duration (minutes):</label>
-              <input
-                name="duration"
-                type="number"
-                step="0.01"
-                onChange={(event) =>
-                  handleExerciseChange(event, exerciseIndex)
-                }
-                value={exercise.duration}
-              />
+          </div>
 
-              <label>Distance (km):</label>
-              <input
-                name="distance"
-                type="number"
-                step="0.01"
-                onChange={(event) =>
-                  handleExerciseChange(event, exerciseIndex)
-                }
-                value={exercise.distance}
-              />
-            </>
-          )}
-
-          {exercises.length > 1 && (
-
-            <button
-              type="button"
-              onClick={() =>
-                removeExercise(exerciseIndex)
-              }
-            >
-              Remove Exercise
-            </button>
-          )}
-
-        </div>
-
-      ))}
+        );
+      })}
 
       <button
         type="button"

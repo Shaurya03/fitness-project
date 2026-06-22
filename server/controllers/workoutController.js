@@ -116,24 +116,6 @@ const validateExercises = (exercises) => {
         400
       );
     }
-
-    if (
-      !exercise.type ||
-      !["strength", "cardio"].includes(exercise.type)
-    ) {
-      throw createError(
-        "Exercise type must be strength or cardio",
-        400
-      );
-    }
-
-    if (exercise.type === "strength") {
-      validateSets(exercise.sets);
-    }
-
-    if (exercise.type === "cardio") {
-      validateCardio(exercise);
-    }
   }
 };
 

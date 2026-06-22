@@ -14,10 +14,6 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
   const exerciseCount = workout.exercises?.length || 0;
 
-  const totalSets = workout.exercises?.reduce((total, exercise) =>
-    total + (exercise.sets?.length || 0), 0
-  );
-
   const formattedDate = format(new Date(workout.date), "EEEE, d MMM yyyy");
 
   const handleDelete = async () => {
@@ -65,8 +61,6 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
       <p>
         {exerciseCount}{" "}
         {exerciseCount === 1 ? "Exercise" : "Exercises"}
-        {" • "}{totalSets}{" "}
-        {totalSets === 1 ? "Set" : "Sets"}
       </p>
 
       <div className="exercise-list">
@@ -77,44 +71,21 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
               key={`${exercise.name}-${index}`}
             >
 
-                <p className="workout-category">
-                  {exercise.type === "cardio"
-                    ? "Cardio"
-                    : exercise.category}
-                </p>
+              <h4>{exercise.exerciseId?.name}</h4>
 
-              <h4>{exercise.name}</h4>
+              <div className="exercise-metrics">
 
-              {exercise.type === "strength" && (
+                {Object.entries(exercise.metrics || {}).map(
+                  ([metric, value]) => (
 
-                <div className="sets-list">
+                    <p key={metric}>
+                      {metric}: {value}
+                    </p>
 
-                  {exercise.sets?.map((set, setIndex) => (
-
-                    <div
-                      className="set-item"
-                      key={set._id || setIndex}
-                    >
-                      <p>
-                        Set {setIndex + 1}: {set.load} kg × {set.reps} reps
-                      </p>
-                    </div>
-                  ))}
-
-                </div>
-              )}
-
-              {exercise.type === "cardio" && (
-
-                <div className="cardio-details">
-                  <p>
-                    {exercise.duration}{" min • "}
-                    {exercise.distance}{" km"}
-                  </p>
-                </div>
-
-              )}
-
+                  )
+                )}
+                
+              </div>
             </div>
           ))
         ) : (
