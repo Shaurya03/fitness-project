@@ -1,36 +1,39 @@
 import { useState } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
+import { useCategories } from "../hooks/useCategories";
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
 import "./Workouts.css";
-
-const categories = [
-  "All",
-  "Chest",
-  "Back",
-  "Legs",
-  "Shoulders",
-  "Biceps",
-  "Triceps",
-  "Core",
-  "Cardio"
-];
 
 function Workouts() {
   const { workouts, isLoading, error } = useWorkoutContext();
   const [editingWorkout, setEditingWorkout] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const { categories } = useCategories();
+
+  const filterCategories = [
+    {
+      _id: "all",
+      name: "All"
+    },
+
+    ...(categories || [])
+  ];
+
+  const categoryMap = Object.fromEntries(
+    (categories || []).map(category => [
+      category._id,
+      category.name
+    ])
+  );
 
   const filteredWorkouts = workouts?.filter((workout) => {
     const matchesCategory =
       selectedCategory === "All" ||
       workout.exercises?.some(
-        exercise => exercise.category === selectedCategory ||
-          (
-            selectedCategory === "Cardio" &&
-            exercise.type === "cardio"
-          )
+        exercise =>
+          categoryMap[exercise.categoryId] === selectedCategory
       );
 
     const normalizedSearch = searchTerm.toLowerCase();
@@ -42,16 +45,12 @@ function Workouts() {
 
       workout.exercises?.some(
         exercise =>
-          exercise.name
-            .toLowerCase()
-            .includes(normalizedSearch) ||
-
-          exercise.category
+          exercise.exerciseId?.name
             ?.toLowerCase()
-            .includes(normalizedSearch) ||
+            ?.includes(normalizedSearch) ||
 
-          exercise.type
-            .toLowerCase()
+          categoryMap[exercise.categoryId]
+            ?.toLowerCase()
             .includes(normalizedSearch)
       );
 
@@ -70,13 +69,13 @@ function Workouts() {
           />
         </div>
         <div className="filters">
-          {categories.map((category) => (
+          {filterCategories.map((category) => (
             <button
-              key={category}
-              className={selectedCategory === category ? "active" : ""}
-              onClick={() => setSelectedCategory(category)}
+              key={category._id}
+              className={selectedCategory === category.name ? "active" : ""}
+              onClick={() => setSelectedCategory(category.name)}
             >
-              {category}
+              {category.name}
             </button>
           ))}
         </div>
