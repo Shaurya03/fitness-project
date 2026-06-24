@@ -2,6 +2,14 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
+const setSchema = new Schema({
+  metrics: {
+    type: Map,
+    of: Number,
+    default: {}
+  }
+});
+
 const exerciseSchema = new Schema(
   {
     categoryId: {
@@ -16,10 +24,9 @@ const exerciseSchema = new Schema(
       required: true
     },
     
-    metrics: {
-      type: Map,
-      of: Number,
-      default: {}
+    sets: {
+      type: [setSchema],
+      default: []
     }
   }
 );

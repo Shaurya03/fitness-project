@@ -2,64 +2,64 @@ const DEFAULT_CATEGORIES = [
   {
     name: "Chest",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Back",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Legs",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Shoulders",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Biceps",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Triceps",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Forearms",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 
   {
     name: "Core",
     defaultMetrics: [
-      "reps",
-      "weight"
+      "weight",
+      "reps"
     ]
   },
 

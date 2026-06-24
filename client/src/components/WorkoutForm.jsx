@@ -10,7 +10,12 @@ import "./WorkoutForm.css";
 const emptyExercise = {
   categoryId: '',
   exerciseId: '',
-  metrics: {}
+
+  sets: [
+    {
+      metrics: {}
+    }
+  ]
 };
 
 function WorkoutForm({ editingWorkout, setEditingWorkout }) {
@@ -70,19 +75,35 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     );
   };
 
-  const handleMetricChange = (event, exerciseIndex) => {
+  const handleSetChange = (event, exerciseIndex, setIndex) => {
     const { name, value } = event.target;
 
     setExercises(
       exercises.map((exercise, index) => {
 
         if (index === exerciseIndex) {
+
+          const updatedSets = exercise.sets.map(
+            (set, currentSetIndex) => {
+
+              if (currentSetIndex === setIndex) {
+                return {
+                  ...set,
+
+                  metrics: {
+                    ...set.metrics,
+                    [name]: Number(value)
+                  }
+                };
+              }
+
+              return set;
+            }
+          );
+
           return {
             ...exercise,
-            metrics: {
-              ...exercise.metrics,
-              [name]: value
-            }
+            sets: updatedSets
           };
         }
 
@@ -108,6 +129,65 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         ...emptyExercise,
       }
     ]);
+  };
+
+  const addSet = (exerciseIndex) => {
+
+    setExercises(
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+          return {
+            ...exercise,
+
+            sets: [
+              ...exercise.sets,
+              {
+                metrics: {}
+              }
+            ]
+          };
+        }
+
+        return exercise;
+      })
+    );
+  };
+
+  const removeSet = (
+    exerciseIndex,
+    setIndex
+  ) => {
+
+    setExercises(
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+
+          if (exercise.sets.length === 1) {
+            return {
+              ...exercise,
+              sets: [
+                {
+                  metrics: {}
+                }
+              ]
+            };
+          }
+
+          return {
+            ...exercise,
+
+            sets: exercise.sets.filter(
+              (_, currentSetIndex) =>
+                currentSetIndex !== setIndex
+            )
+          };
+        }
+
+        return exercise;
+      })
+    );
   };
 
   const handleCreateExercise = async (exercise, exerciseIndex) => {
@@ -158,7 +238,6 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     ));
   };
 
-
   /* eslint-disable react-hooks/set-state-in-effect */
 
   useEffect(() => {
@@ -167,8 +246,13 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
       setExercises(
         editingWorkout.exercises.map(exercise => ({
-          ...exercise,
-          exerciseId: exercise.exerciseId._id
+          categoryId: exercise.categoryId,
+          exerciseId: exercise.exerciseId._id,
+          sets: exercise.sets || [
+            {
+              metrics: {}
+            }
+          ]
         }))
       );
     } else {
@@ -197,16 +281,13 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       return;
     }
 
-    const formattedExercises = exercises.map((exercise) => ({
-      categoryId: exercise.categoryId,
-      exerciseId: exercise.exerciseId,
-
-      metrics: Object.fromEntries(
-        Object.entries(
-          exercise.metrics || {}
-        ).map(([key, value]) => [key, Number(value)])
-      )
-    }));
+    const formattedExercises = exercises.map(
+      exercise => ({
+        categoryId: exercise.categoryId,
+        exerciseId: exercise.exerciseId,
+        sets: exercise.sets
+      })
+    );
 
     const workout = {
       title,
@@ -310,7 +391,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         const selectedExercise =
           getSelectedExercise(exercise.exerciseId);
 
-        const exerciseMetrics = 
+        const exerciseMetrics =
           selectedExercise?.metrics || [];
 
         return (
@@ -402,31 +483,77 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
             )}
 
-           <div className="metric-container">
+            {exercise.exerciseId && (
+              <div className="sets-container">
 
-            {exerciseMetrics.map(metric => (
+                {exercise.sets.map((set, setIndex) => (
 
-              <div
-                key={metric}
-                className="metric-input"
-              >
-                <label>{metric}</label>
+                  <div
+                    key={setIndex}
+                    className="set-block"
+                  >
 
-                <input
-                  type="number"
-                  name={metric}
-                  value={
-                    exercise.metrics?.[metric] || ""
+                    <h5>
+                      Set {setIndex + 1}
+                    </h5>
+
+                    {exerciseMetrics.map(metric => (
+
+                      <div
+                        key={metric}
+                        className="metric-input"
+                      >
+                        <label>{metric}</label>
+
+                        <input
+                          type="number"
+                          name={metric}
+                          value={
+                            set.metrics?.[metric] || ""
+                          }
+                          onChange={(event) =>
+                            handleSetChange(
+                              event,
+                              exerciseIndex,
+                              setIndex
+                            )
+                          }
+                        />
+                      </div>
+
+                    ))}
+
+
+
+                    {exercise.sets.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          removeSet(
+                            exerciseIndex,
+                            setIndex
+                          )
+                        }
+                      >
+                        Remove Set
+                      </button>
+                    )}
+
+                  </div>
+
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    addSet(exerciseIndex)
                   }
-                  onChange={(event) => 
-                    handleMetricChange(event, exerciseIndex)
-                  }
-                />
-                </div>
+                >
+                  Add Set
+                </button>
 
-            ))}
-            
-           </div>
+              </div>
+            )}
 
             {exercises.length > 1 && (
 

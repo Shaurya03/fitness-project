@@ -16,6 +16,13 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
   const formattedDate = format(new Date(workout.date), "EEEE, d MMM yyyy");
 
+  const totalSets =
+    workout.exercises?.reduce(
+      (total, exercise) =>
+        total + (exercise.sets?.length || 0),
+      0
+    ) || 0;
+
   const handleDelete = async () => {
     if (!user) {
       return;
@@ -61,6 +68,9 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
       <p>
         {exerciseCount}{" "}
         {exerciseCount === 1 ? "Exercise" : "Exercises"}
+        {" • "}
+        {totalSets}{" "}
+        {totalSets === 1 ? "Set" : "Sets"}
       </p>
 
       <div className="exercise-list">
@@ -73,18 +83,31 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
               <h4>{exercise.exerciseId?.name}</h4>
 
-              <div className="exercise-metrics">
+              <div className="sets-list">
 
-                {Object.entries(exercise.metrics || {}).map(
-                  ([metric, value]) => (
+                {exercise.sets?.map((set, setIndex) => (
 
-                    <p key={metric}>
-                      {metric}: {value}
-                    </p>
+                  <div
+                    key={set._id || setIndex}
+                    className="set-item"
+                  >
 
-                  )
-                )}
-                
+                    <p>Set {setIndex + 1}</p>
+
+                    {Object.entries(set.metrics || {}).map(
+                      ([metric, value]) => (
+
+                        <p key={metric}>
+                          {metric}: {value}
+                        </p>
+
+                      )
+                    )}
+
+                  </div>
+
+                ))}
+
               </div>
             </div>
           ))
