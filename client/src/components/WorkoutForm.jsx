@@ -92,7 +92,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
                   metrics: {
                     ...set.metrics,
-                    [name]: Number(value)
+                    [name]: value === ""
+                      ? ""
+                      : Number(value)
                   }
                 };
               }
@@ -509,7 +511,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                           type="number"
                           name={metric}
                           value={
-                            set.metrics?.[metric] || ""
+                            set.metrics?.[metric] ?? ""
                           }
                           onChange={(event) =>
                             handleSetChange(

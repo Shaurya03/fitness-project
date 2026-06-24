@@ -6,6 +6,43 @@ const createError = (message, statusCode) => {
   return err;
 };
 
+const validateMetric = (metric, value) => {
+  if (typeof value !== "number") {
+    throw createError(
+      `${metric} must be a number`,
+      400
+    );
+  }
+
+  switch (metric) {
+    case "weight":
+      if (value < 0) {
+        throw createError(
+          "Weight cannot be negative",
+          400
+        );
+      }
+      break;
+
+    case "rpe":
+      if (value < 1 || value > 10) {
+        throw createError(
+          "RPE must be between 1 and 10",
+          400
+        );
+      }
+      break;
+
+    default:
+      if (value <= 0) {
+        throw createError(
+          `${metric} must be greater than 0`,
+          400
+        );
+      }
+  }
+};
+
 const validateExercises = (exercises) => {
 
   if (!Array.isArray(exercises)) {
@@ -29,6 +66,33 @@ const validateExercises = (exercises) => {
         "Exercise is required",
         400
       );
+    }
+
+    if (
+      !Array.isArray(exercise.sets) ||
+      exercise.sets.length === 0
+    ) {
+      throw createError(
+        "At least one set is required",
+        400
+      );
+    }
+
+    for (const set of exercise.sets) {
+
+      if (
+        !set.metrics ||
+        Object.keys(set.metrics).length === 0
+      ) {
+        throw createError(
+          "Set metrics are required",
+          400
+        );
+      }
+
+      for (const [metric, value] of Object.entries(set.metrics)) {
+        validateMetric(metric, value);
+      }
     }
   }
 };
@@ -57,7 +121,7 @@ const getWorkout = async (req, res, next) => {
     const workout = await Workout
       .findOne({
         _id: id,
-        user_id 
+        user_id
       })
       .populate("exercises.exerciseId");
 
@@ -79,28 +143,13 @@ const createWorkout = async (req, res, next) => {
     const user_id = req.user._id;
     const { title, exercises } = req.body;
 
-    let emptyFields = [];
-
-    if (
-      typeof title !== "string" ||
-      !title.trim()
-    ) {
-      emptyFields.push("title");
-    }
-
-    if (emptyFields.length > 0) {
-      const error = createError(
-        `Missing required fields: ${emptyFields.join(", ")}`,
-        400
-      );
-      error.emptyFields = emptyFields;
-      throw error;
-    }
-
     validateExercises(exercises);
 
     const workout = await Workout.create({
-      title: title.trim(),
+      title:
+        typeof title === "string"
+          ? title.trim()
+          : "",
       exercises,
       user_id
     });
@@ -125,13 +174,10 @@ const updateWorkout = async (req, res, next) => {
 
     if (
       title !== undefined &&
-      (
-        typeof title !== "string" ||
-        !title.trim()
-      )
+      typeof title !== "string"
     ) {
       throw createError(
-        "Title cannot be empty",
+        "Title must be a string",
         400
       );
     }
@@ -142,7 +188,7 @@ const updateWorkout = async (req, res, next) => {
 
     const updateFields = {};
 
-    if (title !== undefined) {
+    if (typeof title === "string") {
       updateFields.title = title.trim();
     }
 

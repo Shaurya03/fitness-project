@@ -35,7 +35,8 @@ const workoutSchema = new Schema(
   {
     title: {
       type: String,
-      required: true,
+      trim: true,
+      default: "",
     },
 
     date: {
