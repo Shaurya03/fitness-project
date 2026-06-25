@@ -520,6 +520,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                               setIndex
                             )
                           }
+                          onWheel={(event) =>
+                            event.currentTarget.blur()
+                          }
                         />
                       </div>
 
