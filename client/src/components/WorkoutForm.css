@@ -88,3 +88,25 @@
   border: 1px solid #1aac83;
   box-shadow: 0 0 0 3px rgba(26, 172, 131, 0.1);
 }
+
+.metric-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.metric-controls button {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+}
+
+.metric-controls input {
+  flex: 1;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

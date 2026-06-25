@@ -3,6 +3,7 @@ import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { useCategories } from '../hooks/useCategories';
 import { useExercises } from '../hooks/useExercises';
+import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import "./WorkoutForm.css";
@@ -112,6 +113,63 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         return exercise;
       })
     );
+  };
+
+  const adjustMetricValue = (
+    exerciseIndex,
+    setIndex,
+    metric,
+    direction
+  ) => {
+    const config = getMetricConfig(metric);
+
+    const currentValue =
+      exercises[exerciseIndex]
+        .sets[setIndex]
+        .metrics[metric] ?? 0;
+
+    const newValue =
+      currentValue + direction * config.step;
+
+    const adjustedValue =
+      config.max !== undefined
+        ? Math.min(
+          config.max,
+          Math.max(config.min, newValue)
+        )
+        : Math.max(config.min, newValue);
+
+    const updatedExercises = exercises.map((exercise, currentExerciseIndex) => {
+      if (currentExerciseIndex === exerciseIndex) {
+
+        const updatedSets = exercise.sets.map(
+          (set, currentSetIndex) => {
+
+            if (currentSetIndex === setIndex) {
+              return {
+                ...set,
+
+                metrics: {
+                  ...set.metrics,
+                  [metric]: adjustedValue
+                }
+              };
+            }
+
+            return set;
+          }
+        );
+
+        return {
+          ...exercise,
+          sets: updatedSets
+        };
+      }
+
+      return exercise;
+    });
+
+    setExercises(updatedExercises);
   };
 
   const resetForm = () => {
@@ -499,36 +557,74 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                       Set {setIndex + 1}
                     </h5>
 
-                    {exerciseMetrics.map(metric => (
+                    {exerciseMetrics.map((metric) => {
 
-                      <div
-                        key={metric}
-                        className="metric-input"
-                      >
-                        <label>{metric}</label>
+                      const config = getMetricConfig(metric);
 
-                        <input
-                          type="number"
-                          name={metric}
-                          value={
-                            set.metrics?.[metric] ?? ""
-                          }
-                          onChange={(event) =>
-                            handleSetChange(
-                              event,
-                              exerciseIndex,
-                              setIndex
-                            )
-                          }
-                          onWheel={(event) =>
-                            event.currentTarget.blur()
-                          }
-                        />
-                      </div>
+                      return (
 
-                    ))}
+                        <div
+                          key={metric}
+                          className="metric-input"
+                        >
+                          <label>
+                            {config.label}
+                            {config.showUnit ? ` (${config.unit})` : ""}
+                          </label>
 
+                          <div className="metric-controls">
 
+                            <button
+                              type="button"
+                              onClick={() =>
+                                adjustMetricValue(
+                                  exerciseIndex,
+                                  setIndex,
+                                  metric,
+                                  -1
+                                )
+                              }
+                            >
+                              -
+                            </button>
+
+                            <input
+                              type="number"
+                              name={metric}
+                              value={
+                                set.metrics?.[metric] ?? ""
+                              }
+                              onChange={(event) =>
+                                handleSetChange(
+                                  event,
+                                  exerciseIndex,
+                                  setIndex
+                                )
+                              }
+                              onWheel={(event) =>
+                                event.currentTarget.blur()
+                              }
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() =>
+                                adjustMetricValue(
+                                  exerciseIndex,
+                                  setIndex,
+                                  metric,
+                                  1
+                                )
+                              }
+                            >
+                              +
+                            </button>
+
+                          </div>
+
+                        </div>
+                      )
+                    })}
 
                     {exercise.sets.length > 1 && (
                       <button
