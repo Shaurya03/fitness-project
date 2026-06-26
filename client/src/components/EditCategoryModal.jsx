@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import MetricSelector from "./MetricSelector";
 import "./Modal.css";
 
@@ -58,7 +59,7 @@ function EditCategoryModal({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
       className="modal-overlay"
       onClick={handleClose}
@@ -97,7 +98,8 @@ function EditCategoryModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

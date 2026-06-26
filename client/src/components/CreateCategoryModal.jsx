@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import MetricSelector from "./MetricSelector";
 import "./Modal.css";
 
@@ -46,7 +47,7 @@ function CreateCategoryModal({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
       className="modal-overlay"
       onClick={handleClose}
@@ -85,7 +86,8 @@ function CreateCategoryModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

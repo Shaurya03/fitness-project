@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import "./Modal.css";
 
 function DeleteExerciseModal({
@@ -19,7 +20,7 @@ function DeleteExerciseModal({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
       className="modal-overlay"
       onClick={handleClose}
@@ -45,7 +46,8 @@ function DeleteExerciseModal({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
