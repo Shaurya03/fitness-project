@@ -5,8 +5,8 @@ import { format } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
-import { formatMetric } from "../utils/metricFormatter";
 import "./WorkoutDetails.css";
+import { getMetricConfig } from "../utils/metricConfig";
 
 function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
   const { dispatch } = useWorkoutContext();
@@ -62,7 +62,9 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
   return (
     <div className="workout-details">
 
-      <h2>{workout.title}</h2>
+      {workout.title && (
+        <h2>{workout.title}</h2>
+      )}
 
       <p>{formattedDate}</p>
 
@@ -76,42 +78,62 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
       <div className="exercise-list">
         {workout.exercises?.length > 0 ? (
-          workout.exercises.map((exercise, index) => (
-            <div
-              className="exercise-item"
-              key={`${exercise.exerciseId?._id}-${index}`}
-            >
+          workout.exercises.map((exercise, index) => {
 
-              <h4>{exercise.exerciseId?.name}</h4>
+            const metrics = Object.keys(
+              exercise.sets?.[0]?.metrics || {}
+            );
 
-              <div className="sets-list">
+            return (
 
-                {exercise.sets?.map((set, setIndex) => (
+              <div
+                className="exercise-item"
+                key={`${exercise.exerciseId?._id}-${index}`}
+              >
 
-                  <div
-                    key={set._id || setIndex}
-                    className="set-item"
-                  >
+                <h4>{exercise.exerciseId?.name}</h4>
 
-                    <p>Set {setIndex + 1}</p>
+                <div className="sets-list">
 
-                    {Object.entries(set.metrics || {}).map(
-                      ([metric, value]) => (
+                  <div className="metrics-header">
 
-                        <p key={metric}>
-                          {formatMetric(metric, value)}
-                        </p>
-                        
-                      )
-                    )}
+                    {metrics.map(metric => {
+                      const config = getMetricConfig(metric);
+
+                      return (
+                        <span key={metric}>
+                          {config.label}
+                          {config.showUnit
+                            ? ` (${config.unit})`
+                            : ""
+                          }
+                        </span>
+                      );
+                    })}
 
                   </div>
 
-                ))}
+                  {exercise.sets?.map((set, setIndex) => (
 
+                    <div
+                      key={set._id || setIndex}
+                      className="set-row"
+                    >
+
+                      {metrics.map(metric => (
+                        <span key={metric}>
+                          {set.metrics?.[metric]}
+                        </span>
+                      ))}
+
+                    </div>
+
+                  ))}
+
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p>No exercises found.</p>
         )}

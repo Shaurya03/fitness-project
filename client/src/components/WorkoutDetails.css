@@ -75,10 +75,36 @@
 }
 
 .exercise-item {
-  padding: 12px 0;
+  margin-top: 12px;
+  padding: 8px 0;
   border-bottom: 1px solid #ddd;
 }
 
 .exercise-item:last-child {
   border-bottom: none;
+}
+
+.metrics-header,
+.set-row {
+  display: grid;
+  grid-template-columns: repeat(3, 120px);
+  gap: 1rem;
+  width: fit-content;
+  align-items: center;
+}
+
+.metrics-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  opacity: 0.7;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.set-row {
+  padding: 8px 0;
+}
+
+.sets-list {
+  width: fit-content;
 }
