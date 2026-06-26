@@ -6,6 +6,7 @@ import { useExercises } from '../hooks/useExercises';
 import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
+import CreateExerciseModal from "./CreateExerciseModal";
 import "./WorkoutForm.css";
 
 const emptyExercise = {
@@ -31,10 +32,10 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const [emptyFields, setEmptyFields] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const { exercises: exerciseCatalog, fetchExercises, createExercise } = useExercises();
+  const [showCreateExerciseModal, setShowCreateExerciseModal] = useState(false);
+  const [targetExerciseIndex, setTargetExerciseIndex] = useState(null);
 
-  const [showCreateExercise, setShowCreateExercise] = useState(false);
-  const [newExerciseName, setNewExerciseName] = useState("");
+  const { exercises: exerciseCatalog, fetchExercises, createExercise } = useExercises();
 
   const { categories, fetchCategories } = useCategories();
 
@@ -56,10 +57,11 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           }
 
           if (
-            name === "name" &&
+            name === "exerciseId" &&
             value === "__CREATE_NEW__"
           ) {
-            setShowCreateExercise(true);
+            setTargetExerciseIndex(exerciseIndex);
+            setShowCreateExerciseModal(true);
 
             return exercise;
           }
@@ -172,6 +174,36 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     setExercises(updatedExercises);
   };
 
+  const handleCreateExercise = async (exerciseData) => {
+    try {
+      const createdExercise = await createExercise({
+        ...exerciseData,
+        categoryId: selectedCategory._id
+      });
+
+      if (!createdExercise) {
+        return;
+      }
+
+      setExercises(
+        exercises.map((exercise, index) =>
+          index === targetExerciseIndex
+            ? {
+              ...exercise,
+              exerciseId: createdExercise._id
+            }
+            : exercise
+        )
+      );
+
+      setShowCreateExerciseModal(false);
+      setTargetExerciseIndex(null);
+
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const resetForm = () => {
     setTitle('');
     setExercises([
@@ -248,43 +280,6 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         return exercise;
       })
     );
-  };
-
-  const handleCreateExercise = async (exercise, exerciseIndex) => {
-    if (!newExerciseName.trim()) {
-      return;
-    }
-
-    try {
-      const createdExercise = await createExercise({
-        name: newExerciseName,
-        categoryId: exercise.categoryId
-      });
-
-      if (!createdExercise) {
-        return;
-      }
-
-      setExercises(
-        exercises.map((currentExercise, index) => {
-
-          if (index === exerciseIndex) {
-            return {
-              ...currentExercise,
-              exerciseId: createdExercise._id
-            };
-          }
-
-          return currentExercise;
-        })
-      );
-
-      setShowCreateExercise(false);
-      setNewExerciseName("");
-
-    } catch (error) {
-      toast.error(error.message);
-    }
   };
 
   const removeExercise = (exerciseIndex) => {
@@ -432,6 +427,11 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     );
   };
 
+  const selectedCategory = categories?.find(
+    category =>
+      category._id === exercises[targetExerciseIndex]?.categoryId
+  );
+
   return (
     <form className="workout-form" onSubmit={handleSubmit}>
       <h3>
@@ -509,39 +509,6 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                 + Create New Exercise
               </option>
             </select>
-
-            {showCreateExercise && (
-              <div>
-                <input
-                  type="text"
-                  placeholder="Exercise Name"
-                  value={newExerciseName}
-                  onChange={(event) =>
-                    setNewExerciseName(event.target.value)
-                  }
-                />
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    handleCreateExercise(exercise, exerciseIndex)
-                  }
-                >
-                  Save
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowCreateExercise(false);
-                    setNewExerciseName("")
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-
-            )}
 
             {exercise.exerciseId && (
               <div className="sets-container">
@@ -695,6 +662,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         </button>
       )}
       {error && <div className="error">{error}</div>}
+
+      <CreateExerciseModal
+        isOpen={showCreateExerciseModal}
+        selectedCategory={selectedCategory}
+        onClose={() => {
+          setShowCreateExerciseModal(false);
+          setTargetExerciseIndex(null);
+        }}
+        onCreate={handleCreateExercise}
+      />
 
     </form>
   );

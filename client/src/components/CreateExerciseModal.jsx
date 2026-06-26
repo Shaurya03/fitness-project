@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import MetricSelector from "./MetricSelector";
 import "./Modal.css";
 
@@ -61,7 +62,7 @@ function CreateExerciseModal({
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
       className="modal-overlay"
       onClick={handleClose}
@@ -95,16 +96,23 @@ function CreateExerciseModal({
         />
 
         <div className="modal-actions">
-          <button onClick={handleSubmit}>
+          <button
+            type="button"
+            onClick={handleSubmit}
+          >
             Create
           </button>
 
-          <button onClick={handleClose}>
+          <button
+            type="button"
+            onClick={handleClose}
+          >
             Cancel
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 
