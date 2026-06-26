@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
+import { formatMetric } from "../utils/metricFormatter";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
@@ -78,7 +79,7 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
           workout.exercises.map((exercise, index) => (
             <div
               className="exercise-item"
-              key={`${exercise.name}-${index}`}
+              key={`${exercise.exerciseId?._id}-${index}`}
             >
 
               <h4>{exercise.exerciseId?.name}</h4>
@@ -98,9 +99,9 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
                       ([metric, value]) => (
 
                         <p key={metric}>
-                          {metric}: {value}
+                          {formatMetric(metric, value)}
                         </p>
-
+                        
                       )
                     )}
 
