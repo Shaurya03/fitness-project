@@ -6,6 +6,7 @@ import { useExercises } from '../hooks/useExercises';
 import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
+import { DISTANCE_UNITS, UNITS } from '../utils/units';
 import CreateExerciseModal from "./CreateExerciseModal";
 import "./WorkoutForm.css";
 
@@ -15,7 +16,8 @@ const emptyExercise = {
 
   sets: [
     {
-      metrics: {}
+      metrics: {},
+      units: {}
     }
   ]
 };
@@ -174,6 +176,35 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     setExercises(updatedExercises);
   };
 
+  const handleUnitChange = (
+    exerciseIndex,
+    metric,
+    unit
+  ) => {
+    setExercises(
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+
+          const updatedSets = exercise.sets.map(set => ({
+            ...set,
+            units: {
+              ...set.units,
+              [metric]: unit
+            }
+          }));
+
+          return {
+            ...exercise,
+            sets: updatedSets
+          };
+        }
+
+        return exercise;
+      })
+    );
+  };
+
   const handleCreateExercise = async (exerciseData) => {
     try {
       const createdExercise = await createExercise({
@@ -235,7 +266,10 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
             sets: [
               ...exercise.sets,
               {
-                metrics: {}
+                metrics: {},
+                units: {
+                  ...exercise.sets[0].units
+                }
               }
             ]
           };
@@ -261,7 +295,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
               ...exercise,
               sets: [
                 {
-                  metrics: {}
+                  metrics: {},
+                  units: {}
                 }
               ]
             };
@@ -305,7 +340,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           exerciseId: exercise.exerciseId._id,
           sets: exercise.sets || [
             {
-              metrics: {}
+              metrics: {},
+              units: {}
             }
           ]
         }))
@@ -340,7 +376,29 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       exercise => ({
         categoryId: exercise.categoryId,
         exerciseId: exercise.exerciseId,
-        sets: exercise.sets
+
+        sets: exercise.sets.map(set => {
+          const convertedMetrics = {
+            ...set.metrics
+          };
+
+          if (
+            convertedMetrics.distance !== undefined &&
+            convertedMetrics.distance !== ""
+          ) {
+            const unit = 
+              set.units?.distance || "m";
+
+            convertedMetrics.distance =
+              UNITS.distance[unit].toBase(
+                convertedMetrics.distance
+              );
+          }
+
+          return {
+            metrics: convertedMetrics
+          };
+        })
       })
     );
 
@@ -588,6 +646,28 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                             </button>
 
                           </div>
+
+                          {metric === "distance" && (
+                            <select
+                              value={set.units?.distance || "m"}
+                              onChange={(event) =>
+                                handleUnitChange(
+                                  exerciseIndex,
+                                  metric,
+                                  event.target.value
+                                )
+                              }
+                            >
+                              {DISTANCE_UNITS.map(unit => (
+                                <option
+                                  key={unit}
+                                  value={unit}
+                                >
+                                  {unit}
+                                </option>
+                              ))}
+                            </select>
+                          )}
 
                         </div>
                       )
