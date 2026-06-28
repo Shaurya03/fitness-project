@@ -50,15 +50,3 @@ export const UNITS = {
     }
   }
 };
-
-export const DISTANCE_UNITS = Object.keys(
-  UNITS.distance
-);
-
-export const DURATION_UNITS = Object.keys(
-  UNITS.duration
-);
-
-export const WEIGHT_UNITS = Object.keys(
-  UNITS.weight
-);

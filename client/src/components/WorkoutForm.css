@@ -103,6 +103,11 @@
 
 .metric-controls input {
   flex: 1;
+  min-width: 0;
+}
+
+.metric-controls select {
+  width: 50px;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
@@ -113,17 +118,24 @@ input[type="number"]::-webkit-inner-spin-button {
 
 .duration-inputs {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.duration-time {
+  display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .duration-inputs input {
-  width: 70px;
+  width: 56px;
   text-align: center;
 }
 
 .duration-inputs span {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
   color: #666;
 }

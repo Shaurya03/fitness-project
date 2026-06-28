@@ -6,7 +6,7 @@ import { useExercises } from '../hooks/useExercises';
 import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
-import { DISTANCE_UNITS, UNITS } from '../utils/units';
+import { UNITS } from '../utils/units';
 import CreateExerciseModal from "./CreateExerciseModal";
 import "./WorkoutForm.css";
 
@@ -654,55 +654,61 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                             className="duration-inputs"
                           >
 
-                              <input
-                                type="number"
-                                name="hours"
-                                placeholder="HH"
-                                onChange={(event) =>
-                                  handleDurationChange(
-                                    event,
-                                    exerciseIndex,
-                                    setIndex
-                                  )
-                                }
-                                value={set.metrics?.duration?.hours ?? ""}
-                              />
+                            <label>{config.label}</label>
 
-                              <span>:</span>
+                            <div className="duration-time">
 
-                              <input
-                                type="number"
-                                name="minutes"
-                                placeholder="MM"
-                                onChange={(event) =>
-                                  handleDurationChange(
-                                    event,
-                                    exerciseIndex,
-                                    setIndex
-                                  )
-                                }
-                                value={set.metrics?.duration?.minutes ?? ""}
-                                min={0}
-                                max={59}
-                              />
+                            <input
+                              type="number"
+                              name="hours"
+                              placeholder="HH"
+                              onChange={(event) =>
+                                handleDurationChange(
+                                  event,
+                                  exerciseIndex,
+                                  setIndex
+                                )
+                              }
+                              value={set.metrics?.duration?.hours ?? ""}
+                            />
 
-                              <span>:</span>
+                            <span>:</span>
 
-                              <input
-                                type="number"
-                                name="seconds"
-                                placeholder="SS"
-                                onChange={(event) =>
-                                  handleDurationChange(
-                                    event,
-                                    exerciseIndex,
-                                    setIndex
-                                  )
-                                }
-                                value={set.metrics?.duration?.seconds ?? ""}
-                                min={0}
-                                max={59}
-                              />
+                            <input
+                              type="number"
+                              name="minutes"
+                              placeholder="MM"
+                              onChange={(event) =>
+                                handleDurationChange(
+                                  event,
+                                  exerciseIndex,
+                                  setIndex
+                                )
+                              }
+                              value={set.metrics?.duration?.minutes ?? ""}
+                              min={0}
+                              max={59}
+                            />
+
+                            <span>:</span>
+
+                            <input
+                              type="number"
+                              name="seconds"
+                              placeholder="SS"
+                              onChange={(event) =>
+                                handleDurationChange(
+                                  event,
+                                  exerciseIndex,
+                                  setIndex
+                                )
+                              }
+                              value={set.metrics?.duration?.seconds ?? ""}
+                              min={0}
+                              max={59}
+                            />
+
+                          </div>
 
                           </div>
                         );
@@ -767,30 +773,31 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                               +
                             </button>
 
+
+
+                            {metric === "distance" && (
+                              <select
+                                value={set.units?.distance || "km"}
+                                onChange={(event) =>
+                                  handleUnitChange(
+                                    exerciseIndex,
+                                    metric,
+                                    event.target.value
+                                  )
+                                }
+                              >
+                                {Object.keys(UNITS.distance).map(unit => (
+                                  <option
+                                    key={unit}
+                                    value={unit}
+                                  >
+                                    {unit}
+                                  </option>
+                                ))}
+                              </select>
+                            )}
+
                           </div>
-
-                          {metric === "distance" && (
-                            <select
-                              value={set.units?.distance || "m"}
-                              onChange={(event) =>
-                                handleUnitChange(
-                                  exerciseIndex,
-                                  metric,
-                                  event.target.value
-                                )
-                              }
-                            >
-                              {DISTANCE_UNITS.map(unit => (
-                                <option
-                                  key={unit}
-                                  value={unit}
-                                >
-                                  {unit}
-                                </option>
-                              ))}
-                            </select>
-                          )}
-
                         </div>
                       )
                     })}
