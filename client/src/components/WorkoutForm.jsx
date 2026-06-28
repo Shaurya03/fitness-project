@@ -205,6 +205,53 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     );
   };
 
+  const handleDurationChange = (
+    event,
+    exerciseIndex,
+    setIndex
+  ) => {
+    const { name, value } = event.target;
+
+    setExercises(
+      exercises.map((exercise, index) => {
+
+        if (index === exerciseIndex) {
+
+          const updatedSets = exercise.sets.map(
+            (set, currentSetIndex) => {
+
+              if (currentSetIndex === setIndex) {
+                return {
+                  ...set,
+
+                  metrics: {
+                    ...set.metrics,
+
+                    duration: {
+                      ...(set.metrics.duration || {}),
+                      [name]: value === ""
+                        ? ""
+                        : Number(value)
+                    }
+                  }
+                };
+              }
+
+              return set;
+            }
+          );
+
+          return {
+            ...exercise,
+            sets: updatedSets
+          };
+        }
+
+        return exercise;
+      })
+    );
+  };
+
   const handleCreateExercise = async (exerciseData) => {
     try {
       const createdExercise = await createExercise({
@@ -386,13 +433,27 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
             convertedMetrics.distance !== undefined &&
             convertedMetrics.distance !== ""
           ) {
-            const unit = 
+            const unit =
               set.units?.distance || "m";
 
             convertedMetrics.distance =
               UNITS.distance[unit].toBase(
                 convertedMetrics.distance
               );
+          }
+
+          if (convertedMetrics.duration) {
+
+            const {
+              hours = 0,
+              minutes = 0,
+              seconds = 0
+            } = convertedMetrics.duration;
+
+            convertedMetrics.duration =
+              hours * 3600 +
+              minutes * 60 +
+              seconds;
           }
 
           return {
@@ -585,6 +646,67 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                     {exerciseMetrics.map((metric) => {
 
                       const config = getMetricConfig(metric);
+
+                      if (metric === "duration") {
+                        return (
+                          <div
+                            key={metric}
+                            className="duration-inputs"
+                          >
+
+                              <input
+                                type="number"
+                                name="hours"
+                                placeholder="HH"
+                                onChange={(event) =>
+                                  handleDurationChange(
+                                    event,
+                                    exerciseIndex,
+                                    setIndex
+                                  )
+                                }
+                                value={set.metrics?.duration?.hours ?? ""}
+                              />
+
+                              <span>:</span>
+
+                              <input
+                                type="number"
+                                name="minutes"
+                                placeholder="MM"
+                                onChange={(event) =>
+                                  handleDurationChange(
+                                    event,
+                                    exerciseIndex,
+                                    setIndex
+                                  )
+                                }
+                                value={set.metrics?.duration?.minutes ?? ""}
+                                min={0}
+                                max={59}
+                              />
+
+                              <span>:</span>
+
+                              <input
+                                type="number"
+                                name="seconds"
+                                placeholder="SS"
+                                onChange={(event) =>
+                                  handleDurationChange(
+                                    event,
+                                    exerciseIndex,
+                                    setIndex
+                                  )
+                                }
+                                value={set.metrics?.duration?.seconds ?? ""}
+                                min={0}
+                                max={59}
+                              />
+
+                          </div>
+                        );
+                      }
 
                       return (
 
