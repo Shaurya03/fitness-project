@@ -5,13 +5,19 @@ import { format } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
-import "./WorkoutDetails.css";
 import { getMetricConfig } from "../utils/metricConfig";
+import { formatMetric } from "../utils/metricFormatter";
+import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
   const { dispatch } = useWorkoutContext();
   const { user } = useAuthContext();
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const settings = {
+    weightUnit: "kg",
+    distanceUnit: "km"
+  };
 
   const exerciseCount = workout.exercises?.length || 0;
 
@@ -122,7 +128,11 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
                       {metrics.map(metric => (
                         <span key={metric}>
-                          {set.metrics?.[metric]}
+                          {formatMetric(
+                            metric,
+                            set.metrics?.[metric],
+                            settings
+                          )}
                         </span>
                       ))}
 

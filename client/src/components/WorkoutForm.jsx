@@ -385,12 +385,39 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         editingWorkout.exercises.map(exercise => ({
           categoryId: exercise.categoryId,
           exerciseId: exercise.exerciseId._id,
-          sets: exercise.sets || [
-            {
-              metrics: {},
-              units: {}
+
+          sets: exercise.sets.map(set => {
+
+            const metrics = {
+              ...set.metrics
+            };
+
+            if (metrics.distance !== undefined) {
+
+              const unit = set.units?.distance || "km";
+
+              metrics.distance =
+                UNITS.distance[unit].fromBase(
+                  metrics.distance
+                );
             }
-          ]
+
+            if (metrics.duration !== undefined) {
+
+              const totalSeconds = metrics.duration;
+
+              metrics.duration = {
+                hours: Math.floor(totalSeconds / 3600),
+                minutes: Math.floor((totalSeconds % 3600) / 60),
+                seconds: totalSeconds % 60
+              };
+            }
+
+            return {
+              ...set,
+              metrics
+            };
+          })
         }))
       );
     } else {
@@ -457,7 +484,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           }
 
           return {
-            metrics: convertedMetrics
+            metrics: convertedMetrics,
+            units: set.units
           };
         })
       })
@@ -658,57 +686,57 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
                             <div className="duration-time">
 
-                            <input
-                              type="number"
-                              name="hours"
-                              placeholder="HH"
-                              onChange={(event) =>
-                                handleDurationChange(
-                                  event,
-                                  exerciseIndex,
-                                  setIndex
-                                )
-                              }
-                              value={set.metrics?.duration?.hours ?? ""}
-                            />
+                              <input
+                                type="number"
+                                name="hours"
+                                placeholder="HH"
+                                onChange={(event) =>
+                                  handleDurationChange(
+                                    event,
+                                    exerciseIndex,
+                                    setIndex
+                                  )
+                                }
+                                value={set.metrics?.duration?.hours ?? ""}
+                              />
 
-                            <span>:</span>
+                              <span>:</span>
 
-                            <input
-                              type="number"
-                              name="minutes"
-                              placeholder="MM"
-                              onChange={(event) =>
-                                handleDurationChange(
-                                  event,
-                                  exerciseIndex,
-                                  setIndex
-                                )
-                              }
-                              value={set.metrics?.duration?.minutes ?? ""}
-                              min={0}
-                              max={59}
-                            />
+                              <input
+                                type="number"
+                                name="minutes"
+                                placeholder="MM"
+                                onChange={(event) =>
+                                  handleDurationChange(
+                                    event,
+                                    exerciseIndex,
+                                    setIndex
+                                  )
+                                }
+                                value={set.metrics?.duration?.minutes ?? ""}
+                                min={0}
+                                max={59}
+                              />
 
-                            <span>:</span>
+                              <span>:</span>
 
-                            <input
-                              type="number"
-                              name="seconds"
-                              placeholder="SS"
-                              onChange={(event) =>
-                                handleDurationChange(
-                                  event,
-                                  exerciseIndex,
-                                  setIndex
-                                )
-                              }
-                              value={set.metrics?.duration?.seconds ?? ""}
-                              min={0}
-                              max={59}
-                            />
+                              <input
+                                type="number"
+                                name="seconds"
+                                placeholder="SS"
+                                onChange={(event) =>
+                                  handleDurationChange(
+                                    event,
+                                    exerciseIndex,
+                                    setIndex
+                                  )
+                                }
+                                value={set.metrics?.duration?.seconds ?? ""}
+                                min={0}
+                                max={59}
+                              />
 
-                          </div>
+                            </div>
 
                           </div>
                         );
