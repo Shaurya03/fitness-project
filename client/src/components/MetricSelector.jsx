@@ -3,7 +3,7 @@ import "./MetricSelector.css";
 
 function MetricSelector({ selectedMetrics, onToggle }) {
   return (
-    <div className="metrics-grid">
+    <div className="metric-selector-grid">
       {METRICS.map(metric => (
         <label
           key={metric}

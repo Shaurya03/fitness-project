@@ -6,9 +6,20 @@ import { useExercises } from '../hooks/useExercises';
 import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
-import { UNITS } from '../utils/units';
+import { DISTANCE_SYSTEMS, UNITS } from '../utils/units';
+import { DEFAULT_SETTINGS, DEFAULT_UNITS } from '../utils/settings';
 import CreateExerciseModal from "./CreateExerciseModal";
 import "./WorkoutForm.css";
+
+const DEFAULT_DISTANCE_UNIT =
+  DEFAULT_UNITS[
+    DEFAULT_SETTINGS.distanceSystem
+  ].distance;
+
+const DEFAULT_WEIGHT_UNIT =
+  DEFAULT_UNITS[
+    DEFAULT_SETTINGS.weightSystem
+  ].weight;
 
 const emptyExercise = {
   categoryId: '',
@@ -17,7 +28,9 @@ const emptyExercise = {
   sets: [
     {
       metrics: {},
-      units: {}
+      inputUnits: {
+        distance: DEFAULT_DISTANCE_UNIT
+      }
     }
   ]
 };
@@ -132,8 +145,30 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         .sets[setIndex]
         .metrics[metric] ?? 0;
 
+    let step = config.step;
+
+    if (metric === "distance") {
+      const unit =
+        exercises[exerciseIndex]
+          .sets[setIndex]
+          .inputUnits?.distance ??
+        DEFAULT_DISTANCE_UNIT;
+
+      step = UNITS.distance[unit].step;
+    }
+
+    else if (metric === "weight") {
+      const unit =
+        exercises[exerciseIndex]
+          .sets[setIndex]
+          .inputUnits?.weight ??
+        DEFAULT_WEIGHT_UNIT;
+
+      step = UNITS.weight[unit].step;
+    }
+
     const newValue =
-      currentValue + direction * config.step;
+      currentValue + direction * step;
 
     const adjustedValue =
       config.max !== undefined
@@ -188,8 +223,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
           const updatedSets = exercise.sets.map(set => ({
             ...set,
-            units: {
-              ...set.units,
+            inputUnits: {
+              ...set.inputUnits,
               [metric]: unit
             }
           }));
@@ -314,8 +349,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
               ...exercise.sets,
               {
                 metrics: {},
-                units: {
-                  ...exercise.sets[0].units
+                inputUnits: {
+                  ...exercise.sets[0].inputUnits
                 }
               }
             ]
@@ -343,7 +378,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
               sets: [
                 {
                   metrics: {},
-                  units: {}
+                  inputUnits: {
+                    distance: DEFAULT_DISTANCE_UNIT
+                  }
                 }
               ]
             };
@@ -394,7 +431,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
             if (metrics.distance !== undefined) {
 
-              const unit = set.units?.distance || "km";
+              const unit = set.inputUnits?.distance ?? DEFAULT_DISTANCE_UNIT;
 
               metrics.distance =
                 UNITS.distance[unit].fromBase(
@@ -461,7 +498,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
             convertedMetrics.distance !== ""
           ) {
             const unit =
-              set.units?.distance || "m";
+              set.inputUnits?.distance || DEFAULT_DISTANCE_UNIT;
 
             convertedMetrics.distance =
               UNITS.distance[unit].toBase(
@@ -485,7 +522,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
           return {
             metrics: convertedMetrics,
-            units: set.units
+            inputUnits: set.inputUnits
           };
         })
       })
@@ -682,7 +719,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                             className="duration-inputs"
                           >
 
-                            <label>{config.label}</label>
+                            <label className="metric-label">
+                              {config.label}
+                            </label>
 
                             <div className="duration-time">
 
@@ -698,6 +737,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                                   )
                                 }
                                 value={set.metrics?.duration?.hours ?? ""}
+                                onWheel={(event) =>
+                                  event.currentTarget.blur()
+                                }
                               />
 
                               <span>:</span>
@@ -716,6 +758,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                                 value={set.metrics?.duration?.minutes ?? ""}
                                 min={0}
                                 max={59}
+                                onWheel={(event) =>
+                                  event.currentTarget.blur()
+                                }
                               />
 
                               <span>:</span>
@@ -734,6 +779,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                                 value={set.metrics?.duration?.seconds ?? ""}
                                 min={0}
                                 max={59}
+                                onWheel={(event) =>
+                                  event.currentTarget.blur()
+                                }
                               />
 
                             </div>
@@ -748,9 +796,16 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                           key={metric}
                           className="metric-input"
                         >
-                          <label>
+                          <label className="metric-label">
                             {config.label}
-                            {config.showUnit ? ` (${config.unit})` : ""}
+
+                            {metric === "weight" && ` (${DEFAULT_WEIGHT_UNIT})`}
+
+                            {metric !== "weight" &&
+                              metric !== "distance" &&
+                              config.showUnit &&
+                              config.unit &&
+                              ` (${config.unit})`}
                           </label>
 
                           <div className="metric-controls">
@@ -805,7 +860,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
                             {metric === "distance" && (
                               <select
-                                value={set.units?.distance || "km"}
+                                value={set.inputUnits?.distance ?? DEFAULT_DISTANCE_UNIT}
                                 onChange={(event) =>
                                   handleUnitChange(
                                     exerciseIndex,
@@ -814,14 +869,15 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
                                   )
                                 }
                               >
-                                {Object.keys(UNITS.distance).map(unit => (
-                                  <option
-                                    key={unit}
-                                    value={unit}
-                                  >
-                                    {unit}
-                                  </option>
-                                ))}
+                                {DISTANCE_SYSTEMS[DEFAULT_SETTINGS.distanceSystem]
+                                  .map(unit => (
+                                    <option
+                                      key={unit}
+                                      value={unit}
+                                    >
+                                      {unit}
+                                    </option>
+                                  ))}
                               </select>
                             )}
 

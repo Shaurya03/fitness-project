@@ -7,6 +7,12 @@ const setSchema = new Schema({
     type: Map,
     of: Number,
     default: {}
+  },
+
+  inputUnits: {
+    type: Map,
+    of: String,
+    default: {}
   }
 });
 

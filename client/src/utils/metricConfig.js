@@ -1,9 +1,7 @@
 export const METRIC_CONFIG = {
   weight: {
     label: "Weight",
-    unit: "kg",
     showUnit: true,
-    step: 2.5,
     min: 0
   },
 
@@ -16,16 +14,13 @@ export const METRIC_CONFIG = {
 
   distance: {
     label: "Distance",
-    unit: "km",
     showUnit: true,
-    step: 0.1,
     min: 0
   },
 
   duration: {
     label: "Duration",
-    unit: "min",
-    showUnit: true,
+    showUnit: false,
     step: 1,
     min: 0
   },

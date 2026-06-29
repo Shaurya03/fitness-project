@@ -1,4 +1,4 @@
-.metrics-grid {
+.metric-selector-grid {
   display: grid;
   grid-template-columns: repeat(
     2,

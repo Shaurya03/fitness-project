@@ -7,6 +7,7 @@ import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
+import { DEFAULT_SETTINGS, DEFAULT_UNITS } from "../utils/settings";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
@@ -14,10 +15,17 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
   const { user } = useAuthContext();
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const settings = {
-    weightUnit: "kg",
-    distanceUnit: "km"
-  };
+  const settings = DEFAULT_SETTINGS;
+
+  const DEFAULT_DISTANCE_UNIT =
+    DEFAULT_UNITS[
+      DEFAULT_SETTINGS.distanceSystem
+    ].distance;
+
+  const DEFAULT_WEIGHT_UNIT =
+    DEFAULT_UNITS[
+      DEFAULT_SETTINGS.weightSystem
+    ].weight;
 
   const exerciseCount = workout.exercises?.length || 0;
 
@@ -101,40 +109,61 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
                 <div className="sets-list">
 
-                  <div className="metrics-header">
-
-                    {metrics.map(metric => {
-                      const config = getMetricConfig(metric);
-
-                      return (
-                        <span key={metric}>
-                          {config.label}
-                          {config.showUnit
-                            ? ` (${config.unit})`
-                            : ""
-                          }
-                        </span>
-                      );
-                    })}
-
-                  </div>
-
-                  {exercise.sets?.map((set, setIndex) => (
+                  {Array.from(
+                    { length: Math.ceil(metrics.length / 4) },
+                    (_, index) => metrics.slice(index * 4, index * 4 + 4)
+                  ).map((metricRow, rowIndex) => (
 
                     <div
-                      key={set._id || setIndex}
-                      className="set-row"
+                      className="metrics-grid"
+                      key={rowIndex}
                     >
 
-                      {metrics.map(metric => (
-                        <span key={metric}>
-                          {formatMetric(
-                            metric,
-                            set.metrics?.[metric],
-                            settings
-                          )}
-                        </span>
-                      ))}
+                      {metricRow.map(metric => {
+
+                        const config = getMetricConfig(metric);
+
+                        const unit =
+                          metric === "distance"
+                            ? exercise.sets?.[0]?.inputUnits?.distance ??
+                            DEFAULT_DISTANCE_UNIT
+                            : metric === "weight"
+                              ? DEFAULT_WEIGHT_UNIT
+                              : config.unit;
+
+                        return (
+
+                          <div
+                            className="metric-item"
+                            key={metric}
+                          >
+
+                            <span className="metric-header">
+                              {config.label}
+                              {config.showUnit ? ` (${unit})` : ""}
+                            </span>
+
+                            {exercise.sets?.map((set, setIndex) => (
+
+                              <span
+                                className="metric-value"
+                                key={set._id || setIndex}
+                              >
+                                {formatMetric(
+                                  metric,
+                                  set.metrics?.[metric],
+                                  settings,
+                                  set.inputUnits,
+                                  false
+                                )}
+                              </span>
+
+                            ))}
+
+                          </div>
+
+                        );
+                      })}
 
                     </div>
 

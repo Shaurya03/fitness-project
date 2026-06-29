@@ -275,11 +275,6 @@ const DEFAULT_EXERCISES = [
   },
 
   {
-    name: "Jump Rope",
-    category: "Cardio"
-  },
-
-  {
     name: "Rowing Machine",
     category: "Cardio"
   }

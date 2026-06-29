@@ -1,46 +1,66 @@
+import { DEFAULT_UNITS } from "./settings";
 import { UNITS } from "./units";
 
-export const formatMetric = (metric, value, settings) => {
+export const formatMetric = (
+  metric,
+  value,
+  settings,
+  inputUnits = {},
+  showUnit = true
+) => {
 
   switch (metric) {
 
     case "weight": {
-      const unit = settings.weightUnit;
+      const unit =
+        inputUnits.weight ??
+        DEFAULT_UNITS[settings.weightSystem].weight;
 
-      return `${UNITS.weight[unit].fromBase(value)} ${unit}`;
+      const config = UNITS.weight[unit];
+
+      const formattedValue =
+        config.fromBase(value)
+          .toFixed(config.precision);
+
+      return showUnit
+        ? `${formattedValue} ${unit}`
+        : `${formattedValue}`
     }
 
     case "distance": {
-      const unit = settings.distanceUnit;
+      const unit =
+        inputUnits.distance ??
+        DEFAULT_UNITS[settings.distanceSystem].distance;
 
-      return `${UNITS.distance[unit].fromBase(value)} ${unit}`;
+      const config = UNITS.distance[unit];
+
+      const formattedValue =
+        config.fromBase(value)
+          .toFixed(config.precision);
+
+      return showUnit
+        ? `${formattedValue} ${unit}`
+        : `${formattedValue}`
     }
 
     case "duration": {
-
-      const hours = Math.floor(value / 3600);
-      const minutes = Math.floor((value % 3600) / 60);
-      const seconds = value % 60;
-
-      const parts = [];
 
       if (value === undefined || value === null) {
         return "";
       }
 
+      const hours = Math.floor(value / 3600);
+      const minutes = Math.floor((value % 3600) / 60);
+      const seconds = value % 60;
+
+      const pad = number => String(number).padStart(2, "0");
+
       if (hours > 0) {
-        parts.push(`${hours}h`);
+        return `${hours}:${pad(minutes)}:${pad(seconds)}`;
       }
 
-      if (minutes > 0) {
-        parts.push(`${minutes}m`);
-      }
+      return `${pad(minutes)}:${pad(seconds)}`;
 
-      if (seconds > 0 || parts.length === 0) {
-        parts.push(`${seconds}s`);
-      }
-
-      return parts.join(" ");
     }
 
     default:
