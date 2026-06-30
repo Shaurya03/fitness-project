@@ -1,6 +1,9 @@
 import { DEFAULT_UNITS } from "./settings";
 import { UNITS } from "./units";
 
+const pad = number =>
+  String(number).padStart(2, "0");
+
 export const formatMetric = (
   metric,
   value,
@@ -24,7 +27,7 @@ export const formatMetric = (
 
       return showUnit
         ? `${formattedValue} ${unit}`
-        : `${formattedValue}`
+        : formattedValue;
     }
 
     case "distance": {
@@ -40,12 +43,12 @@ export const formatMetric = (
 
       return showUnit
         ? `${formattedValue} ${unit}`
-        : `${formattedValue}`
+        : formattedValue;
     }
 
     case "duration": {
 
-      if (value === undefined || value === null) {
+      if (value == null) {
         return "";
       }
 
@@ -53,14 +56,44 @@ export const formatMetric = (
       const minutes = Math.floor((value % 3600) / 60);
       const seconds = value % 60;
 
-      const pad = number => String(number).padStart(2, "0");
-
       if (hours > 0) {
         return `${hours}:${pad(minutes)}:${pad(seconds)}`;
       }
 
       return `${pad(minutes)}:${pad(seconds)}`;
+    }
 
+    case "pace": {
+
+      if (value == null) {
+        return "";
+      }
+
+      const totalSeconds = Math.round(value);
+
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+
+      const unit =
+        settings.distanceSystem === "metric"
+          ? "km"
+          : "mi";
+
+      return `${minutes}:${pad(seconds)}/${unit}`;
+    }
+
+    case "speed": {
+
+      if (value == null) {
+        return "";
+      }
+
+      const unit =
+        settings.distanceSystem === "metric"
+          ? "km/h"
+          : "mph";
+
+      return `${value.toFixed(1)} ${unit}`;
     }
 
     default:

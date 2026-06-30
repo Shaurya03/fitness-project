@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { DEFAULT_SETTINGS, DEFAULT_UNITS } from "../utils/settings";
+import { getDisplayMetrics } from "../utils/derivedMetrics";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
@@ -94,9 +95,22 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
         {workout.exercises?.length > 0 ? (
           workout.exercises.map((exercise, index) => {
 
-            const metrics = Object.keys(
-              exercise.sets?.[0]?.metrics || {}
+            const displayMetrics = getDisplayMetrics(
+              exercise.sets?.[0]?.metrics || {},
+              settings.distanceSystem
             );
+
+            const metricKeys =
+              displayMetrics.map(metric => metric.key);
+
+            const setsWithDisplayMetrics =
+              exercise.sets?.map(set => ({
+                ...set,
+                displayMetrics: getDisplayMetrics(
+                  set.metrics,
+                  settings.distanceSystem
+                )
+              })) || [];
 
             return (
 
@@ -110,8 +124,8 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
                 <div className="sets-list">
 
                   {Array.from(
-                    { length: Math.ceil(metrics.length / 4) },
-                    (_, index) => metrics.slice(index * 4, index * 4 + 4)
+                    { length: Math.ceil(metricKeys.length / 4) },
+                    (_, index) => metricKeys.slice(index * 4, index * 4 + 4)
                   ).map((metricRow, rowIndex) => (
 
                     <div
@@ -143,22 +157,29 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
                               {config.showUnit ? ` (${unit})` : ""}
                             </span>
 
-                            {exercise.sets?.map((set, setIndex) => (
+                            {setsWithDisplayMetrics.map((set, setIndex) => {
 
-                              <span
-                                className="metric-value"
-                                key={set._id || setIndex}
-                              >
-                                {formatMetric(
-                                  metric,
-                                  set.metrics?.[metric],
-                                  settings,
-                                  set.inputUnits,
-                                  false
-                                )}
-                              </span>
+                              const value = set.displayMetrics.find(
+                                item => item.key === metric
+                              )?.value;
 
-                            ))}
+                              return (
+
+                                <span
+                                  className="metric-value"
+                                  key={set._id || setIndex}
+                                >
+                                  {formatMetric(
+                                    metric,
+                                    value,
+                                    settings,
+                                    set.inputUnits,
+                                    false
+                                  )}
+                                </span>
+
+                              );
+                            })}
 
                           </div>
 

@@ -55,6 +55,16 @@ export const METRIC_CONFIG = {
     showUnit: false,
     step: 1,
     min: 0
+  },
+
+  pace: {
+    label: "Pace",
+    showUnit: false
+  },
+
+  speed: {
+    label: "Speed",
+    showUnit: false
   }
 };
 
