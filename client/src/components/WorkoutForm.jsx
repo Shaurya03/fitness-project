@@ -328,10 +328,15 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
 
   const addExercise = () => {
 
+    const previousExercise =
+      exercises[exercises.length - 1];
+
     setExercises([
       ...exercises,
       {
         ...emptyExercise,
+        categoryId:
+          previousExercise?.categoryId || ""
       }
     ]);
   };
