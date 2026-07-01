@@ -3,21 +3,47 @@ import {
   PieChart,
   Pie,
   Cell,
-  Tooltip,
   ResponsiveContainer,
-  Label
+  Label,
+  Sector
 } from "recharts";
 import './CategoryBreakdownChart.css';
 
-const categoryColors = {
-  Chest: "#EF4444",
-  Back: "#3B82F6",
-  Legs: "#F59E0B",
-  Shoulders: "#A855F7",
-  Biceps: "#10B981",
-  Triceps: "#14B8A6",
-  Forearms: "#6366F1",
-  Cardio: "#EC4899"
+const renderActiveShape = (props) => {
+  const {
+    cx,
+    cy,
+    innerRadius,
+    outerRadius,
+    startAngle,
+    endAngle,
+    fill
+  } = props;
+
+  return (
+    <g>
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 8}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        opacity={0.4}
+      />
+
+      <Sector
+        cx={cx}
+        cy={cy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+      />
+    </g>
+  );
 };
 
 function CategoryBreakdownChart({ workouts }) {
@@ -25,30 +51,32 @@ function CategoryBreakdownChart({ workouts }) {
 
   workouts?.forEach(workout => {
     workout.exercises?.forEach(exercise => {
-      const category =
-        exercise.type === "cardio"
-          ? "Cardio"
-          : exercise.category;
 
-      const setCount =
-        exercise.type === "cardio"
-          ? 1
-          : exercise.sets?.length || 0;
+      const category = exercise.exerciseId?.categoryId;
 
-      categoryTotals[category] =
-        (categoryTotals[category] || 0) + setCount;
+      if (!category) {
+        return;
+      }
+
+      if (!categoryTotals[category._id]) {
+        categoryTotals[category._id] = {
+          name: category.name,
+          color: category.color,
+          value: 0
+        };
+      }
+
+      categoryTotals[category._id].value +=
+        exercise.sets?.length || 0;
 
     });
   });
 
-  const chartData = Object.entries(categoryTotals)
-    .map(([name, value]) => ({
-      name,
-      value
-    }))
+  const chartData = Object.values(categoryTotals)
     .sort((a, b) => b.value - a.value);
 
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(-1);
 
   const displayedCategory = activeCategory || chartData[0];
 
@@ -86,20 +114,22 @@ function CategoryBreakdownChart({ workouts }) {
             innerRadius={70}
             outerRadius={120}
             paddingAngle={2}
-            onMouseEnter={(_, index) =>
+            onMouseEnter={(_, index) => {
               setActiveCategory(chartData[index])
-            }
-            onMouseLeave={() =>
+              setActiveIndex(index)
+            }}
+            onMouseLeave={() => {
               setActiveCategory(null)
-            }
+              setActiveIndex(-1)
+            }}
+            activeIndex={activeIndex}
+            activeShape={renderActiveShape}
           >
             {
               chartData.map((entry) => (
                 <Cell
                   key={entry.name}
-                  fill={
-                    categoryColors[entry.name] || "#999"
-                  }
+                  fill={entry.color}
                 />
               ))
             }
@@ -140,14 +170,6 @@ function CategoryBreakdownChart({ workouts }) {
               }}
             />
           </Pie>
-          <Tooltip
-            formatter={(value, name) => [
-              name === "Cardio"
-                ? `${value} ${value === 1 ? "session" : "sessions"}`
-                : `${value} ${value === 1 ? "set" : "sets"}`,
-              name
-            ]}
-          />
         </PieChart>
       </ResponsiveContainer>
 
@@ -161,7 +183,7 @@ function CategoryBreakdownChart({ workouts }) {
               <span
                 className="color-dot"
                 style={{
-                  backgroundColor: categoryColors[item.name] || "#999"
+                  backgroundColor: item.color
                 }}
               />
               <span>{item.name}</span>
@@ -169,10 +191,7 @@ function CategoryBreakdownChart({ workouts }) {
 
             <div className="category-breakdown-stats">
               <span>{item.value}{" "}
-                {item.name === "Cardio"
-                  ? `${item.value === 1 ? "session" : "sessions"}`
-                  : `${item.value === 1 ? "set" : "sets"}`
-                }
+                {item.value === 1 ? "set" : "sets"}
               </span>
 
               <span>

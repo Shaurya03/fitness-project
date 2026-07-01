@@ -8,6 +8,11 @@ const categorySchema = new mongoose.Schema({
     trim: true
   },
 
+  color: {
+    type: String,
+    required: true
+  },
+
   defaultMetrics: {
     type: [String],
     enum: METRICS,

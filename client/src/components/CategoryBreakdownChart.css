@@ -63,3 +63,10 @@
 .chart-empty {
   color: #666;
 }
+
+.recharts-pie-sector:focus,
+.recharts-sector:focus,
+.recharts-layer:focus,
+.recharts-wrapper svg:focus {
+  outline: none;
+}

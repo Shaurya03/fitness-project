@@ -4,6 +4,7 @@ const Category = require("../models/categoryModel");
 const Exercise = require("../models/exerciseModel");
 const DEFAULT_CATEGORIES = require("../utils/defaultCategories");
 const DEFAULT_EXERCISES = require("../utils/defaultExercises");
+const CATEGORY_COLORS = require('../utils/categoryColors');
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.SECRET, { expiresIn: '3d' });
@@ -17,8 +18,9 @@ const signupUser = async (req, res) => {
 
     const categories = await Category.insertMany(
       DEFAULT_CATEGORIES.map(
-        (category) => ({
+        (category, index) => ({
           ...category,
+          color: CATEGORY_COLORS[index],
           user_id: user._id
         })
       )
