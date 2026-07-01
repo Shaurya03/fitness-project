@@ -3,6 +3,8 @@ import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
 import { getPersonalRecords } from "../utils/personalRecords";
+import { formatMetric } from "../utils/metricFormatter";
+import { DEFAULT_SETTINGS } from "../utils/settings";
 import StatCard from "../components/StatCard";
 import PersonalRecordCard from "../components/PersonalRecordCard";
 import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
@@ -15,6 +17,8 @@ function Dashboard() {
   const { workouts } = useWorkoutContext();
 
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+
+  const settings = DEFAULT_SETTINGS;
 
   const stats = getDashboardStats(workouts);
 
@@ -57,17 +61,29 @@ function Dashboard() {
 
         <StatCard
           title="Volume"
-          value={`${stats.totalVolume} kg`}
+          value={formatMetric(
+            "weight",
+            stats.totalVolume,
+            settings
+          )}
         />
 
         <StatCard
           title="Total Distance"
-          value={`${stats.totalDistance} km`}
+          value={formatMetric(
+            "distance",
+            stats.totalDistance,
+            settings
+          )}
         />
 
         <StatCard
           title="Total Duration"
-          value={`${stats.totalDuration} min`}
+          value={formatMetric(
+            "duration",
+            stats.totalDuration,
+            settings
+          )}
         />
 
       </div>
@@ -78,7 +94,11 @@ function Dashboard() {
 
         <PersonalRecordCard
           title="Highest Weight"
-          value={`${prs.highestWeightRecord?.value || 0} kg`}
+          value={formatMetric(
+            "weight",
+            prs.highestWeightRecord?.value || 0,
+            settings
+          )}
           exercise={prs.highestWeightRecord?.exerciseName || "None"}
           workout={prs.highestWeightRecord?.title || "None"}
           date={
@@ -95,7 +115,11 @@ function Dashboard() {
 
         <PersonalRecordCard
           title="Longest Distance"
-          value={`${prs.longestDistanceRecord?.value || 0} km`}
+          value={formatMetric(
+            "distance",
+            prs.longestDistanceRecord?.value || 0,
+            settings
+          )}
           exercise={prs.longestDistanceRecord.exerciseName || "None"}
           workout={prs.longestDistanceRecord?.title || "None"}
           date={
@@ -112,7 +136,11 @@ function Dashboard() {
 
         <PersonalRecordCard
           title="Longest Duration"
-          value={`${prs.longestDurationRecord?.value || 0} min`}
+          value={formatMetric(
+            "duration",
+            prs.longestDurationRecord?.value || 0,
+            settings
+          )}
           exercise={prs.longestDurationRecord.exerciseName || "None"}
           workout={prs.longestDurationRecord?.title || "None"}
           date={
@@ -145,7 +173,11 @@ function Dashboard() {
 
         <PersonalRecordCard
           title="Highest Volume Workout"
-          value={`${prs.highestVolumeRecord?.volume || 0} kg`}
+          value={formatMetric(
+            "weight",
+            prs.highestVolumeRecord?.volume || 0,
+            settings
+          )}
           workout={prs.highestVolumeRecord?.title || "None"}
           date={
             prs.highestVolumeRecord.date
@@ -176,7 +208,7 @@ function Dashboard() {
 
       <div className="charts-section">
         <CategoryBreakdownChart workouts={workouts} />
-        <VolumeChart workouts={workouts} /> 
+        <VolumeChart workouts={workouts} />
       </div>
 
     </div>

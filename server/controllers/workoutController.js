@@ -103,7 +103,12 @@ const getWorkouts = async (req, res, next) => {
     const user_id = req.user._id;
     const workouts = await Workout
       .find({ user_id })
-      .populate("exercises.exerciseId")
+      .populate({
+        path: "exercises.exerciseId",
+        populate: {
+          path: "categoryId"
+        }
+      })
       .sort({ createdAt: -1 });
     res.status(200).json(workouts);
   } catch (error) {
@@ -123,7 +128,12 @@ const getWorkout = async (req, res, next) => {
         _id: id,
         user_id
       })
-      .populate("exercises.exerciseId");
+      .populate({
+        path: "exercises.exerciseId",
+        populate: {
+          path: "categoryId"
+        }
+      });
 
     if (!workout) {
       throw createError("Workout not found", 404);
@@ -156,7 +166,12 @@ const createWorkout = async (req, res, next) => {
 
     const populatedWorkout = await Workout
       .findById(workout._id)
-      .populate("exercises.exerciseId");
+      .populate({
+        path: "exercises.exerciseId",
+        populate: {
+          path: "categoryId"
+        }
+      });
 
     res.status(201).json(populatedWorkout);
   } catch (error) {
@@ -211,7 +226,12 @@ const updateWorkout = async (req, res, next) => {
 
     const populatedWorkout = await Workout
       .findById(workout._id)
-      .populate("exercises.exerciseId");
+      .populate({
+        path: "exercises.exerciseId",
+        populate: {
+          path: "categoryId"
+        }
+      });
 
     res.status(200).json(populatedWorkout);
   } catch (error) {

@@ -24,9 +24,12 @@ export const getDashboardStats = (workouts) => {
   workouts.forEach((workout) => {
     workout.exercises?.forEach((exercise) => {
 
-      if (exercise.category) {
-        categoryCounts[exercise.category] =
-          (categoryCounts[exercise.category] || 0) + 1;
+      const category =
+        exercise.exerciseId?.categoryId?.name;
+
+      if (category) {
+        categoryCounts[category] =
+          (categoryCounts[category] || 0) + 1;
       }
     });
   });
@@ -40,19 +43,26 @@ export const getDashboardStats = (workouts) => {
     total + getWorkoutVolume(workout), 0
   );
 
-  const cardioExercises = workouts.flatMap(workout =>
-    workout.exercises?.filter(exercise =>
-      exercise.type === "cardio"
-    ) || []
-  );
+  let totalDistance = 0;
+  let totalDuration = 0;
 
-  const totalDistance = cardioExercises.reduce((total, exercise) =>
-    total + (exercise.distance || 0), 0
-  );
+  workouts.forEach(workout => {
 
-  const totalDuration = cardioExercises.reduce((total, exercise) =>
-    total + (exercise.duration || 0), 0
-  );
+    workout.exercises?.forEach(exercise => {
+
+      exercise.sets?.forEach(set => {
+
+        totalDistance +=
+          set.metrics?.distance || 0;
+
+        totalDuration +=
+          set.metrics?.duration || 0;
+
+      });
+
+    });
+
+  });
 
   return {
     totalWorkouts,
