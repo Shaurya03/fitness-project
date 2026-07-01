@@ -100,7 +100,7 @@ function Dashboard() {
             settings
           )}
           exercise={prs.highestWeightRecord?.exerciseName || "None"}
-          workout={prs.highestWeightRecord?.title || "None"}
+          workout={prs.highestWeightRecord?.title}
           date={
             prs.highestWeightRecord.date
               ?
@@ -121,7 +121,7 @@ function Dashboard() {
             settings
           )}
           exercise={prs.longestDistanceRecord.exerciseName || "None"}
-          workout={prs.longestDistanceRecord?.title || "None"}
+          workout={prs.longestDistanceRecord?.title}
           date={
             prs.longestDistanceRecord.date
               ?
@@ -142,7 +142,7 @@ function Dashboard() {
             settings
           )}
           exercise={prs.longestDurationRecord.exerciseName || "None"}
-          workout={prs.longestDurationRecord?.title || "None"}
+          workout={prs.longestDurationRecord?.title}
           date={
             prs.longestDurationRecord.date
               ?
@@ -158,7 +158,7 @@ function Dashboard() {
         <PersonalRecordCard
           title="Most Exercises"
           value={prs.mostExercisesRecord?.value || 0}
-          workout={prs.mostExercisesRecord?.title || "None"}
+          workout={prs.mostExercisesRecord?.title}
           date={
             prs.mostExercisesRecord.date
               ?
@@ -178,7 +178,7 @@ function Dashboard() {
             prs.highestVolumeRecord?.volume || 0,
             settings
           )}
-          workout={prs.highestVolumeRecord?.title || "None"}
+          workout={prs.highestVolumeRecord?.title}
           date={
             prs.highestVolumeRecord.date
               ?

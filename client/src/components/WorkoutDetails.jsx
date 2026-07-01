@@ -121,6 +121,10 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
 
                 <h4>{exercise.exerciseId?.name}</h4>
 
+                <p className="exercise-category">
+                  {exercise.exerciseId?.categoryId?.name}
+                </p>
+
                 <div className="sets-list">
 
                   {Array.from(
