@@ -5,6 +5,9 @@ import { getDashboardStats } from "../utils/dashboardStats";
 import { getPersonalRecords } from "../utils/personalRecords";
 import { formatMetric } from "../utils/metricFormatter";
 import { DEFAULT_SETTINGS } from "../utils/settings";
+import { filterWorkouts } from "../utils/filterWorkouts";
+import { getPeriodLabel, getDisableNext, getPreviousPeriodDate, getNextPeriodDate } from "../utils/dashboardNavigation";
+import DashboardFilter from "../components/DashboardFilter";
 import StatCard from "../components/StatCard";
 import PersonalRecordCard from "../components/PersonalRecordCard";
 import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
@@ -18,14 +21,68 @@ function Dashboard() {
 
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
+  const [selectedPeriod, setSelectedPeriod] = useState("all");
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [customRange, setCustomRange] = useState({
+    startDate: "",
+    endDate: ""
+  });
+
+  const filteredWorkouts = filterWorkouts(
+    workouts,
+    selectedPeriod,
+    selectedDate,
+    customRange
+  );
+
+  const periodLabel = getPeriodLabel(
+    selectedPeriod,
+    selectedDate
+  );
+
+  const disableNext = getDisableNext(
+    selectedPeriod,
+    selectedDate
+  );
+
+  const goToPrevious = () => {
+    setSelectedDate(date =>
+      getPreviousPeriodDate(
+        selectedPeriod,
+        date
+      )
+    );
+  };
+
+  const goToNext = () => {
+    setSelectedDate(date =>
+      getNextPeriodDate(
+        selectedPeriod,
+        date
+      )
+    );
+  };
+
+  const handlePeriodChange = (newPeriod) => {
+    setSelectedPeriod(newPeriod);
+    setSelectedDate(new Date());
+
+    if (newPeriod !== "custom") {
+      setCustomRange({
+        startDate: "",
+        endDate: ""
+      });
+    }
+  };
+
   const settings = DEFAULT_SETTINGS;
 
-  const stats = getDashboardStats(workouts);
+  const stats = getDashboardStats(filteredWorkouts);
 
-  const prs = getPersonalRecords(workouts);
+  const prs = getPersonalRecords(filteredWorkouts);
 
   const openWorkoutPreview = (workoutId) => {
-    const workout = workouts.find(
+    const workout = filteredWorkouts.find(
       workout => workout._id === workoutId
     );
 
@@ -36,6 +93,17 @@ function Dashboard() {
     <div className="dashboard">
 
       <h2>Dashboard</h2>
+
+      <DashboardFilter
+        selectedPeriod={selectedPeriod}
+        onPeriodChange={handlePeriodChange}
+        periodLabel={periodLabel}
+        onPrevious={goToPrevious}
+        onNext={goToNext}
+        disableNext={disableNext}
+        customRange={customRange}
+        setCustomRange={setCustomRange}
+      />
 
       <div className="stats-grid">
 
@@ -207,8 +275,8 @@ function Dashboard() {
       <h2>Progress Charts</h2>
 
       <div className="charts-section">
-        <CategoryBreakdownChart workouts={workouts} />
-        <VolumeChart workouts={workouts} />
+        <CategoryBreakdownChart workouts={filteredWorkouts} />
+        <VolumeChart workouts={filteredWorkouts} />
       </div>
 
     </div>
