@@ -1,3 +1,21 @@
+import { forwardRef } from "react";
+import { format } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const DateButton = forwardRef(({ label, onClick }, ref) => (
+  <button
+    ref={ref}
+    type="button"
+    className="date-display"
+    onClick={onClick}
+  >
+    {label}
+  </button>
+));
+
+DateButton.displayName = "DateButton";
+
 function DashboardFilter({
   selectedPeriod,
   onPeriodChange,
@@ -8,6 +26,24 @@ function DashboardFilter({
   customRange,
   setCustomRange
 }) {
+
+  const rangeLabel = (() => {
+    const { startDate, endDate } = customRange;
+
+    if (!startDate) {
+      return "Select Date Range";
+    }
+
+    if (!endDate) {
+      return `${format(startDate, "dd MMM yyyy")} to ...`;
+    }
+
+    return `${format(startDate, "dd MMM yyyy")} to ${format(
+      endDate,
+      "dd MMM yyyy"
+    )}`;
+  })();
+
   return (
     <div className="dashboard-filter">
       <select
@@ -43,31 +79,24 @@ function DashboardFilter({
 
       {selectedPeriod === "custom" && (
         <div className="period-navigation">
-          <input
-            type="date"
-            value={customRange.startDate || ""}
-            onChange={(event) =>
-              setCustomRange(range => ({
-                ...range,
-                startDate: event.target.value
-              }))
+          <DatePicker
+            selectsRange
+            startDate={customRange.startDate}
+            endDate={customRange.endDate}
+            onChange={([startDate, endDate]) =>
+              setCustomRange({
+                startDate,
+                endDate
+              })
             }
-          />
-
-          <input
-            type="date"
-            min={customRange.startDate}
-            value={customRange.endDate || ""}
-            onChange={(event) =>
-              setCustomRange(range => ({
-                ...range,
-                endDate: event.target.value
-              }))
-            }
+            customInput={<DateButton label={rangeLabel} />}
+            dateFormat="dd MMM yyyy"
+            shouldCloseOnSelect={false}
+            popperPlacement="bottom-start"
           />
         </div>
       )}
-    </div>
+    </div >
   );
 }
 

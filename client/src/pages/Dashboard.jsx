@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
@@ -27,6 +27,36 @@ function Dashboard() {
     startDate: "",
     endDate: ""
   });
+
+  const getDefaultCustomRange = useCallback(() => {
+    const endDate = new Date();
+
+    if (!workouts?.length) {
+      return {
+        startDate: new Date(),
+        endDate
+      };
+    }
+
+    return {
+      startDate: new Date(
+        Math.min(
+          ...workouts.map(workout => new Date(workout.date))
+        )
+      ),
+      endDate
+    };
+  }, [workouts]);
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    setCustomRange(getDefaultCustomRange());
+  }, [getDefaultCustomRange]);
+
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  const settings = DEFAULT_SETTINGS;
 
   const filteredWorkouts = filterWorkouts(
     workouts,
@@ -68,14 +98,9 @@ function Dashboard() {
     setSelectedDate(new Date());
 
     if (newPeriod === "custom") {
-      setCustomRange({
-        startDate: "",
-        endDate: ""
-      });
+      setCustomRange(getDefaultCustomRange());
     }
   };
-
-  const settings = DEFAULT_SETTINGS;
 
   const stats = getDashboardStats(filteredWorkouts);
 

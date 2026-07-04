@@ -28,7 +28,7 @@
   padding: 16px 20px;
   border-radius: 12px;
 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .recent-workouts {
@@ -41,7 +41,7 @@
   padding: 18px;
   border-radius: 12px;
 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 }
 
 .recent-workout-card h4 {
@@ -50,4 +50,9 @@
 
 .recent-workout-card p {
   margin: 6px 0;
+}
+
+.date-display {
+  min-width: 100%;
+  text-align: left;
 }
