@@ -19,7 +19,7 @@ function DashboardFilter({
         <option value="month">Month</option>
         <option value="year">Year</option>
         <option value="all">All Time</option>
-        <option value="custom">Custom Range</option>
+        <option value="custom">Custom</option>
       </select>
 
       {selectedPeriod !== "all" &&

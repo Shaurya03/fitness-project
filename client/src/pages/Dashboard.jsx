@@ -67,7 +67,7 @@ function Dashboard() {
     setSelectedPeriod(newPeriod);
     setSelectedDate(new Date());
 
-    if (newPeriod !== "custom") {
+    if (newPeriod === "custom") {
       setCustomRange({
         startDate: "",
         endDate: ""
