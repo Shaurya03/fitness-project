@@ -1,7 +1,9 @@
 import { forwardRef } from "react";
 import { format } from "date-fns";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "./DashboardFilter.css";
 
 const DateButton = forwardRef(({ label, onClick }, ref) => (
   <button
@@ -38,7 +40,7 @@ function DashboardFilter({
       return `${format(startDate, "dd MMM yyyy")} to ...`;
     }
 
-    return `${format(startDate, "dd MMM yyyy")} to ${format(
+    return `${format(startDate, "dd MMM yyyy")} - ${format(
       endDate,
       "dd MMM yyyy"
     )}`;
@@ -46,17 +48,20 @@ function DashboardFilter({
 
   return (
     <div className="dashboard-filter">
-      <select
-        value={selectedPeriod}
-        onChange={(event) => onPeriodChange(event.target.value)}
-      >
-        <option value="day">Day</option>
-        <option value="week">Week</option>
-        <option value="month">Month</option>
-        <option value="year">Year</option>
-        <option value="all">All Time</option>
-        <option value="custom">Custom</option>
-      </select>
+
+      <div className="filter-period">
+        <select
+          value={selectedPeriod}
+          onChange={(event) => onPeriodChange(event.target.value)}
+        >
+          <option value="day">Day</option>
+          <option value="week">Week</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+          <option value="all">All Time</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
 
       {selectedPeriod !== "all" &&
         selectedPeriod !== "custom" && (
@@ -64,15 +69,17 @@ function DashboardFilter({
             <button
               onClick={onPrevious}
             >
-              {"<"}
+              <FaChevronLeft />
             </button>
 
-            <span>{periodLabel}</span>
+            <span className="period-label">
+              {periodLabel}
+            </span>
 
             <button onClick={onNext}
               disabled={disableNext}
             >
-              {">"}
+              <FaChevronRight />
             </button>
           </div>
         )}
@@ -92,7 +99,7 @@ function DashboardFilter({
             customInput={<DateButton label={rangeLabel} />}
             dateFormat="dd MMM yyyy"
             shouldCloseOnSelect={false}
-            popperPlacement="bottom-start"
+            popperPlacement="bottom-end"
           />
         </div>
       )}

@@ -21,7 +21,7 @@ function Dashboard() {
 
   const [selectedWorkout, setSelectedWorkout] = useState(null);
 
-  const [selectedPeriod, setSelectedPeriod] = useState("all");
+  const [selectedPeriod, setSelectedPeriod] = useState("week");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [customRange, setCustomRange] = useState({
     startDate: "",
