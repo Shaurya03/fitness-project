@@ -6,7 +6,7 @@ import { API_BASE_URL } from "../services/api";
 
 export const WorkoutContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(workoutReducer, {
-    workouts: null,
+    workouts: [],
     isLoading: false,
     error: null
   });

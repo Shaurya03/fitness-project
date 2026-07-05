@@ -8,11 +8,13 @@ import {
 } from "date-fns";
 
 export const filterWorkouts = (
-  workouts,
+  workouts = [],
   selectedPeriod,
   selectedDate,
   customRange
 ) => {
+  workouts ??= [];
+
   if (selectedPeriod === "all") {
     return workouts;
   }
