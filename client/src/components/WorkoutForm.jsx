@@ -51,6 +51,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const [showCreateExerciseModal, setShowCreateExerciseModal] = useState(false);
   const [targetExerciseIndex, setTargetExerciseIndex] = useState(null);
 
+  const [expandedExercise, setExpandedExercise] = useState(0);
+
   const { exercises: exerciseCatalog, fetchExercises, createExercise } = useExercises();
 
   const { categories, fetchCategories } = useCategories();
@@ -622,6 +624,14 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
       category._id === exercises[targetExerciseIndex]?.categoryId
   );
 
+  const toggleExercise = (exerciseIndex) => {
+    setExpandedExercise(current =>
+      current === exerciseIndex
+        ? null
+        : exerciseIndex
+    );
+  };
+
   return (
     <form className="workout-form" onSubmit={handleSubmit}>
       <h3>
@@ -661,6 +671,9 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           addSet={addSet}
           removeSet={removeSet}
           removeExercise={removeExercise}
+
+          expanded={expandedExercise === exerciseIndex}
+          onToggle={() => toggleExercise(exerciseIndex)}
         />
       ))}
 
