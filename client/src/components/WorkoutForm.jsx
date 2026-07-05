@@ -334,6 +334,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     const previousExercise =
       exercises[exercises.length - 1];
 
+    const newIndex = exercises.length;
+
     setExercises([
       ...exercises,
       {
@@ -342,6 +344,8 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           previousExercise?.categoryId || ""
       }
     ]);
+
+    setExpandedExercise(newIndex);
   };
 
   const addSet = (exerciseIndex) => {
