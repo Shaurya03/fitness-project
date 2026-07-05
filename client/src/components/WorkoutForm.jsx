@@ -6,9 +6,10 @@ import { useExercises } from '../hooks/useExercises';
 import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
-import { DISTANCE_SYSTEMS, UNITS } from '../utils/units';
+import { UNITS } from '../utils/units';
 import { DEFAULT_SETTINGS, DEFAULT_UNITS } from '../utils/settings';
 import CreateExerciseModal from "./CreateExerciseModal";
+import WorkoutExerciseCard from './WorkoutExerciseCard';
 import "./WorkoutForm.css";
 
 const DEFAULT_DISTANCE_UNIT =
@@ -636,307 +637,32 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
         value={title}
       />
 
-      {exercises.map((exercise, exerciseIndex) => {
-        const selectedExercise =
-          getSelectedExercise(exercise.exerciseId);
+      {exercises.map((exercise, exerciseIndex) => (
 
-        const exerciseMetrics =
-          selectedExercise?.metrics || [];
+        <WorkoutExerciseCard
+          key={exerciseIndex}
 
-        return (
+          exercise={exercise}
+          exerciseIndex={exerciseIndex}
 
-          <div
-            className="exercise-block"
-            key={exerciseIndex}
-          >
+          totalExercises={exercises.length}
 
-            <h4>Exercise {exerciseIndex + 1}</h4>
+          categories={categories}
 
-            <select
-              name="categoryId"
-              onChange={(event) =>
-                handleExerciseChange(event, exerciseIndex)
-              }
-              value={exercise.categoryId}
-            >
-              <option value="">
-                Select a category
-              </option>
+          getSelectedExercise={getSelectedExercise}
+          getFilteredExercises={getFilteredExercises}
 
-              {categories?.map((category) => (
-                <option
-                  key={category._id}
-                  value={category._id}
-                >
-                  {category.name}
-                </option>
-              ))}
-            </select>
+          handleExerciseChange={handleExerciseChange}
+          handleSetChange={handleSetChange}
+          handleDurationChange={handleDurationChange}
+          adjustMetricValue={adjustMetricValue}
+          handleUnitChange={handleUnitChange}
 
-            <label>Exercise Name:</label>
-            <select
-              name="exerciseId"
-              onChange={(event) =>
-                handleExerciseChange(event, exerciseIndex)
-              }
-              value={exercise.exerciseId}
-              disabled={!exercise.categoryId}
-            >
-              <option value="">
-                Select an exercise
-              </option>
-
-              {getFilteredExercises(exercise)?.map((catalogExercise) => (
-                <option
-                  key={catalogExercise._id}
-                  value={catalogExercise._id}
-                >
-                  {catalogExercise.name}
-                </option>
-              ))}
-              <option value="__CREATE_NEW__">
-                + Create New Exercise
-              </option>
-            </select>
-
-            {exercise.exerciseId && (
-              <div className="sets-container">
-
-                {exercise.sets.map((set, setIndex) => (
-
-                  <div
-                    key={setIndex}
-                    className="set-block"
-                  >
-
-                    <h5>
-                      Set {setIndex + 1}
-                    </h5>
-
-                    {exerciseMetrics.map((metric) => {
-
-                      const config = getMetricConfig(metric);
-
-                      if (metric === "duration") {
-                        return (
-                          <div
-                            key={metric}
-                            className="duration-inputs"
-                          >
-
-                            <label className="metric-label">
-                              {config.label}
-                            </label>
-
-                            <div className="duration-time">
-
-                              <input
-                                type="number"
-                                name="hours"
-                                placeholder="HH"
-                                onChange={(event) =>
-                                  handleDurationChange(
-                                    event,
-                                    exerciseIndex,
-                                    setIndex
-                                  )
-                                }
-                                value={set.metrics?.duration?.hours ?? ""}
-                                onWheel={(event) =>
-                                  event.currentTarget.blur()
-                                }
-                              />
-
-                              <span>:</span>
-
-                              <input
-                                type="number"
-                                name="minutes"
-                                placeholder="MM"
-                                onChange={(event) =>
-                                  handleDurationChange(
-                                    event,
-                                    exerciseIndex,
-                                    setIndex
-                                  )
-                                }
-                                value={set.metrics?.duration?.minutes ?? ""}
-                                min={0}
-                                max={59}
-                                onWheel={(event) =>
-                                  event.currentTarget.blur()
-                                }
-                              />
-
-                              <span>:</span>
-
-                              <input
-                                type="number"
-                                name="seconds"
-                                placeholder="SS"
-                                onChange={(event) =>
-                                  handleDurationChange(
-                                    event,
-                                    exerciseIndex,
-                                    setIndex
-                                  )
-                                }
-                                value={set.metrics?.duration?.seconds ?? ""}
-                                min={0}
-                                max={59}
-                                onWheel={(event) =>
-                                  event.currentTarget.blur()
-                                }
-                              />
-
-                            </div>
-
-                          </div>
-                        );
-                      }
-
-                      return (
-
-                        <div
-                          key={metric}
-                          className="metric-input"
-                        >
-                          <label className="metric-label">
-                            {config.label}
-
-                            {metric === "weight" && ` (${DEFAULT_WEIGHT_UNIT})`}
-
-                            {metric !== "weight" &&
-                              metric !== "distance" &&
-                              config.showUnit &&
-                              config.unit &&
-                              ` (${config.unit})`}
-                          </label>
-
-                          <div className="metric-controls">
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                adjustMetricValue(
-                                  exerciseIndex,
-                                  setIndex,
-                                  metric,
-                                  -1
-                                )
-                              }
-                            >
-                              -
-                            </button>
-
-                            <input
-                              type="number"
-                              name={metric}
-                              value={
-                                set.metrics?.[metric] ?? ""
-                              }
-                              onChange={(event) =>
-                                handleSetChange(
-                                  event,
-                                  exerciseIndex,
-                                  setIndex
-                                )
-                              }
-                              onWheel={(event) =>
-                                event.currentTarget.blur()
-                              }
-                            />
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                adjustMetricValue(
-                                  exerciseIndex,
-                                  setIndex,
-                                  metric,
-                                  1
-                                )
-                              }
-                            >
-                              +
-                            </button>
-
-
-
-                            {metric === "distance" && (
-                              <select
-                                value={set.inputUnits?.distance ?? DEFAULT_DISTANCE_UNIT}
-                                onChange={(event) =>
-                                  handleUnitChange(
-                                    exerciseIndex,
-                                    metric,
-                                    event.target.value
-                                  )
-                                }
-                              >
-                                {DISTANCE_SYSTEMS[DEFAULT_SETTINGS.distanceSystem]
-                                  .map(unit => (
-                                    <option
-                                      key={unit}
-                                      value={unit}
-                                    >
-                                      {unit}
-                                    </option>
-                                  ))}
-                              </select>
-                            )}
-
-                          </div>
-                        </div>
-                      )
-                    })}
-
-                    {exercise.sets.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          removeSet(
-                            exerciseIndex,
-                            setIndex
-                          )
-                        }
-                      >
-                        Remove Set
-                      </button>
-                    )}
-
-                  </div>
-
-                ))}
-
-                <button
-                  type="button"
-                  onClick={() =>
-                    addSet(exerciseIndex)
-                  }
-                >
-                  Add Set
-                </button>
-
-              </div>
-            )}
-
-            {exercises.length > 1 && (
-
-              <button
-                type="button"
-                onClick={() =>
-                  removeExercise(exerciseIndex)
-                }
-              >
-                Remove Exercise
-              </button>
-            )}
-
-          </div>
-
-        );
-      })}
+          addSet={addSet}
+          removeSet={removeSet}
+          removeExercise={removeExercise}
+        />
+      ))}
 
       <button
         type="button"
