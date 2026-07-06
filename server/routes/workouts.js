@@ -9,7 +9,8 @@ const {
   getWorkout,
   createWorkout,
   updateWorkout,
-  deleteWorkout
+  deleteWorkout,
+  getExerciseHistory
 } = require("../controllers/workoutController");
 
 const validateObjectId = require("../middleware/validateObjectId");
@@ -20,5 +21,6 @@ router.get("/:id", validateObjectId, getWorkout);
 router.post("/", createWorkout);
 router.patch("/:id", validateObjectId, updateWorkout);
 router.delete("/:id", validateObjectId, deleteWorkout);
+router.get("/exercises/:id/history", validateObjectId, getExerciseHistory)
 
 module.exports = router;

@@ -1,4 +1,5 @@
-const Workout = require('../models/workoutModel');
+const Workout = require("../models/workoutModel");
+const Exercise = require("../models/exerciseModel");
 
 const createError = (message, statusCode) => {
   const err = new Error(message);
@@ -262,10 +263,55 @@ const deleteWorkout = async (req, res, next) => {
   }
 };
 
+const getExerciseHistory = async (req, res) => {
+  const user_id = req.user._id;
+  const { id: exerciseId } = req.params;
+
+  const exercise = await Exercise.findOne({
+    _id: exerciseId,
+    user_id
+  });
+
+  if (!exercise) {
+    return res.status(404).json({
+      error: "Exercise not found"
+    });
+  }
+
+  const workouts = await Workout
+    .find({ user_id })
+    .sort({ date: -1 });
+
+  const history = [];
+
+  for (const workout of workouts) {
+    for (const loggedExercise of workout.exercises) {
+
+      if (
+        loggedExercise.exerciseId.toString() !== exerciseId
+      ) {
+        continue;
+      }
+
+      history.push({
+        workoutId: workout._id,
+        workoutTitle: workout.title,
+        date: workout.date,
+        exerciseName: exercise.name,
+        metrics: exercise.metrics,
+        sets: loggedExercise.sets
+      });
+    }
+  }
+
+  res.status(200).json(history);
+};
+
 module.exports = {
   getWorkouts,
   getWorkout,
   createWorkout,
   updateWorkout,
-  deleteWorkout
+  deleteWorkout,
+  getExerciseHistory
 };
