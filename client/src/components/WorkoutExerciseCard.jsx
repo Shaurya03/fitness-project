@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { getMetricConfig } from "../utils/metricConfig";
 import { DISTANCE_SYSTEMS } from "../utils/units";
 import { DEFAULT_SETTINGS, DEFAULT_UNITS } from "../utils/settings";
-import { FiChevronDown, FiChevronRight } from "react-icons/fi";
+import { FiBarChart2, FiChevronDown, FiChevronRight } from "react-icons/fi";
+import ExerciseHistoryModal from "./ExerciseHistoryModal";
 import "./WorkoutExerciseCard.css";
 
 function WorkoutExerciseCard({
@@ -27,6 +29,8 @@ function WorkoutExerciseCard({
   expanded,
   onToggle
 }) {
+
+  const [showHistory, setShowHistory] = useState(false);
 
   const selectedExercise =
     getSelectedExercise(exercise.exerciseId);
@@ -57,30 +61,55 @@ function WorkoutExerciseCard({
 
       <div
         className="exercise-card-header"
-        onClick={onToggle}
       >
 
-        <span>
-          {expanded
-            ? <FiChevronDown />
-            : <FiChevronRight />
-          }
-        </span>
+        <div
+          className="exercise-card-main"
+          onClick={onToggle}
+        >
 
-        <div className="exercise-card-info">
-
-          <h4>
-            {selectedExercise?.name || "New Exercise"}
-          </h4>
-
-          <p>
-            {selectedExercise
-              ? `${selectedCategory?.name} • ${exercise.sets.length} ${exercise.sets.length > 1 ? "Sets" : "Set"}`
-              : "Choose an exercise"
+          <button
+            type="button"
+            className="expand-button">
+            {expanded
+              ? <FiChevronDown />
+              : <FiChevronRight />
             }
-          </p>
+          </button>
+
+          <div className="exercise-card-info">
+
+            <h4>
+              {selectedExercise?.name || "New Exercise"}
+            </h4>
+
+            <p>
+              {selectedExercise
+                ? `${selectedCategory?.name} • ${exercise.sets.length} ${exercise.sets.length > 1 ? "Sets" : "Set"}`
+                : "Choose an exercise"
+              }
+            </p>
+
+          </div>
 
         </div>
+
+        {exercise.exerciseId && (
+
+          <button
+            title="Exercise History"
+            type="button"
+            className="exercise-history-button"
+            onClick={(event) => {
+              event.stopPropagation();
+              setShowHistory(true);
+            }}
+            title="Exercise History"
+          >
+            <FiBarChart2 />
+          </button>
+
+        )}
 
       </div>
 
@@ -370,8 +399,13 @@ function WorkoutExerciseCard({
         </>
       )}
 
-    </div>
+      <ExerciseHistoryModal
+        exerciseId={exercise.exerciseId}
+        isOpen={showHistory}
+        onClose={() => setShowHistory(false)}
+      />
 
+    </div>
   );
 }
 

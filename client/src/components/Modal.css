@@ -48,3 +48,9 @@
   border-radius: 6px;
   cursor: pointer;
 }
+
+.history-modal {
+  width: min(500px, 50vw);
+  max-height: 85vh;
+  overflow-y: auto;
+}
