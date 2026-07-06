@@ -29,9 +29,7 @@ const emptyExercise = {
   sets: [
     {
       metrics: {},
-      inputUnits: {
-        distance: DEFAULT_DISTANCE_UNIT
-      }
+      inputUnits: {}
     }
   ]
 };
