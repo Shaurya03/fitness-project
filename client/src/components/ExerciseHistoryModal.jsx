@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { API_BASE_URL } from "../services/api";
+import { getHistoryWithPRs } from "../utils/prHistory";
+import { DEFAULT_SETTINGS } from "../utils/settings";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import "./Modal.css";
 
@@ -63,6 +65,11 @@ function ExerciseHistoryModal({
     return null;
   }
 
+  const historyWithPRs = getHistoryWithPRs(
+    history,
+    DEFAULT_SETTINGS.distanceSystem
+  );
+
   return createPortal(
 
     <div
@@ -89,7 +96,7 @@ function ExerciseHistoryModal({
 
         {!isLoading &&
           !error &&
-          history.map(workout => (
+          historyWithPRs.map(workout => (
             <HistoryWorkoutCard
               key={workout.workoutId}
               workout={workout}

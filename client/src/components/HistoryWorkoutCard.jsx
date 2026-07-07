@@ -59,6 +59,12 @@ function HistoryWorkoutCard({ workout }) {
                       value,
                       settings
                     )}
+
+                    {set.personalRecords?.[metric] && (
+                      <span className="pr-trophy">
+                        🏆
+                      </span>
+                    )}
                   </td>
                 );
               })}
