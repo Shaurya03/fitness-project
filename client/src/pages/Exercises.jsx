@@ -9,6 +9,7 @@ import DeleteExerciseModal from "../components/DeleteExerciseModal";
 import CreateCategoryModal from "../components/CreateCategoryModal";
 import EditCategoryModal from "../components/EditCategoryModal";
 import DeleteCategoryModal from "../components/DeleteCategoryModal";
+import ExerciseHistoryModal from "../components/ExerciseHistoryModal";
 import "./Exercises.css";
 
 function Exercises() {
@@ -22,6 +23,8 @@ function Exercises() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedExercise, setSelectedExercise] = useState(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const [historyExercise, setHistoryExercise] = useState(null);
 
   const [isCreateCategoryModalOpen, setIsCreateCategoryModalOpen] = useState(false);
   const [openCategoryMenu, setOpenCategoryMenu] = useState(null);
@@ -41,27 +44,27 @@ function Exercises() {
   /* eslint-enable react-hooks/exhaustive-deps */
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (
-      categoryMenuRef.current &&
-      !categoryMenuRef.current.contains(event.target)
-    ) {
-      setOpenCategoryMenu(null);
-    }
-  };
+    const handleClickOutside = (event) => {
+      if (
+        categoryMenuRef.current &&
+        !categoryMenuRef.current.contains(event.target)
+      ) {
+        setOpenCategoryMenu(null);
+      }
+    };
 
-  document.addEventListener(
-    "mousedown",
-    handleClickOutside
-  );
-
-  return () => {
-    document.removeEventListener(
+    document.addEventListener(
       "mousedown",
       handleClickOutside
     );
-  };
-}, []);
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleClickOutside
+      );
+    };
+  }, []);
 
   const filteredExercises = exercises?.filter((exercise) =>
     exercise.name
@@ -196,39 +199,40 @@ function Exercises() {
         }
       />
 
-        <div ref={categoryMenuRef}>
-      {categories?.map((category) => {
-        const categoryExercises = groupedExercises[category.name] || [];
+      <div ref={categoryMenuRef}>
+        {categories?.map((category) => {
+          const categoryExercises = groupedExercises[category.name] || [];
 
-        return (
-          <div key={category._id}>
+          return (
+            <div key={category._id}>
 
-            <div className="category-section">
-              <CategoryHeader
-                category={category}
-                openCategoryMenu={openCategoryMenu}
-                setOpenCategoryMenu={setOpenCategoryMenu}
-                onAddExercise={(category) => {
-                  setSelectedCategory(category);
-                  setIsCreateModalOpen(true);
-                }}
-                onEditCategory={handleEditCategory}
-                onDeleteCategory={handleDeleteCategory}
-              />
+              <div className="category-section">
+                <CategoryHeader
+                  category={category}
+                  openCategoryMenu={openCategoryMenu}
+                  setOpenCategoryMenu={setOpenCategoryMenu}
+                  onAddExercise={(category) => {
+                    setSelectedCategory(category);
+                    setIsCreateModalOpen(true);
+                  }}
+                  onEditCategory={handleEditCategory}
+                  onDeleteCategory={handleDeleteCategory}
+                />
+              </div>
+
+              {categoryExercises.map((exercise) => (
+                <ExerciseCard
+                  key={exercise._id}
+                  exercise={exercise}
+                  onHistory={() => setHistoryExercise(exercise)}
+                  onEdit={() => handleEditExercise(exercise)}
+                  onDelete={() => handleDeleteExercise(exercise)}
+                />
+              ))}
+
             </div>
-
-            {categoryExercises.map((exercise) => (
-              <ExerciseCard
-                key={exercise._id}
-                exercise={exercise}
-                onEdit={() => handleEditExercise(exercise)}
-                onDelete={() => handleDeleteExercise(exercise)}
-              />
-            ))}
-
-          </div>
-        );
-      })}
+          );
+        })}
       </div>
 
       <CreateExerciseModal
@@ -284,6 +288,12 @@ function Exercises() {
           setSelectedCategoryForDelete(null)
         }}
         onDelete={handleConfirmDeleteCategory}
+      />
+
+      <ExerciseHistoryModal
+        exerciseId={historyExercise?._id}
+        isOpen={historyExercise !== null}
+        onClose={() => setHistoryExercise(null)}
       />
 
     </div>

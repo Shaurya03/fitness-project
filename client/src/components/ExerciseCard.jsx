@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "./ExerciseCard.css";
 
-function ExerciseCard({ exercise, onEdit, onDelete }) {
+function ExerciseCard({ exercise, onHistory, onEdit, onDelete }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
@@ -51,6 +51,11 @@ function ExerciseCard({ exercise, onEdit, onDelete }) {
         {
           isMenuOpen && (
             <div className="exercise-menu">
+
+              <button onClick={onHistory}>
+                History
+              </button>
+
               <button onClick={onEdit}>
                 Edit
               </button>
