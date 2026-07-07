@@ -1,12 +1,26 @@
 import { format } from "date-fns";
-import { METRIC_LABELS } from "../utils/metrics";
+import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { DEFAULT_SETTINGS } from "../utils/settings";
+import { getDisplayMetrics } from "../utils/derivedMetrics";
 import "./HistoryWorkoutCard.css";
 
 function HistoryWorkoutCard({ workout }) {
 
   const settings = DEFAULT_SETTINGS;
+
+  const metricKeys = getDisplayMetrics(
+    workout.sets[0].metrics,
+    settings.distanceSystem
+  ).map(metric => metric.key);
+
+  const setsWithDisplayMetrics = workout.sets.map(set => ({
+    ...set,
+    displayMetrics: getDisplayMetrics(
+      set.metrics,
+      settings.distanceSystem
+    )
+  }));
 
   return (
     <div className="history-workout-card">
@@ -22,32 +36,35 @@ function HistoryWorkoutCard({ workout }) {
 
         <thead>
           <tr>
-            {workout.metrics.map(metric => (
+            {metricKeys.map(metric => (
               <th key={metric}>
-                {METRIC_LABELS[metric]}
+                {getMetricConfig(metric).label.toUpperCase()}
               </th>
             ))}
           </tr>
         </thead>
 
         <tbody>
-          {workout.sets.map((set, index) => (
-            <tr
-              key={`${workout.workoutId}-${index}`}
-            >
-              {workout.metrics.map(metric => (
-                <td key={metric}>
-                  {formatMetric(
-                    metric,
-                    set.metrics?.[metric] ?? "",
-                    settings
-                  )}
-                </td>
-              ))}
+          {setsWithDisplayMetrics.map((set, index) => (
+            <tr key={index}>
+              {metricKeys.map(metric => {
+                const value = set.displayMetrics.find(
+                  item => item.key === metric
+                )?.value;
+
+                return (
+                  <td key={metric}>
+                    {formatMetric(
+                      metric,
+                      value,
+                      settings
+                    )}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
-
       </table>
 
     </div>
