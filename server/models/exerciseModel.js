@@ -25,7 +25,7 @@ const exerciseSchema = new mongoose.Schema({
     default: null
   },
 
-  isDefault: {
+  isArchived: {
     type: Boolean,
     default: false
   }
