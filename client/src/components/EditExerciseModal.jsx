@@ -13,6 +13,7 @@ function EditExerciseModal({
   const [name, setName] = useState("");
   const [metrics, setMetrics] = useState([]);
   const [categoryId, setCategoryId] = useState("");
+  const [error, setError] = useState("");
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
@@ -31,6 +32,8 @@ function EditExerciseModal({
   }
 
   const toggleMetric = (metric) => {
+    setError("");
+
     setMetrics(current =>
       current.includes(metric)
         ? current.filter(item => item !== metric)
@@ -38,7 +41,7 @@ function EditExerciseModal({
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     if (!name.trim()) {
       return;
@@ -48,16 +51,22 @@ function EditExerciseModal({
       return;
     }
 
-    onSave({
-      name: name.trim(),
-      metrics,
-      categoryId
-    });
+    try {
+      setError("");
 
-    setName("");
-  }
+      await onSave({
+        name: name.trim(),
+        metrics,
+        categoryId
+      });
+
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   const handleClose = () => {
+    setError("");
     setName("");
     setMetrics(exercise?.metrics || []);
     setCategoryId(exercise?.categoryId?._id || "");
@@ -78,7 +87,10 @@ function EditExerciseModal({
 
         <input
           value={name}
-          onChange={(event) => setName(event.target.value)}
+          onChange={(event) => {
+            setName(event.target.value)
+            setError("");
+          }}
           placeholder="Enter Exercise name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -91,9 +103,10 @@ function EditExerciseModal({
 
         <select
           value={categoryId}
-          onChange={(event) =>
-            setCategoryId(event.target.value)
-          }
+          onChange={(event) => {
+            setCategoryId(event.target.value);
+            setError("");
+          }}
         >
           {categories?.map(category => (
             <option
@@ -111,6 +124,12 @@ function EditExerciseModal({
           selectedMetrics={metrics}
           onToggle={toggleMetric}
         />
+
+        {error && (
+          <p className="modal-error">
+            {error}
+          </p>
+        )}
 
         <div className="modal-actions">
           <button onClick={handleSubmit}>
