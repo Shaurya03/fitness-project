@@ -143,14 +143,15 @@ const deleteCategory = async (req, res) => {
   const user_id = req.user._id;
   const { id } = req.params;
 
-  const exercises = await Exercise.findOne({
+  const exerciseCount = await Exercise.countDocuments({
     categoryId: id,
     user_id
   });
 
-  if (exercises) {
+  if (exerciseCount > 0) {
     return res.status(400).json({
-      error: "Cannot delete category with exercises"
+      error: "Cannot delete a category that contains exercises.",
+      exerciseCount
     });
   }
 

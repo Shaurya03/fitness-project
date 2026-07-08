@@ -91,7 +91,7 @@ export const useCategories = () => {
     const json = await response.json();
 
     if (!response.ok) {
-      throw new Error(json.error);
+      throw json;
     }
 
     dispatch({

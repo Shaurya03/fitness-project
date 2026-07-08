@@ -4,6 +4,7 @@ import "./Modal.css";
 function DeleteCategoryModal({
   isOpen,
   category,
+  error,
   onClose,
   onDelete
 }) {
@@ -31,20 +32,48 @@ function DeleteCategoryModal({
       >
         <h2>Delete Category</h2>
 
-        <p>
-          Are you sure you want to delete
-          <strong> {category?.name}</strong>?
-        </p>
+        {!error ? (
+          <>
+            <p>
+              Are you sure you want to delete
+              <strong> {category?.name}</strong>?
+            </p>
 
-        <div className="modal-actions">
-          <button onClick={handleDelete}>
-            Delete
-          </button>
+            <div className="modal-actions">
+              <button onClick={handleDelete}>
+                Delete
+              </button>
 
-          <button onClick={handleClose}>
-            Cancel
-          </button>
-        </div>
+              <button onClick={handleClose}>
+                Cancel
+              </button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="delete-warning">
+              <strong>⚠ Cannot delete category</strong>
+
+              <p>
+                This category contains{" "}
+                <strong>{error.exerciseCount}</strong>{" "}
+                {error.exerciseCount === 1
+                  ? "exercise"
+                  : "exercises"}.
+              </p>
+
+              <p>
+                Delete or move them before deleting this category.
+              </p>
+            </div>
+
+            <div className="modal-actions">
+              <button onClick={handleClose}>
+                OK
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>,
     document.body

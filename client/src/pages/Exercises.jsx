@@ -30,6 +30,7 @@ function Exercises() {
   const [openCategoryMenu, setOpenCategoryMenu] = useState(null);
   const [isEditCategoryModalOpen, setIsEditCategoryModalOpen] = useState(false);
   const [isDeleteCategoryModalOpen, setIsDeleteCategoryModalOpen] = useState(false);
+  const [deleteCategoryError, setDeleteCategoryError] = useState(null);
   const [selectedCategoryForEdit, setSelectedCategoryForEdit] = useState(null);
   const [selectedCategoryForDelete, setSelectedCategoryForDelete] = useState(null);
   const categoryMenuRef = useRef(null);
@@ -148,6 +149,7 @@ function Exercises() {
   const handleDeleteCategory = (category) => {
     setOpenCategoryMenu(null);
 
+    setDeleteCategoryError(null);
     setSelectedCategoryForDelete(category);
     setIsDeleteCategoryModalOpen(true);
   };
@@ -168,10 +170,16 @@ function Exercises() {
       return;
     }
 
-    await deleteCategory(selectedCategoryForDelete._id);
+    try {
+      await deleteCategory(selectedCategoryForDelete._id);
 
-    setIsDeleteCategoryModalOpen(false);
-    setSelectedCategoryForDelete(null);
+      setDeleteCategoryError(null);
+      setIsDeleteCategoryModalOpen(false);
+      setSelectedCategoryForDelete(null);
+
+    } catch (error) {
+      setDeleteCategoryError(error);
+    }
   };
 
   return (
@@ -283,7 +291,9 @@ function Exercises() {
       <DeleteCategoryModal
         isOpen={isDeleteCategoryModalOpen}
         category={selectedCategoryForDelete}
+        error={deleteCategoryError}
         onClose={() => {
+          setDeleteCategoryError(null);
           setIsDeleteCategoryModalOpen(false)
           setSelectedCategoryForDelete(null)
         }}
