@@ -253,6 +253,7 @@ function Exercises() {
       <EditExerciseModal
         isOpen={isEditModalOpen}
         exercise={selectedExercise}
+        categories={categories}
         onClose={() => {
           setIsEditModalOpen(false)
           setSelectedExercise(null)

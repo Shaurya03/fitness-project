@@ -1,4 +1,5 @@
 const Exercise = require("../models/exerciseModel");
+const Category = require("../models/categoryModel");
 
 const getExercises = async (req, res) => {
   const user_id = req.user._id;
@@ -56,7 +57,38 @@ const createExercise = async (req, res) => {
 const updateExercise = async (req, res) => {
   const user_id = req.user._id;
   const { id } = req.params;
-  const updates = req.body;
+
+  const {
+    name,
+    metrics,
+    categoryId
+  } = req.body;
+
+  const updates = {};
+
+  if (name !== undefined) {
+    updates.name = name.trim();
+  }
+
+  if (metrics !== undefined) {
+    updates.metrics = metrics;
+  }
+
+  if (categoryId !== undefined) {
+
+    const category = await Category.findOne({
+      _id: categoryId,
+      user_id
+    });
+
+    if (!category) {
+      return res.status(404).json({
+        error: "Category not found"
+      });
+    }
+
+    updates.categoryId = categoryId;
+  }
 
   const exercise = await Exercise.findOneAndUpdate(
     {

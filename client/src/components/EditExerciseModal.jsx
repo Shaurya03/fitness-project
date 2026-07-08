@@ -6,11 +6,13 @@ import "./Modal.css";
 function EditExerciseModal({
   isOpen,
   exercise,
+  categories,
   onClose,
   onSave
 }) {
   const [name, setName] = useState("");
   const [metrics, setMetrics] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
@@ -18,6 +20,7 @@ function EditExerciseModal({
     if (exercise) {
       setMetrics(exercise.metrics || []);
       setName(exercise.name);
+      setCategoryId(exercise.categoryId?._id || "");
     }
   }, [exercise]);
 
@@ -47,7 +50,8 @@ function EditExerciseModal({
 
     onSave({
       name: name.trim(),
-      metrics
+      metrics,
+      categoryId
     });
 
     setName("");
@@ -56,6 +60,7 @@ function EditExerciseModal({
   const handleClose = () => {
     setName("");
     setMetrics(exercise?.metrics || []);
+    setCategoryId(exercise?.categoryId?._id || "");
 
     onClose();
   };
@@ -81,6 +86,24 @@ function EditExerciseModal({
             }
           }}
         />
+
+        <label>Category</label>
+
+        <select
+          value={categoryId}
+          onChange={(event) =>
+            setCategoryId(event.target.value)
+          }
+        >
+          {categories?.map(category => (
+            <option
+              key={category._id}
+              value={category._id}
+            >
+              {category.name}
+            </option>
+          ))}
+        </select>
 
         <h3>Metrics</h3>
 

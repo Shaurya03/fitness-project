@@ -54,3 +54,18 @@
   max-height: 85vh;
   overflow-y: auto;
 }
+
+.modal select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+
+label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #555;
+}
