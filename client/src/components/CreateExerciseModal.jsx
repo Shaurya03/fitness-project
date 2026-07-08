@@ -29,6 +29,8 @@ function CreateExerciseModal({
   }
 
   const toggleMetric = (metric) => {
+    setError("");
+
     setMetrics(current =>
       current.includes(metric)
         ? current.filter(item => item !== metric)
@@ -52,7 +54,6 @@ function CreateExerciseModal({
     };
 
     try {
-
       setError("");
 
       await onCreate(exerciseData);

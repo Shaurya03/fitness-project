@@ -10,12 +10,15 @@ function CreateCategoryModal({
 }) {
   const [categoryName, setCategoryName] = useState("");
   const [metrics, setMetrics] = useState([]);
+  const [error, setError] = useState("");
 
   if (!isOpen) {
     return null;
   }
 
   const toggleMetric = (metric) => {
+    setError("");
+
     setMetrics(current =>
       current.includes(metric)
         ? current.filter(item => item !== metric)
@@ -23,7 +26,7 @@ function CreateCategoryModal({
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     if (!categoryName.trim()) {
       return;
@@ -33,15 +36,23 @@ function CreateCategoryModal({
       return;
     }
 
-    onCreate({
-      name: categoryName.trim(),
-      defaultMetrics: metrics
-    });
-    setCategoryName("");
-    setMetrics([]);
+    try {
+      setError("");
+
+      await onCreate({
+        name: categoryName.trim(),
+        defaultMetrics: metrics
+      });
+      setCategoryName("");
+      setMetrics([]);
+
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleClose = () => {
+    setError("");
     setCategoryName("");
     setMetrics([]);
     onClose();
@@ -60,7 +71,10 @@ function CreateCategoryModal({
 
         <input
           value={categoryName}
-          onChange={(event) => setCategoryName(event.target.value)}
+          onChange={(event) => {
+            setCategoryName(event.target.value);
+            setError("");
+          }}
           placeholder="Category name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -75,6 +89,12 @@ function CreateCategoryModal({
           selectedMetrics={metrics}
           onToggle={toggleMetric}
         />
+
+        {error && (
+          <p className="modal-error">
+            {error}
+          </p>
+        )}
 
         <div className="modal-actions">
           <button onClick={handleSubmit}>

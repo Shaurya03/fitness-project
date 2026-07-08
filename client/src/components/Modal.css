@@ -69,3 +69,7 @@ label {
   font-weight: 600;
   color: #555;
 }
+
+.modal-error {
+  font-weight: bold;
+}

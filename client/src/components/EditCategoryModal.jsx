@@ -11,6 +11,7 @@ function EditCategoryModal({
 }) {
   const [categoryName, setCategoryName] = useState("");
   const [metrics, setMetrics] = useState([]);
+  const [error, setError] = useState("");
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
@@ -28,6 +29,8 @@ function EditCategoryModal({
   }
 
   const toggleMetric = (metric) => {
+    setError("");
+
     setMetrics(current =>
       current.includes(metric)
         ? current.filter(item => item !== metric)
@@ -35,7 +38,7 @@ function EditCategoryModal({
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     if (!categoryName.trim()) {
       return;
@@ -45,15 +48,23 @@ function EditCategoryModal({
       return;
     }
 
-    onSave({
-      name: categoryName.trim(),
-      defaultMetrics: metrics
-    });
-    setCategoryName("");
-    setMetrics([]);
+    try {
+      setError("");
+
+      await onSave({
+        name: categoryName.trim(),
+        defaultMetrics: metrics
+      });
+      setCategoryName("");
+      setMetrics([]);
+
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   const handleClose = () => {
+    setError("");
     setCategoryName(category?.name || "");
     setMetrics(category?.defaultMetrics || []);
     onClose();
@@ -72,7 +83,10 @@ function EditCategoryModal({
 
         <input
           value={categoryName}
-          onChange={(event) => setCategoryName(event.target.value)}
+          onChange={(event) => {
+            setCategoryName(event.target.value)
+            setError("");
+          }}
           placeholder="Enter Category name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -87,6 +101,12 @@ function EditCategoryModal({
           selectedMetrics={metrics}
           onToggle={toggleMetric}
         />
+
+        {error && (
+          <p className="modal-error">
+            {error}
+          </p>
+        )}
 
         <div className="modal-actions">
           <button onClick={handleSubmit}>
