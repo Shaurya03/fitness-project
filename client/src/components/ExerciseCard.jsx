@@ -52,15 +52,30 @@ function ExerciseCard({ exercise, onHistory, onEdit, onDelete }) {
           isMenuOpen && (
             <div className="exercise-menu">
 
-              <button onClick={onHistory}>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onHistory();
+                }}
+              >
                 History
               </button>
 
-              <button onClick={onEdit}>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onEdit();
+                }}
+              >
                 Edit
               </button>
 
-              <button onClick={onDelete}>
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onDelete();
+                }}
+              >
                 Delete
               </button>
             </div>

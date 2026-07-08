@@ -156,47 +156,41 @@ const deleteExercise = async (req, res) => {
     "exercises.exerciseId": id
   });
 
-  let exercise;
-
   if (workoutCount === 0) {
-
-    exercise = await Exercise.findOneAndDelete({
+    const exercise = await Exercise.findOneAndDelete({
       _id: id,
       user_id
     });
 
-  } else {
+    if (!exercise) {
+      return res.status(404).json({
+        error: "Exercise does not exist"
+      });
+    }
 
-    exercise = await Exercise.findOneAndUpdate(
-      {
-        _id: id,
-        user_id
-      },
-      {
-        isArchived: true
-      },
-      {
-        new: true
-      }
-    );
-
+    return res.status(200).json(exercise);
   }
 
+  const exercise = await Exercise.findOneAndUpdate(
+    {
+      _id: id,
+      user_id
+    },
+    {
+      isArchived: true
+    },
+    {
+      new: true
+    }
+  ).populate("categoryId");
+
   if (!exercise) {
-    return res.status(400).json({
+    return res.status(404).json({
       error: "Exercise does not exist"
     });
   }
 
-  const populatedExercise = await Exercise
-    .findById(exercise._id)
-    .populate("categoryId");
-
-  res.status(200).json({
-    exercise: populatedExercise,
-    workoutCount,
-    archived: workoutCount > 0
-  });
+  return res.status(200).json(exercise);
 };
 
 module.exports = { getExercises, createExercise, updateExercise, deleteExercise };

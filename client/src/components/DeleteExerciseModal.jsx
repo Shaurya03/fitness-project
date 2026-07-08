@@ -14,11 +14,14 @@ function DeleteExerciseModal({
 
   const handleDelete = () => {
     onDelete();
-  }
+  };
 
   const handleClose = () => {
     onClose();
   };
+
+  const hasHistory =
+    (exercise?.workoutCount || 0) > 0;
 
   return createPortal(
     <div
@@ -36,6 +39,36 @@ function DeleteExerciseModal({
           <strong> {exercise?.name}</strong>?
         </p>
 
+        {hasHistory ? (
+          <>
+            <p>
+              This exercise has been used in{" "}
+              <strong>
+                {exercise.workoutCount}
+              </strong>{" "}
+              {exercise.workoutCount === 1
+                ? "workout"
+                : "workouts"}.
+            </p>
+
+            <p>
+              It will be removed
+              from your exercise library.
+            </p>
+
+            <strong>
+              Your workout history and
+              personal records will be preserved.
+            </strong>
+          </>
+        ) : (
+          <p>
+            This exercise has not been used
+            in any workouts. It will be
+            permanently deleted.
+          </p>
+        )}
+
         <div className="modal-actions">
           <button onClick={handleDelete}>
             Delete
@@ -49,6 +82,6 @@ function DeleteExerciseModal({
     </div>,
     document.body
   );
-};
+}
 
 export default DeleteExerciseModal;
