@@ -1,15 +1,23 @@
 import { useState } from "react";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { API_BASE_URL } from "../services/api";
+import { toast } from "react-toastify";
 import { useCategories } from "../hooks/useCategories";
 import WorkoutDetails from "../components/WorkoutDetails";
 import WorkoutForm from "../components/WorkoutForm";
+import DeleteWorkoutModal from "../components/DeleteWorkoutModal";
 import "./Workouts.css";
 
 function Workouts() {
-  const { workouts, isLoading, error } = useWorkoutContext();
+  const { workouts, isLoading, error, dispatch } = useWorkoutContext();
+  const { user } = useAuthContext();
   const [editingWorkout, setEditingWorkout] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [selectedWorkout, setSelectedWorkout] = useState(null);
+
   const { categories } = useCategories();
 
   const filterCategories = [
@@ -57,6 +65,50 @@ function Workouts() {
     return matchesCategory && matchesSearch;
   }) || [];
 
+  const handleDeleteClick = (workout) => {
+    setSelectedWorkout(workout);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+
+    if (!selectedWorkout || !user) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/workouts/${selectedWorkout._id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${user.token}`
+          }
+        }
+      );
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        toast.error(json.error);
+        return;
+      }
+
+      dispatch({
+        type: "DELETE_WORKOUT",
+        payload: json
+      });
+
+      toast.success("Workout deleted successfully!");
+
+      setIsDeleteModalOpen(false);
+      setSelectedWorkout(null);
+
+    } catch {
+      toast.error("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <div className="workouts-page">
       <div className="left-section">
@@ -92,6 +144,7 @@ function Workouts() {
                 key={workout._id}
                 workout={workout}
                 setEditingWorkout={setEditingWorkout}
+                onDelete={() => handleDeleteClick(workout)}
               />
             ))
           )}
@@ -100,6 +153,15 @@ function Workouts() {
       <WorkoutForm
         editingWorkout={editingWorkout}
         setEditingWorkout={setEditingWorkout}
+      />
+
+      <DeleteWorkoutModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setSelectedWorkout(null);
+        }}
+        onDelete={handleConfirmDelete}
       />
     </div>
   );

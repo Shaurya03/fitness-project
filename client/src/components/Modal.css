@@ -73,3 +73,7 @@ label {
 .modal-error {
   font-weight: bold;
 }
+
+.modal-warning {
+  font-weight: bold;
+}

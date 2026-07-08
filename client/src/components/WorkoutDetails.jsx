@@ -1,20 +1,17 @@
-import { useState } from "react";
-import { useWorkoutContext } from "../hooks/useWorkoutContext";
-import { useAuthContext } from "../hooks/useAuthContext";
 import { format } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-import { API_BASE_URL } from "../services/api";
-import { toast } from "react-toastify";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { DEFAULT_SETTINGS, DEFAULT_UNITS } from "../utils/settings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
 import "./WorkoutDetails.css";
 
-function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
-  const { dispatch } = useWorkoutContext();
-  const { user } = useAuthContext();
-  const [isDeleting, setIsDeleting] = useState(false);
+function WorkoutDetails({
+  workout,
+  setEditingWorkout,
+  onDelete,
+  preview = false
+}) {
 
   const settings = DEFAULT_SETTINGS;
 
@@ -38,41 +35,6 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
         total + (exercise.sets?.length || 0),
       0
     ) || 0;
-
-  const handleDelete = async () => {
-    if (!user) {
-      return;
-    }
-
-    try {
-      setIsDeleting(true);
-
-      const response = await fetch(`${API_BASE_URL}/workouts/${workout._id}`, {
-        method: "DELETE",
-        headers: {
-          'Authorization': `Bearer ${user.token}`
-        }
-      });
-
-      const json = await response.json();
-
-      if (!response.ok) {
-        toast.error(json.error || "Failed to delete workout.");
-        return;
-      }
-
-      dispatch({
-        type: 'DELETE_WORKOUT',
-        payload: json
-      });
-      toast.success("Workout deleted successfully!");
-
-    } catch {
-      toast.error("An error occurred. Please try again.");
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   return (
     <div className="workout-details">
@@ -206,14 +168,18 @@ function WorkoutDetails({ workout, setEditingWorkout, preview = false }) {
       {!preview && (
         <div className="workout-actions">
 
-          <button className="edit-button"
-            onClick={() => setEditingWorkout(workout)}>
+          <button
+            className="edit-button"
+            onClick={() => setEditingWorkout(workout)}
+          >
             <FiEdit />
           </button>
-          <button className="delete-button"
-            onClick={handleDelete}
-            disabled={isDeleting}>
-            {isDeleting ? "Deleting..." : <FiTrash2 />}
+
+          <button
+            className="delete-button"
+            onClick={onDelete}
+          >
+            <FiTrash2 />
           </button>
 
         </div>
