@@ -7,10 +7,12 @@ function CreateExerciseModal({
   isOpen,
   selectedCategory,
   onClose,
-  onCreate
+  onCreate,
+  onRestoreRequired
 }) {
   const [name, setName] = useState("");
   const [metrics, setMetrics] = useState([]);
+  const [error, setError] = useState("");
 
   /* eslint-disable react-hooks/set-state-in-effect */
 
@@ -34,7 +36,7 @@ function CreateExerciseModal({
     );
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
 
     if (!name.trim()) {
       return;
@@ -44,16 +46,35 @@ function CreateExerciseModal({
       return;
     }
 
-    onCreate({
+    const exerciseData = {
       name: name.trim(),
       metrics
-    });
+    };
 
-    setName("");
-  }
+    try {
+
+      setError("");
+
+      await onCreate(exerciseData);
+
+      handleClose();
+
+    } catch (error) {
+
+      if (error.archivedExercise) {
+
+        onRestoreRequired(exerciseData);
+
+        return;
+      }
+
+      setError(error.error || error.message);
+    }
+  };
 
   const handleClose = () => {
     setName("");
+    setError("");
 
     setMetrics(
       selectedCategory?.defaultMetrics || []
@@ -79,7 +100,10 @@ function CreateExerciseModal({
 
         <input
           value={name}
-          onChange={(event) => setName(event.target.value)}
+          onChange={(event) => {
+            setName(event.target.value);
+            setError("");
+          }}
           placeholder="Exercise name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
@@ -94,6 +118,12 @@ function CreateExerciseModal({
           selectedMetrics={metrics}
           onToggle={toggleMetric}
         />
+
+        {error && (
+          <p className="modal-error">
+            {error}
+          </p>
+        )}
 
         <div className="modal-actions">
           <button
@@ -114,6 +144,6 @@ function CreateExerciseModal({
     </div>,
     document.body
   );
-};
+}
 
 export default CreateExerciseModal;

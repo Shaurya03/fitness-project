@@ -39,7 +39,7 @@ export const useExercises = () => {
     const json = await response.json();
 
     if (!response.ok) {
-      throw new Error(json.error);
+      throw json;
     }
 
     if (response.ok) {
