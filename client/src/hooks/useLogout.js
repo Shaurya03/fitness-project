@@ -1,11 +1,19 @@
 import { useAuthContext } from "./useAuthContext";
+import { useSettingsContext } from "./useSettingsContext";
 
 export const useLogout = () => {
-  const { dispatch } = useAuthContext();
+  const { dispatch: authDispatch } = useAuthContext();
+  const { dispatch: settingsDispatch } = useSettingsContext();
 
   const logout = () => {
     localStorage.removeItem('user');
-    dispatch({ type: 'LOGOUT' });
+
+    authDispatch({ type: 'LOGOUT' });
+
+    settingsDispatch({
+      type: "SET_SETTINGS",
+      payload: null
+    });
   };
 
   return { logout };
