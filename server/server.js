@@ -14,6 +14,9 @@ app.get("/", (req, res) => {
 });
 
 // Routes
+const settingsRoutes = require("./routes/settings");
+app.use("/api/settings", settingsRoutes);
+
 const workoutsRoutes = require("./routes/workouts");
 app.use("/api/workouts", workoutsRoutes);
 

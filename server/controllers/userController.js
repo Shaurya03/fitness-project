@@ -2,6 +2,7 @@ const User = require('../models/userModel');
 const jwt = require('jsonwebtoken');
 const Category = require("../models/categoryModel");
 const Exercise = require("../models/exerciseModel");
+const Settings = require("../models/settingsModel");
 const DEFAULT_CATEGORIES = require("../utils/defaultCategories");
 const DEFAULT_EXERCISES = require("../utils/defaultExercises");
 const CATEGORY_COLORS = require('../utils/categoryColors');
@@ -15,6 +16,10 @@ const signupUser = async (req, res) => {
 
   try {
     const user = await User.signup(email, password);
+
+    await Settings.create({
+      user_id: user._id
+    });
 
     const categories = await Category.insertMany(
       DEFAULT_CATEGORIES.map(
