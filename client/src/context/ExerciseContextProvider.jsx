@@ -7,7 +7,7 @@ export const ExerciseContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(
     exerciseReducer,
     {
-      exercises: null
+      exercises: []
     }
   );
 

@@ -7,7 +7,7 @@ export const CategoryContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(
     categoryReducer,
     {
-      categories: null
+      categories: []
     }
   );
 

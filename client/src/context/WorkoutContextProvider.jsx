@@ -14,6 +14,12 @@ export const WorkoutContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (!user) {
+
+      dispatch({
+        type: "SET_WORKOUTS",
+        payload: []
+      });
+
       return;
     }
 

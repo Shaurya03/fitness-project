@@ -149,7 +149,7 @@ function WorkoutExerciseCard({
               Select an exercise
             </option>
 
-            {getFilteredExercises(exercise)?.map((catalogExercise) => (
+            {getFilteredExercises(exercise).map((catalogExercise) => (
               <option
                 key={catalogExercise._id}
                 value={catalogExercise._id}

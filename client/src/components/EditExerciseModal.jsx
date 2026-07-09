@@ -108,7 +108,7 @@ function EditExerciseModal({
             setError("");
           }}
         >
-          {categories?.map(category => (
+          {categories.map(category => (
             <option
               key={category._id}
               value={category._id}
