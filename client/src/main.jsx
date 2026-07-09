@@ -5,6 +5,7 @@ import { WorkoutContextProvider } from './context/WorkoutContextProvider';
 import { AuthContextProvider } from './context/AuthContextProvider.jsx';
 import { CategoryContextProvider } from './context/CategoryContextProvider.jsx';
 import { ExerciseContextProvider } from './context/ExerciseContextProvider.jsx';
+import { SettingsContextProvider } from './context/SettingsContextProvider.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css';
@@ -15,14 +16,16 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <AuthContextProvider>
-        <WorkoutContextProvider>
-          <CategoryContextProvider>
-            <ExerciseContextProvider>
-              <App />
-            </ExerciseContextProvider>
-          </CategoryContextProvider>
+        <SettingsContextProvider>
+          <WorkoutContextProvider>
+            <CategoryContextProvider>
+              <ExerciseContextProvider>
+                <App />
+              </ExerciseContextProvider>
+            </CategoryContextProvider>
+          </WorkoutContextProvider>
           <ToastContainer />
-        </WorkoutContextProvider>
+        </SettingsContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
   </StrictMode>,
