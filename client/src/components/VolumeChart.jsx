@@ -1,5 +1,7 @@
 import { format } from "date-fns";
 import { getWorkoutVolume } from "../utils/workoutHelpers";
+import { UNITS } from "../utils/units";
+import { DEFAULT_UNITS } from "../utils/settings";
 import {
   LineChart,
   Line,
@@ -9,36 +11,48 @@ import {
   ResponsiveContainer,
   CartesianGrid
 } from "recharts";
-import { formatMetric } from "../utils/metricFormatter";
-import { DEFAULT_SETTINGS } from "../utils/settings";
+import { useSettings } from "../hooks/useSettings";
 
 function VolumeChart({ workouts }) {
-  const settings = DEFAULT_SETTINGS;
+
+  const { settings } = useSettings();
+
+  const weightSystem =
+    settings?.weightSystem ?? "metric";
+
+  const weightUnit =
+    DEFAULT_UNITS[weightSystem].weight;
+
+  const convertWeight =
+    UNITS.weight[weightUnit].fromBase;
+
   const volumeByDate = {};
 
   workouts?.forEach(workout => {
+
     const dateKey = format(
-      new Date(workout.date), "yyyy-MM-dd"
+      new Date(workout.date),
+      "yyyy-MM-dd"
     );
 
     const volume = getWorkoutVolume(workout);
 
-    volumeByDate[dateKey] = (volumeByDate[dateKey] || 0) + volume;
+    volumeByDate[dateKey] =
+      (volumeByDate[dateKey] || 0) + volume;
   });
 
   const chartData = Object.entries(volumeByDate)
-    .sort(([a], [b]) =>
-      new Date(a) - new Date(b)
-    )
+    .sort(([a], [b]) => new Date(a) - new Date(b))
     .map(([date, volume]) => ({
       date: format(new Date(date), "d MMM"),
-      volume
+      volume: convertWeight(volume)
     }));
 
   if (!chartData.length) {
     return (
       <div className="chart-card">
         <h3>Workout Volume</h3>
+
         <div className="chart-empty">
           No workout data available yet.
         </div>
@@ -46,20 +60,19 @@ function VolumeChart({ workouts }) {
     );
   }
 
+  const totalVolume =
+    chartData.reduce(
+      (sum, item) => sum + item.volume,
+      0
+    );
+
   return (
     <div className="chart-card">
+
       <h3>Workout Volume Over Time</h3>
 
       <p className="chart-summary">
-        {formatMetric(
-          "weight",
-          chartData.reduce(
-            (sum, item) => sum + item.volume,
-            0
-          ),
-          settings
-        )}{" "}
-        total volume
+        {totalVolume.toFixed(1)} {weightUnit} total volume
       </p>
 
       <ResponsiveContainer
@@ -79,11 +92,13 @@ function VolumeChart({ workouts }) {
             strokeDasharray="3 3"
             vertical={false}
           />
+
           <XAxis
             dataKey="date"
             axisLine={false}
             tickLine={false}
           />
+
           <YAxis
             domain={[
               (min) => min * 0.9,
@@ -91,16 +106,14 @@ function VolumeChart({ workouts }) {
             ]}
             axisLine={false}
             tickLine={false}
-            tickFormatter={(value) =>
-              value >= 1000
-                ? `${(value / 1000).toFixed(0)}k`
-                : value
-            }
+            tickFormatter={(value) => value.toFixed(0)}
           />
+
           <Tooltip
-            formatter={(value) =>
-              formatMetric("weight", value, settings)
-            }
+            formatter={(value) => [
+              `${Number(value).toFixed(1)} ${weightUnit}`,
+              "Volume"
+            ]}
           />
 
           <Line
@@ -112,8 +125,10 @@ function VolumeChart({ workouts }) {
             dot={{ r: 3 }}
             activeDot={{ r: 6 }}
           />
+
         </LineChart>
       </ResponsiveContainer>
+
     </div>
   );
 }

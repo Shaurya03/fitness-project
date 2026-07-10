@@ -1,13 +1,13 @@
 import { format } from "date-fns";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
-import { DEFAULT_SETTINGS } from "../utils/settings";
+import { useSettings } from "../hooks/useSettings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
 import "./HistoryWorkoutCard.css";
 
 function HistoryWorkoutCard({ workout }) {
 
-  const settings = DEFAULT_SETTINGS;
+  const { settings } = useSettings();
 
   const metricKeys = getDisplayMetrics(
     workout.sets[0].metrics,
@@ -57,7 +57,8 @@ function HistoryWorkoutCard({ workout }) {
                     {formatMetric(
                       metric,
                       value,
-                      settings
+                      settings,
+                      set.inputUnits
                     )}
 
                     {set.personalRecords?.[metric] && (

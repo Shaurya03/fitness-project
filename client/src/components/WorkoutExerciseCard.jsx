@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { getMetricConfig } from "../utils/metricConfig";
 import { DISTANCE_SYSTEMS } from "../utils/units";
-import { DEFAULT_SETTINGS, DEFAULT_UNITS } from "../utils/settings";
+import { DEFAULT_UNITS } from "../utils/settings";
+import { useSettings } from "../hooks/useSettings";
 import { FiBarChart2, FiChevronDown, FiChevronRight } from "react-icons/fi";
 import ExerciseHistoryModal from "./ExerciseHistoryModal";
 import "./WorkoutExerciseCard.css";
@@ -30,6 +31,8 @@ function WorkoutExerciseCard({
   onToggle
 }) {
 
+  const { settings } = useSettings();
+
   const [showHistory, setShowHistory] = useState(false);
 
   const selectedExercise =
@@ -45,12 +48,12 @@ function WorkoutExerciseCard({
 
   const DEFAULT_DISTANCE_UNIT =
     DEFAULT_UNITS[
-      DEFAULT_SETTINGS.distanceSystem
+      settings.distanceSystem
     ].distance;
 
   const DEFAULT_WEIGHT_UNIT =
     DEFAULT_UNITS[
-      DEFAULT_SETTINGS.weightSystem
+      settings.weightSystem
     ].weight;
 
   return (
@@ -104,7 +107,6 @@ function WorkoutExerciseCard({
               event.stopPropagation();
               setShowHistory(true);
             }}
-            title="Exercise History"
           >
             <FiBarChart2 />
           </button>
@@ -337,7 +339,7 @@ function WorkoutExerciseCard({
                                 )
                               }
                             >
-                              {DISTANCE_SYSTEMS[DEFAULT_SETTINGS.distanceSystem]
+                              {DISTANCE_SYSTEMS[settings.distanceSystem]
                                 .map(unit => (
                                   <option
                                     key={unit}

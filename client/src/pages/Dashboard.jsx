@@ -4,7 +4,7 @@ import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
 import { getPersonalRecords } from "../utils/personalRecords";
 import { formatMetric } from "../utils/metricFormatter";
-import { DEFAULT_SETTINGS } from "../utils/settings";
+import { useSettings } from "../hooks/useSettings";
 import { filterWorkouts } from "../utils/filterWorkouts";
 import { getPeriodLabel, getDisableNext, getPreviousPeriodDate, getNextPeriodDate } from "../utils/dashboardNavigation";
 import DashboardFilter from "../components/DashboardFilter";
@@ -56,7 +56,7 @@ function Dashboard() {
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  const settings = DEFAULT_SETTINGS;
+  const { settings } = useSettings();
 
   const filteredWorkouts = filterWorkouts(
     workouts,

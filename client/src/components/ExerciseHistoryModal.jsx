@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useAuthContext } from "../hooks/useAuthContext";
+import { useSettings } from "../hooks/useSettings";
 import { API_BASE_URL } from "../services/api";
 import { getHistoryWithPRs } from "../utils/prHistory";
-import { DEFAULT_SETTINGS } from "../utils/settings";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import "./Modal.css";
 
@@ -14,6 +14,7 @@ function ExerciseHistoryModal({
 }) {
 
   const { user } = useAuthContext();
+  const { settings } = useSettings();
 
   const [history, setHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -67,7 +68,7 @@ function ExerciseHistoryModal({
 
   const historyWithPRs = getHistoryWithPRs(
     history,
-    DEFAULT_SETTINGS.distanceSystem
+    settings.distanceSystem
   );
 
   return createPortal(

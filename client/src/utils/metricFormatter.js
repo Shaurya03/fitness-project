@@ -1,5 +1,6 @@
 import { DEFAULT_UNITS } from "./settings";
 import { UNITS } from "./units";
+import { getDisplayDistanceUnit } from "./getDisplayDistanceUnit";
 
 const pad = number =>
   String(number).padStart(2, "0");
@@ -12,14 +13,26 @@ export const formatMetric = (
   showUnit = true
 ) => {
 
+  const weightSystem =
+    settings?.weightSystem ?? "metric";
+
+  const distanceSystem =
+    settings?.distanceSystem ?? "metric";
+
   switch (metric) {
 
     case "weight": {
+
+      if (value == null) {
+        return "";
+      }
+
       const unit =
         inputUnits.weight ??
-        DEFAULT_UNITS[settings.weightSystem].weight;
+        DEFAULT_UNITS[weightSystem].weight;
 
-      const config = UNITS.weight[unit];
+      const config =
+        UNITS.weight[unit];
 
       const formattedValue =
         config.fromBase(value)
@@ -31,18 +44,30 @@ export const formatMetric = (
     }
 
     case "distance": {
-      const unit =
-        inputUnits.distance ??
-        DEFAULT_UNITS[settings.distanceSystem].distance;
 
-      const config = UNITS.distance[unit];
+      if (value == null) {
+        return "";
+      }
+
+      const inputUnit =
+        inputUnits.distance ??
+        DEFAULT_UNITS[distanceSystem].distance;
+
+      const displayUnit =
+        getDisplayDistanceUnit(
+          inputUnit,
+          distanceSystem
+        );
+
+      const config =
+        UNITS.distance[displayUnit];
 
       const formattedValue =
         config.fromBase(value)
           .toFixed(config.precision);
 
       return showUnit
-        ? `${formattedValue} ${unit}`
+        ? `${formattedValue} ${displayUnit}`
         : formattedValue;
     }
 
@@ -75,7 +100,7 @@ export const formatMetric = (
       const seconds = totalSeconds % 60;
 
       const unit =
-        settings.distanceSystem === "metric"
+        distanceSystem === "metric"
           ? "km"
           : "mi";
 
@@ -89,7 +114,7 @@ export const formatMetric = (
       }
 
       const unit =
-        settings.distanceSystem === "metric"
+        distanceSystem === "metric"
           ? "km/h"
           : "mph";
 

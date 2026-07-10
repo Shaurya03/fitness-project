@@ -2,8 +2,10 @@ import { format } from "date-fns";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
-import { DEFAULT_SETTINGS, DEFAULT_UNITS } from "../utils/settings";
+import { useSettings } from "../hooks/useSettings";
+import { DEFAULT_UNITS } from "../utils/settings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
+import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({
@@ -13,21 +15,19 @@ function WorkoutDetails({
   preview = false
 }) {
 
-  const settings = DEFAULT_SETTINGS;
-
-  const DEFAULT_DISTANCE_UNIT =
-    DEFAULT_UNITS[
-      DEFAULT_SETTINGS.distanceSystem
-    ].distance;
+  const { settings } = useSettings();
 
   const DEFAULT_WEIGHT_UNIT =
     DEFAULT_UNITS[
-      DEFAULT_SETTINGS.weightSystem
+      settings.weightSystem
     ].weight;
 
   const exerciseCount = workout.exercises?.length || 0;
 
-  const formattedDate = format(new Date(workout.date), "EEEE, d MMM yyyy");
+  const formattedDate = format(
+    new Date(workout.date),
+    "EEEE, d MMM yyyy"
+  );
 
   const totalSets =
     workout.exercises?.reduce(
@@ -91,7 +91,8 @@ function WorkoutDetails({
 
                   {Array.from(
                     { length: Math.ceil(metricKeys.length / 4) },
-                    (_, index) => metricKeys.slice(index * 4, index * 4 + 4)
+                    (_, index) =>
+                      metricKeys.slice(index * 4, index * 4 + 4)
                   ).map((metricRow, rowIndex) => (
 
                     <div
@@ -103,10 +104,17 @@ function WorkoutDetails({
 
                         const config = getMetricConfig(metric);
 
+                        const firstSet = exercise.sets?.[0];
+
                         const unit =
                           metric === "distance"
-                            ? exercise.sets?.[0]?.inputUnits?.distance ??
-                            DEFAULT_DISTANCE_UNIT
+                            ? getDisplayDistanceUnit(
+                              firstSet?.inputUnits?.distance ??
+                              DEFAULT_UNITS[
+                                settings.distanceSystem
+                              ].distance,
+                              settings.distanceSystem
+                            )
                             : metric === "weight"
                               ? DEFAULT_WEIGHT_UNIT
                               : config.unit;
@@ -120,14 +128,17 @@ function WorkoutDetails({
 
                             <span className="metric-header">
                               {config.label}
-                              {config.showUnit ? ` (${unit})` : ""}
+                              {config.showUnit
+                                ? ` (${unit})`
+                                : ""}
                             </span>
 
                             {setsWithDisplayMetrics.map((set, setIndex) => {
 
-                              const value = set.displayMetrics.find(
-                                item => item.key === metric
-                              )?.value;
+                              const value =
+                                set.displayMetrics.find(
+                                  item => item.key === metric
+                                )?.value;
 
                               return (
 

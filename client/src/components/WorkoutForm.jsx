@@ -7,20 +7,12 @@ import { getMetricConfig } from '../utils/metricConfig';
 import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import { UNITS } from '../utils/units';
-import { DEFAULT_SETTINGS, DEFAULT_UNITS } from '../utils/settings';
+import { useSettings } from '../hooks/useSettings';
+import { DEFAULT_UNITS } from '../utils/settings';
+import { getDisplayDistanceUnit } from '../utils/getDisplayDistanceUnit';
 import CreateExerciseModal from "./CreateExerciseModal";
 import WorkoutExerciseCard from './WorkoutExerciseCard';
 import "./WorkoutForm.css";
-
-const DEFAULT_DISTANCE_UNIT =
-  DEFAULT_UNITS[
-    DEFAULT_SETTINGS.distanceSystem
-  ].distance;
-
-const DEFAULT_WEIGHT_UNIT =
-  DEFAULT_UNITS[
-    DEFAULT_SETTINGS.weightSystem
-  ].weight;
 
 const emptyExercise = {
   categoryId: '',
@@ -54,6 +46,18 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
   const { exercises: exerciseCatalog, fetchExercises, createExercise } = useExercises();
 
   const { categories, fetchCategories } = useCategories();
+
+  const { settings } = useSettings();
+
+  const DEFAULT_DISTANCE_UNIT =
+    DEFAULT_UNITS[
+      settings.distanceSystem
+    ].distance;
+
+  const DEFAULT_WEIGHT_UNIT =
+    DEFAULT_UNITS[
+      settings.weightSystem
+    ].weight;
 
   const handleExerciseChange = (event, exerciseIndex) => {
     const { name, value } = event.target;
@@ -439,14 +443,41 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
               ...set.metrics
             };
 
+            if (metrics.weight !== undefined) {
+
+              const unit =
+                set.inputUnits?.weight ?? DEFAULT_WEIGHT_UNIT;
+
+              const config = UNITS.weight[unit];
+
+              metrics.weight = Number(
+                config
+                  .fromBase(metrics.weight)
+                  .toFixed(config.precision)
+              );
+            }
+
             if (metrics.distance !== undefined) {
 
-              const unit = set.inputUnits?.distance ?? DEFAULT_DISTANCE_UNIT;
-
-              metrics.distance =
-                UNITS.distance[unit].fromBase(
-                  metrics.distance
+              const displayUnit =
+                getDisplayDistanceUnit(
+                  set.inputUnits?.distance ??
+                  DEFAULT_DISTANCE_UNIT,
+                  settings.distanceSystem
                 );
+
+              const config = UNITS.distance[displayUnit];
+
+              metrics.distance = Number(
+                config
+                  .fromBase(metrics.distance)
+                  .toFixed(config.precision)
+              );
+
+              set.inputUnits = {
+                ...set.inputUnits,
+                distance: displayUnit
+              };
             }
 
             if (metrics.duration !== undefined) {
@@ -470,7 +501,7 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
     } else {
       resetForm();
     }
-  }, [editingWorkout]);
+  }, [editingWorkout, DEFAULT_DISTANCE_UNIT, DEFAULT_WEIGHT_UNIT]);
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
@@ -502,6 +533,19 @@ function WorkoutForm({ editingWorkout, setEditingWorkout }) {
           const convertedMetrics = {
             ...set.metrics
           };
+
+          if (
+            convertedMetrics.weight !== undefined &&
+            convertedMetrics.weight !== ""
+          ) {
+            const unit =
+              set.inputUnits?.weight ?? DEFAULT_WEIGHT_UNIT;
+
+            convertedMetrics.weight =
+              UNITS.weight[unit].toBase(
+                convertedMetrics.weight
+              );
+          }
 
           if (
             convertedMetrics.distance !== undefined &&
