@@ -23,8 +23,7 @@ export const exerciseReducer = (state, action) => {
     case "DELETE_EXERCISE":
       return {
         exercises: state.exercises.filter(
-          (exercise) =>
-            exercise._id !== action.payload._id
+          exercise => exercise._id !== action.payload
         )
       };
 

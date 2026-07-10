@@ -151,16 +151,6 @@ function Settings() {
 
       </div>
 
-      <div className="settings-section">
-
-        <h3>Exercise Library</h3>
-
-        <button type="button">
-          Manage Archived Exercises
-        </button>
-
-      </div>
-
     </div>
   );
 }

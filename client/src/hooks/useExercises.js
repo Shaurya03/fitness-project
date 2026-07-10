@@ -1,8 +1,10 @@
 import { useExerciseContext } from "./useExerciseContext";
+import { useWorkoutContext } from "./useWorkoutContext";
 import { useAuthContext } from "./useAuthContext";
 
 export const useExercises = () => {
   const { exercises, dispatch } = useExerciseContext();
+  const { dispatch: workoutDispatch } = useWorkoutContext();
   const { user } = useAuthContext();
 
   const fetchExercises = async () => {
@@ -94,9 +96,24 @@ export const useExercises = () => {
       throw new Error(json.error);
     }
 
+    const workoutsResponse = await fetch("/api/workouts", {
+      headers: {
+        Authorization: `Bearer ${user.token}`
+      }
+    });
+
+    const workouts = await workoutsResponse.json();
+
+    if (workoutsResponse.ok) {
+      workoutDispatch({
+        type: "SET_WORKOUTS",
+        payload: workouts
+      });
+    }
+
     dispatch({
       type: "DELETE_EXERCISE",
-      payload: json
+      payload: id
     });
 
     return json;

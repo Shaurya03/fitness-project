@@ -77,3 +77,24 @@ label {
 .modal-warning {
   font-weight: bold;
 }
+
+.delete-warning-list {
+  margin: 1rem 0;
+  padding-left: 1.25rem;
+}
+
+.delete-warning-list li {
+  margin-bottom: 0.5rem;
+}
+
+.delete-confirmation {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.modal-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
