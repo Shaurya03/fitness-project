@@ -14,8 +14,7 @@ const getExercises = async (req, res) => {
 
   const exercises = await Exercise
     .find({
-      user_id,
-      isArchived: false
+      user_id
     })
     .populate("categoryId")
     .sort({ name: 1 });
@@ -64,38 +63,9 @@ const createExercise = async (req, res) => {
     }
   });
 
-  if (existingExercise && !existingExercise.isArchived) {
+  if (existingExercise) {
     return res.status(400).json({
       error: "Exercise already exists"
-    });
-  }
-
-  if (existingExercise?.isArchived && !req.body.restoreArchived) {
-    return res.status(409).json({
-      archivedExercise: true,
-      exerciseName: normalizedName
-    });
-  }
-
-  if (existingExercise?.isArchived && req.body.restoreArchived) {
-
-    existingExercise.name = normalizedName;
-    existingExercise.categoryId = categoryId;
-    existingExercise.metrics = metrics;
-    existingExercise.isArchived = false;
-
-    await existingExercise.save();
-
-    const populatedExercise = await Exercise
-      .findById(existingExercise._id)
-      .populate("categoryId");
-
-    return res.status(200).json({
-      ...populatedExercise.toObject(),
-      workoutCount: await getWorkoutCount(
-        existingExercise._id,
-        user_id
-      )
     });
   }
 
@@ -164,9 +134,7 @@ const updateExercise = async (req, res) => {
 
     if (existingExercise) {
       return res.status(400).json({
-        error: existingExercise.isArchived
-          ? "An archived exercise already uses this name. Please choose a different name."
-          : "Exercise already exists"
+        error: "Exercise already exists"
       });
     }
 
@@ -208,42 +176,42 @@ const updateExercise = async (req, res) => {
   });
 };
 
+const removeExerciseFromWorkouts = async (
+  exerciseId,
+  user_id
+) => {
+
+  const workouts = await Workout.find({
+    user_id,
+    "exercises.exerciseId": exerciseId
+  });
+
+  for (const workout of workouts) {
+
+    workout.exercises = workout.exercises.filter(
+      exercise =>
+        exercise.exerciseId.toString() !== exerciseId
+    );
+
+    if (workout.exercises.length === 0) {
+      await workout.deleteOne();
+    } else {
+      await workout.save();
+    }
+  }
+
+  return workouts.length;
+};
+
 const deleteExercise = async (req, res) => {
+
   const user_id = req.user._id;
   const { id } = req.params;
 
-  const workoutCount = await getWorkoutCount(
-    id,
+  const exercise = await Exercise.findOne({
+    _id: id,
     user_id
-  );
-
-  if (workoutCount === 0) {
-    const exercise = await Exercise.findOneAndDelete({
-      _id: id,
-      user_id
-    });
-
-    if (!exercise) {
-      return res.status(404).json({
-        error: "Exercise does not exist"
-      });
-    }
-
-    return res.status(200).json(exercise);
-  }
-
-  const exercise = await Exercise.findOneAndUpdate(
-    {
-      _id: id,
-      user_id
-    },
-    {
-      isArchived: true
-    },
-    {
-      new: true
-    }
-  ).populate("categoryId");
+  });
 
   if (!exercise) {
     return res.status(404).json({
@@ -251,7 +219,18 @@ const deleteExercise = async (req, res) => {
     });
   }
 
-  return res.status(200).json(exercise);
+  const workoutCount =
+    await removeExerciseFromWorkouts(
+      id,
+      user_id
+    );
+
+  await exercise.deleteOne();
+
+  res.status(200).json({
+    message: "Exercise deleted successfully",
+    workoutCount
+  });
 };
 
 module.exports = {

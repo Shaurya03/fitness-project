@@ -23,12 +23,8 @@ const exerciseSchema = new mongoose.Schema({
   user_id: {
     type: String,
     default: null
-  },
-
-  isArchived: {
-    type: Boolean,
-    default: false
   }
+
 }, {
   timestamps: true
 });

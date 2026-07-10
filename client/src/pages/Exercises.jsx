@@ -11,7 +11,6 @@ import EditCategoryModal from "../components/EditCategoryModal";
 import DeleteCategoryModal from "../components/DeleteCategoryModal";
 import ExerciseHistoryModal from "../components/ExerciseHistoryModal";
 import "./Exercises.css";
-import RestoreExerciseModal from "../components/RestoreExerciseModal";
 
 function Exercises() {
   const { categories, fetchCategories, createCategory, updateCategory, deleteCategory } = useCategories();
@@ -35,9 +34,6 @@ function Exercises() {
   const [selectedCategoryForEdit, setSelectedCategoryForEdit] = useState(null);
   const [selectedCategoryForDelete, setSelectedCategoryForDelete] = useState(null);
   const categoryMenuRef = useRef(null);
-
-  const [pendingExercise, setPendingExercise] = useState(null);
-  const [showRestoreModal, setShowRestoreModal] = useState(false);
 
   /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -186,18 +182,6 @@ function Exercises() {
     }
   };
 
-  const handleRestoreExercise = async () => {
-    await createExercise({
-      ...pendingExercise,
-      categoryId: selectedCategory._id,
-      restoreArchived: true
-    });
-
-    setShowRestoreModal(false);
-    setPendingExercise(null);
-    handleCloseModal();
-  }
-
   return (
     <div>
       <div className="page-header">
@@ -264,11 +248,6 @@ function Exercises() {
         selectedCategory={selectedCategory}
         onClose={handleCloseModal}
         onCreate={handleCreateExercise}
-        onRestoreRequired={(exerciseData) => {
-          setPendingExercise(exerciseData);
-          setIsCreateModalOpen(false);
-          setShowRestoreModal(true);
-        }}
       />
 
       <EditExerciseModal
@@ -326,16 +305,6 @@ function Exercises() {
         exerciseId={historyExercise?._id}
         isOpen={historyExercise !== null}
         onClose={() => setHistoryExercise(null)}
-      />
-
-      <RestoreExerciseModal
-        isOpen={showRestoreModal}
-        exerciseName={pendingExercise?.name}
-        onClose={() => {
-          setShowRestoreModal(false);
-          setPendingExercise(null);
-        }}
-        onRestore={handleRestoreExercise}
       />
 
     </div>

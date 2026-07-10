@@ -7,9 +7,9 @@ function CreateExerciseModal({
   isOpen,
   selectedCategory,
   onClose,
-  onCreate,
-  onRestoreRequired
+  onCreate
 }) {
+
   const [name, setName] = useState("");
   const [metrics, setMetrics] = useState([]);
   const [error, setError] = useState("");
@@ -48,32 +48,24 @@ function CreateExerciseModal({
       return;
     }
 
-    const exerciseData = {
-      name: name.trim(),
-      metrics
-    };
-
     try {
+
       setError("");
 
-      await onCreate(exerciseData);
+      await onCreate({
+        name: name.trim(),
+        metrics
+      });
 
       handleClose();
 
     } catch (error) {
-
-      if (error.archivedExercise) {
-
-        onRestoreRequired(exerciseData);
-
-        return;
-      }
-
       setError(error.error || error.message);
     }
   };
 
   const handleClose = () => {
+
     setName("");
     setError("");
 
@@ -93,6 +85,7 @@ function CreateExerciseModal({
         className="modal"
         onClick={(event) => event.stopPropagation()}
       >
+
         <h2>Create Exercise</h2>
 
         <p>
@@ -127,6 +120,7 @@ function CreateExerciseModal({
         )}
 
         <div className="modal-actions">
+
           <button
             type="button"
             onClick={handleSubmit}
@@ -140,7 +134,9 @@ function CreateExerciseModal({
           >
             Cancel
           </button>
+
         </div>
+
       </div>
     </div>,
     document.body
