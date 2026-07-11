@@ -64,7 +64,7 @@
   margin-bottom: 20px;
 }
 
-label {
+.modal label {
   font-size: 0.95rem;
   font-weight: 600;
   color: #555;
@@ -97,4 +97,10 @@ label {
 .modal-actions button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.workout-preview-modal {
+  width: min(800px, 90vw);
+  max-height: 90vh;
+  overflow-y: auto;
 }

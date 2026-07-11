@@ -2,8 +2,8 @@
 
   /* Colors */
 
-  --primary: #16A34A;
-  --primary-hover: #15803D;
+  --primary: #1AAC83;
+  --primary-hover: #0f8664;
 
   --success: #10B981;
   --warning: #F59E0B;
@@ -59,10 +59,5 @@
 
   --transition-fast: .15s ease;
   --transition-normal: .25s ease;
-
-
-
-
-
 
 }

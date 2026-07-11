@@ -1,4 +1,4 @@
-import './StatCard.css';
+import "./StatCard.css";
 
 function StatCard({
   title,
@@ -12,15 +12,15 @@ function StatCard({
 
     <div className="stat-card">
 
-      <h3>{title}</h3>
-      <p>{value}</p>
+      <h3 className="stat-title">{title}</h3>
+      <p className="stat-value">{value}</p>
       {
         subtitle &&
-        <small>{subtitle}</small>
+        <small className="stat-subtitle">{subtitle}</small>
       }
       {
         extra &&
-        <small>{extra}</small>
+        <small className="stat-subtitle">{extra}</small>
       }
       {children}
 

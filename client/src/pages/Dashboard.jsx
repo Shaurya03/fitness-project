@@ -117,7 +117,7 @@ function Dashboard() {
   return (
     <div className="dashboard">
 
-      <h2>Dashboard</h2>
+      <h2 className="dashboard-title">Dashboard</h2>
 
       <DashboardFilter
         selectedPeriod={selectedPeriod}
@@ -181,7 +181,7 @@ function Dashboard() {
 
       </div>
 
-      <h2>Personal Records</h2>
+      <h2 className="dashboard-title">Personal Records</h2>
 
       <div className="stats-grid">
 
@@ -297,7 +297,7 @@ function Dashboard() {
         </WorkoutPreviewModal>
       )}
 
-      <h2>Progress Charts</h2>
+      <h2 className="dashboard-title">Progress Charts</h2>
 
       <div className="charts-section">
         <CategoryBreakdownChart workouts={filteredWorkouts} />

@@ -7,7 +7,7 @@ import {
   Label,
   Sector
 } from "recharts";
-import './CategoryBreakdownChart.css';
+import './DashboardCharts.css';
 
 const renderActiveShape = (props) => {
   const {
@@ -174,10 +174,18 @@ function CategoryBreakdownChart({ workouts }) {
       </ResponsiveContainer>
 
       <div className="category-breakdown-list">
-        {chartData.map((item) => (
+        {chartData.map((item, index) => (
           <div
             key={item.name}
             className="category-breakdown-item"
+            onMouseEnter={() => {
+              setActiveCategory(item);
+              setActiveIndex(index);
+            }}
+            onMouseLeave={() => {
+              setActiveCategory(null);
+              setActiveIndex(-1);
+            }}
           >
             <div className="category-info">
               <span

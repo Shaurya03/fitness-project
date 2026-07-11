@@ -2,6 +2,7 @@ import { forwardRef } from "react";
 import { format } from "date-fns";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import DatePicker from "react-datepicker";
+import Select from "react-select";
 import "react-datepicker/dist/react-datepicker.css";
 import "./DashboardFilter.css";
 
@@ -46,63 +47,76 @@ function DashboardFilter({
     )}`;
   })();
 
+  const periodOptions = [
+    { value: "day", label: "Day" },
+    { value: "week", label: "Week" },
+    { value: "month", label: "Month" },
+    { value: "year", label: "Year" },
+    { value: "all", label: "All Time" },
+    { value: "custom", label: "Custom" }
+  ];
+
   return (
     <div className="dashboard-filter">
 
-      <div className="filter-period">
-        <select
-          value={selectedPeriod}
-          onChange={(event) => onPeriodChange(event.target.value)}
-        >
-          <option value="day">Day</option>
-          <option value="week">Week</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-          <option value="all">All Time</option>
-          <option value="custom">Custom</option>
-        </select>
-      </div>
+      <div className="filter-toolbar">
 
-      {selectedPeriod !== "all" &&
-        selectedPeriod !== "custom" && (
-          <div className="period-navigation">
-            <button
-              onClick={onPrevious}
-            >
-              <FaChevronLeft />
-            </button>
-
-            <span className="period-label">
-              {periodLabel}
-            </span>
-
-            <button onClick={onNext}
-              disabled={disableNext}
-            >
-              <FaChevronRight />
-            </button>
-          </div>
-        )}
-
-      {selectedPeriod === "custom" && (
-        <div className="period-navigation">
-          <DatePicker
-            selectsRange
-            startDate={customRange.startDate}
-            endDate={customRange.endDate}
-            onChange={([startDate, endDate]) =>
-              setCustomRange({
-                startDate,
-                endDate
-              })
-            }
-            customInput={<DateButton label={rangeLabel} />}
-            dateFormat="dd MMM yyyy"
-            shouldCloseOnSelect={false}
-            popperPlacement="bottom-end"
+        <div className="filter-period">
+          <Select
+            className="period-select"
+            classNamePrefix="period-select"
+            options={periodOptions}
+            value={periodOptions.find(
+              option => option.value === selectedPeriod
+            )}
+            onChange={(option) => onPeriodChange(option.value)}
+            isSearchable={false}
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
           />
         </div>
-      )}
+
+        {selectedPeriod !== "all" &&
+          selectedPeriod !== "custom" && (
+            <div className="period-navigation">
+              <button
+                onClick={onPrevious}
+              >
+                <FaChevronLeft />
+              </button>
+
+              <span className="period-label">
+                {periodLabel}
+              </span>
+
+              <button onClick={onNext}
+                disabled={disableNext}
+              >
+                <FaChevronRight />
+              </button>
+            </div>
+          )}
+
+        {selectedPeriod === "custom" && (
+          <div className="period-navigation">
+            <DatePicker
+              selectsRange
+              startDate={customRange.startDate}
+              endDate={customRange.endDate}
+              onChange={([startDate, endDate]) =>
+                setCustomRange({
+                  startDate,
+                  endDate
+                })
+              }
+              customInput={<DateButton label={rangeLabel} />}
+              dateFormat="dd MMM yyyy"
+              shouldCloseOnSelect={false}
+              popperPlacement="bottom-end"
+            />
+          </div>
+        )}
+      </div>
     </div >
   );
 }

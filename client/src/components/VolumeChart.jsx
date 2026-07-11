@@ -12,6 +12,7 @@ import {
   CartesianGrid
 } from "recharts";
 import { useSettings } from "../hooks/useSettings";
+import "./DashboardCharts.css";
 
 function VolumeChart({ workouts }) {
 

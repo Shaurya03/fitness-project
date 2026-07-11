@@ -1,0 +1,99 @@
+.chart-card {
+  background: var(--surface);
+  padding: var(--card-padding);
+
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    box-shadow var(--transition-normal),
+    transform var(--transition-normal);
+}
+
+.chart-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.chart-card h3 {
+  margin-bottom: var(--space-sm);
+
+  color: var(--text-primary);
+
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.category-breakdown-list {
+  max-width: 450px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.category-breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .75rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.category-breakdown-item:last-child {
+  border-bottom: none;
+}
+
+.category-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.category-breakdown-stats {
+  display: flex;
+  gap: var(--space-md);
+  color: var(--text-secondary);
+  font-size: .95rem;
+}
+
+.category-breakdown-stats span:first-child {
+  width: 90px;
+  text-align: right;
+}
+
+.category-breakdown-stats span:last-child {
+  width: 60px;
+  text-align: right;
+}
+
+.color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+
+  flex-shrink: 0;
+}
+
+.chart-summary {
+  margin-bottom: var(--space-lg);
+  color: var(--text-secondary);
+  font-size: .95rem;
+}
+
+.chart-empty {
+  padding: var(--space-xl) 0;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.recharts-pie-sector:focus,
+.recharts-sector:focus,
+.recharts-layer:focus,
+.recharts-wrapper svg:focus {
+  outline: none;
+}

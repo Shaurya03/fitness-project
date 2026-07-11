@@ -1,4 +1,4 @@
-import './PersonalRecordCard.css';
+import "./PersonalRecordCard.css";
 
 function PersonalRecordCard({
   title,
@@ -12,20 +12,24 @@ function PersonalRecordCard({
   return (
     <div className="pr-card">
 
-      <h3>{title}</h3>
-      <p>{value}</p>
-      {
-        exercise &&
-        <small>{exercise}</small>
-      }
-      {
-        workout &&
-        <small>{workout}</small>
-      }
-      {
-        date &&
-        <small>{date}</small>
-      }
+      <div className="pr-content">
+
+        <h3 className="pr-title">{title}</h3>
+        <p className="pr-value">{value}</p>
+
+        <small className="pr-exercise">{exercise || "\u00A0"}</small>
+
+        {
+          workout &&
+          <span className="pr-workout" >{workout}</span>
+        }
+        {
+          date &&
+          <span className="pr-date">{date}</span>
+        }
+
+      </div>
+
       <button
         className="view-workout-btn"
         onClick={onViewWorkout}

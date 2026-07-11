@@ -1,53 +1,72 @@
 .dashboard {
-  padding: 40px;
+  padding: var(--space-xl);
 }
 
-.dashboard h2 {
-  margin-bottom: 24px;
-  color: #1aac83;
+.dashboard-title {
+  margin: 0 0 var(--space-xl);
+  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.dashboard-title:first-child {
+  margin-top: 0;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg);
 }
 
-.dashboard-section {
-  margin-top: 40px;
+.dashboard-section .dashboard-title,
+.dashboard-title:not(:first-child) {
+  margin-top: calc(var(--space-xl) * 2);
 }
 
 .category-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 20px;
+  gap: var(--space-lg);
 }
 
 .category-card {
-  background: white;
-  padding: 16px 20px;
-  border-radius: 12px;
+  background: var(--surface);
+  padding: var(--card-padding);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+}
 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+.category-card:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .recent-workouts {
   display: grid;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .recent-workout-card {
-  background: white;
-  padding: 18px;
-  border-radius: 12px;
+  background: var(--surface);
+  padding: var(--card-padding);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-normal);
+}
 
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+.recent-workout-card:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .recent-workout-card h4 {
-  margin-bottom: 12px;
+  margin-bottom: var(--space-md);
 }
 
 .recent-workout-card p {
-  margin: 6px 0;
+  margin: var(--space-xs) 0;
+  color: var(--text-secondary);
 }
