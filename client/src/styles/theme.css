@@ -1,0 +1,68 @@
+:root {
+
+  /* Colors */
+
+  --primary: #16A34A;
+  --primary-hover: #15803D;
+
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+
+  --background: #F5F7FA;
+  --surface: #FCFCFD;
+  --surface-hover: #F8FAFC;
+
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+
+  --border: #E5E7EB;
+  --border-light: #EEF2F7;
+  --divider: #E8ECF1;
+
+  --disabled: #CBD5E1;
+  --focus: #22C55E;
+
+  /* Border Radius */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Shadows */
+
+  --shadow-sm: 0 1px 3px rgba(15, 23, 42, .08);
+
+  --shadow-md:
+    0 4px 12px rgba(15, 23, 42, .08),
+    0 1px 2px rgba(15, 23, 42, .04);
+
+  --shadow-lg:
+    0 16px 40px rgba(15, 23, 42, .12);
+
+  /* Spacing */
+
+  --space-xs: .25rem;
+  --space-sm: .5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* Layout */
+
+  --max-content-width: 1400px;
+  --card-padding: 24px;
+  --navbar-height: 72px;
+
+  /* Animation */
+
+  --transition-fast: .15s ease;
+  --transition-normal: .25s ease;
+
+
+
+
+
+
+}

@@ -8,8 +8,9 @@ import { ExerciseContextProvider } from './context/ExerciseContextProvider.jsx';
 import { SettingsContextProvider } from './context/SettingsContextProvider.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import './index.css';
 import App from './App.jsx';
+import "./styles/theme.css";
+import "./index.css";
 
 
 createRoot(document.getElementById('root')).render(
@@ -28,5 +29,5 @@ createRoot(document.getElementById('root')).render(
         </SettingsContextProvider>
       </AuthContextProvider>
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 );
