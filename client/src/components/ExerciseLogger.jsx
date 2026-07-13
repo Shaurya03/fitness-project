@@ -12,6 +12,7 @@ import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
 import { useSettings } from "../hooks/useSettings";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import { getHistoryWithPRs } from "../utils/prHistory";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import "./ExerciseLogger.css";
 
@@ -131,9 +132,6 @@ function ExerciseLogger({
         item.exerciseId?._id === exercise._id
     );
 
-  const loggedSets =
-    loggedExercise?.sets || [];
-
   const exerciseHistory = workouts
     .filter(workout =>
       workout.exercises.some(item =>
@@ -145,6 +143,37 @@ function ExerciseLogger({
         new Date(b.date) -
         new Date(a.date)
     );
+
+  const historyWithPRs = getHistoryWithPRs(
+
+    exerciseHistory.map(workout => {
+
+      const exerciseData = workout.exercises.find(
+        item => item.exerciseId._id === exercise._id
+      );
+
+      return {
+        ...workout,
+        sets: exerciseData.sets
+      };
+    })
+  );
+
+  const todaysWorkoutWithPRs =
+    historyWithPRs.find(workout => {
+
+      const workoutDate = new Date(workout.date);
+      const today = new Date();
+
+      return (
+        workoutDate.getFullYear() === today.getFullYear() &&
+        workoutDate.getMonth() === today.getMonth() &&
+        workoutDate.getDate() === today.getDate()
+      );
+    });
+
+  const loggedSetsWithPRs =
+    todaysWorkoutWithPRs?.sets ?? [];
 
   const metricOrder = [
     "distance",
@@ -1091,15 +1120,17 @@ function ExerciseLogger({
                 Today's Sets
               </h3>
 
-              {loggedSets.length === 0 && (
+              {loggedSetsWithPRs.length === 0 && (
                 <p>
                   No sets logged yet.
                 </p>
               )}
 
-              {loggedSets.length > 0 && (() => {
+              {loggedSetsWithPRs.length > 0 && (() => {
 
-                const metrics = getSortedDisplayMetrics(loggedSets[0].metrics);
+                const metrics = getSortedDisplayMetrics(
+                  loggedSetsWithPRs[0].metrics
+                );
 
                 return (
 
@@ -1117,7 +1148,7 @@ function ExerciseLogger({
                       const unit =
                         key === "distance"
                           ? getDisplayDistanceUnit(
-                            loggedSets[0].inputUnits?.distance ??
+                            loggedSetsWithPRs[0].inputUnits?.distance ??
                             DEFAULT_DISTANCE_UNIT,
                             settings.distanceSystem
                           )
@@ -1142,7 +1173,7 @@ function ExerciseLogger({
 
               <div className="logged-sets-body">
 
-                {loggedSets.map(
+                {loggedSetsWithPRs.map(
                   (set, index) => {
 
                     const displayMetrics =
@@ -1180,6 +1211,12 @@ function ExerciseLogger({
                                 false
                               )}
 
+                              {set.personalRecords?.[key] && (
+                                <span className="pr-trophy">
+                                  🏆
+                                </span>
+                              )}
+
                             </span>
 
                           ))}
@@ -1211,29 +1248,12 @@ function ExerciseLogger({
 
             ) : (
 
-              exerciseHistory.map(workout => {
-
-                const exerciseData =
-                  workout.exercises.find(
-                    item =>
-                      item.exerciseId._id ===
-                      exercise._id
-                  );
-
-                return (
-
-                  <HistoryWorkoutCard
-                    key={workout._id}
-                    workout={{
-                      ...workout,
-                      sets: exerciseData.sets
-                    }}
-                  />
-
-                );
-
-              })
-
+              historyWithPRs.map(workout => (
+                <HistoryWorkoutCard
+                  key={workout._id}
+                  workout={workout}
+                />
+              ))
             )}
 
           </div>
