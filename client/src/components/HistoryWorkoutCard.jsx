@@ -54,18 +54,20 @@ function HistoryWorkoutCard({ workout }) {
 
                 return (
                   <td key={metric}>
-                    {formatMetric(
-                      metric,
-                      value,
-                      settings,
-                      set.inputUnits
-                    )}
+                    <div className="history-value">
+                      {formatMetric(
+                        metric,
+                        value,
+                        settings,
+                        set.inputUnits
+                      )}
 
-                    {set.personalRecords?.[metric] && (
-                      <span className="pr-trophy">
-                        🏆
-                      </span>
-                    )}
+                      {set.personalRecords?.[metric] && (
+                        <span className="pr-trophy">
+                          🏆
+                        </span>
+                      )}
+                    </div>
                   </td>
                 );
               })}

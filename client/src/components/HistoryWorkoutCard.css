@@ -1,36 +1,76 @@
 .history-workout-card {
-  padding-bottom: 20px;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #eee;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-sm);
 }
 
-.history-workout-card:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+.history-workout-card h3 {
+  margin: 0 0 var(--space-lg);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .history-table {
-  border-collapse: separate;
-  border-spacing: 0;
-  width: max-content;
-  min-width: 100%;
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.history-table thead {
+  border-bottom: 1px solid var(--border);
 }
 
 .history-table th {
+  padding: 0 0 var(--space-md);
   text-align: left;
-  padding: 8px 28px 8px 0;
-  color: #666;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: .85rem;
+  font-weight: 700;
+  color: var(--text-secondary);
   text-transform: uppercase;
+  letter-spacing: .04em;
 }
 
 .history-table td {
-  padding: 6px 28px 6px 0;
+  padding: 12px 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.history-table tbody tr:not(:last-child) {
+  border-bottom: 1px solid var(--border);
 }
 
 .pr-trophy {
-  margin-left: 4px;
-  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  margin-left: 6px;
+  font-size: .9rem;
+}
+
+.history-value {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (max-width: 640px) {
+
+  .history-workout-card {
+    padding: 18px;
+  }
+
+  .history-workout-card h3 {
+    font-size: 1.15rem;
+  }
+
+  .history-table th,
+  .history-table td {
+    font-size: .9rem;
+  }
+
 }

@@ -786,16 +786,16 @@ function ExerciseLogger({
   return (
     <div className="exercise-logger">
 
+      <button
+        className="back-btn"
+        onClick={onBack}
+      >
+        ←
+      </button>
+
       <div className="logger-header">
 
-        <button
-          className="back-btn"
-          onClick={onBack}
-        >
-          ←
-        </button>
-
-        <div>
+        <div className="logger-info">
 
           <h2>
             {exercise.name}
@@ -1166,21 +1166,24 @@ function ExerciseLogger({
 
                           {displayMetrics.map(({ key, value }) => (
 
-                            <span key={key}>
+                            <span
+                              className="set-value"
+                              key={key}
+                            >
 
-                              {formatMetric(
-                                key,
-                                value,
-                                settings,
-                                set.inputUnits,
-                                false
-                              )}
+                              <span>
+                                {formatMetric(
+                                  key,
+                                  value,
+                                  settings,
+                                  set.inputUnits,
+                                  false
+                                )}
+                              </span>
 
-                              {set.personalRecords?.[key] && (
-                                <span className="pr-trophy">
-                                  🏆
-                                </span>
-                              )}
+                              <span className="prs-trophy">
+                                {set.personalRecords?.[key] ? "🏆" : ""}
+                              </span>
 
                             </span>
 
