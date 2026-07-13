@@ -15,8 +15,11 @@
 }
 
 .back-btn {
+  font-weight: bold;
+  font-size: 1rem;
   border: none;
-  background: var(--background);
+  background: var(--primary);
+  color: white;
   border-radius: var(--radius-sm);
   padding: 8px 14px;
   cursor: pointer;
@@ -24,7 +27,7 @@
 }
 
 .back-btn:hover {
-  background: var(--border-light);
+  background: var(--primary-hover);
 }
 
 .logger-header h2 {
@@ -139,11 +142,19 @@
   background: var(--surface);
 }
 
+.logger-actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
 .save-set-btn,
 .update-set-btn,
-.delete-set-btn {
+.delete-set-btn,
+.clear-set-btn {
   margin-top: var(--space-xl);
   height: 48px;
+  width: 100px;
   border: none;
   border-radius: var(--radius-md);
   padding: 0 26px;
@@ -152,7 +163,8 @@
 }
 
 .save-set-btn,
-.update-set-btn {
+.update-set-btn,
+.clear-set-btn {
   background: var(--primary);
   color: white;
 }
@@ -165,13 +177,15 @@
 .metric-adjust-btn,
 .save-set-btn,
 .update-set-btn,
-.delete-set-btn {
+.delete-set-btn,
+.clear-set-btn {
   transition: var(--transition-fast);
 }
 
 .metric-adjust-btn:hover,
 .save-set-btn:hover,
-.update-set-btn:hover {
+.update-set-btn:hover,
+.clear-set-btn:hover {
   transform: translateY(-1px);
 }
 
@@ -183,7 +197,8 @@
 
 .edit-set-actions {
   display: flex;
-  gap: 12px;
+  justify-content: center;
+  gap: var(--space-md);
 }
 
 .logged-sets {
@@ -318,6 +333,9 @@ input[type="number"] {
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: var(--space-sm);
 }
 
 .exercise-content {

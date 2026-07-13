@@ -526,6 +526,36 @@ function ExerciseLogger({
     }
   };
 
+  const clearInputs = () => {
+
+    const metrics = {};
+
+    if (exercise.metrics.includes("duration")) {
+
+      metrics.duration = {
+        hours: "",
+        minutes: "",
+        seconds: ""
+      };
+
+    }
+
+    setMetricValues({
+      metrics,
+      inputUnits: {
+        weight: DEFAULT_WEIGHT_UNIT,
+        distance: DEFAULT_DISTANCE_UNIT
+      }
+    });
+
+    setSelectedSetIndex(null);
+
+    requestAnimationFrame(() => {
+      firstInputRef.current?.focus();
+    });
+
+  };
+
   const handleSelectSet = (set, index) => {
 
     setSelectedSetIndex(index);
@@ -836,7 +866,7 @@ function ExerciseLogger({
           className="back-btn"
           onClick={onBack}
         >
-          ← Back
+          ←
         </button>
 
         <div>
@@ -856,7 +886,7 @@ function ExerciseLogger({
                 }`}
               onClick={() => setActiveTab("logger")}
             >
-              Logger
+              Track
             </button>
 
             <button
@@ -1083,16 +1113,25 @@ function ExerciseLogger({
 
             {selectedSetIndex === null ? (
 
-              <button
-                className="save-set-btn"
-                onClick={handleSaveSet}
-                disabled={isLoading}
-              >
-                {isLoading
-                  ? "Saving..."
-                  : "SaveSet"
-                }
-              </button>
+              <div className="logger-actions">
+
+                <button
+                  className="save-set-btn"
+                  onClick={handleSaveSet}
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Saving..." : "Save"}
+                </button>
+
+                <button
+                  className="clear-set-btn"
+                  onClick={clearInputs}
+                  type="button"
+                >
+                  Clear
+                </button>
+
+              </div>
 
             ) : (
               <div className="edit-set-actions">
