@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { UNITS, DISTANCE_SYSTEMS } from "../utils/units";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
+import { getDisplaySet } from "../utils/getDisplaySet";
 import { useSettings } from "../hooks/useSettings";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { getHistoryWithPRs } from "../utils/prHistory";
@@ -55,55 +56,6 @@ function ExerciseLogger({
   const distanceUnit =
     metricValues.inputUnits.distance ??
     DEFAULT_DISTANCE_UNIT;
-
-  /* eslint-disable react-hooks/set-state-in-effect */
-
-  useEffect(() => {
-
-    if (!exercise) {
-      return;
-    }
-
-    const units = {};
-
-    const metrics = {};
-
-    if (exercise.metrics.includes("duration")) {
-      metrics.duration = {
-        hours: "",
-        minutes: "",
-        seconds: ""
-      };
-    }
-
-    if (exercise.metrics.includes("weight")) {
-      units.weight = DEFAULT_WEIGHT_UNIT;
-    }
-
-    if (exercise.metrics.includes("distance")) {
-      units.distance = DEFAULT_DISTANCE_UNIT;
-    }
-
-    setMetricValues({
-      metrics,
-      inputUnits: units
-    });
-
-  }, [
-    exercise,
-    DEFAULT_WEIGHT_UNIT,
-    DEFAULT_DISTANCE_UNIT
-  ]);
-
-  /* eslint-enable react-hooks/set-state-in-effect */
-
-  if (!exercise) {
-    return (
-      <div className="exercise-logger empty">
-        Select an exercise
-      </div>
-    );
-  }
 
   const todaysWorkout =
     workouts.find(workout => {
@@ -174,6 +126,77 @@ function ExerciseLogger({
 
   const loggedSetsWithPRs =
     todaysWorkoutWithPRs?.sets ?? [];
+
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+
+    if (!exercise) return;
+
+    const loggedExercise =
+      todaysWorkout?.exercises.find(
+        item => item.exerciseId?._id === exercise._id
+      );
+
+    const lastLoggedSet =
+      loggedExercise?.sets.at(-1);
+
+    if (lastLoggedSet) {
+
+      setMetricValues(
+        getDisplaySet({
+          set: lastLoggedSet,
+          settings,
+          DEFAULT_WEIGHT_UNIT,
+          DEFAULT_DISTANCE_UNIT
+        })
+      );
+
+      return;
+    }
+
+    const metrics = {};
+    const inputUnits = {};
+
+    if (exercise.metrics.includes("duration")) {
+      metrics.duration = {
+        hours: "",
+        minutes: "",
+        seconds: ""
+      };
+    }
+
+    if (exercise.metrics.includes("weight")) {
+      inputUnits.weight = DEFAULT_WEIGHT_UNIT;
+    }
+
+    if (exercise.metrics.includes("distance")) {
+      inputUnits.distance = DEFAULT_DISTANCE_UNIT;
+    }
+
+    setMetricValues({
+      metrics,
+      inputUnits
+    });
+
+  }, [
+    exercise,
+    todaysWorkout,
+    settings,
+    DEFAULT_WEIGHT_UNIT,
+    DEFAULT_DISTANCE_UNIT
+  ]);
+
+  /* eslint-enable react-hooks/set-state-in-effect */
+
+  if (!exercise) {
+    return (
+      <div className="exercise-logger empty">
+        Select an exercise
+      </div>
+    );
+  }
 
   const metricOrder = [
     "distance",
@@ -501,14 +524,14 @@ function ExerciseLogger({
 
       toast.success("Set saved.");
 
-      setMetricValues({
-        metrics: {
-          ...metricValues.metrics
-        },
-        inputUnits: {
-          ...metricValues.inputUnits
-        }
+      const displaySet = getDisplaySet({
+        set: newSet,
+        settings,
+        DEFAULT_WEIGHT_UNIT,
+        DEFAULT_DISTANCE_UNIT
       });
+
+      setMetricValues(displaySet);
 
       requestAnimationFrame(() => {
         firstInputRef.current?.focus();
@@ -560,82 +583,14 @@ function ExerciseLogger({
 
     setSelectedSetIndex(index);
 
-    const metrics = {
-      ...set.metrics
-    };
-
-    if (metrics.weight != null) {
-
-      const weightConfig =
-        UNITS.weight[DEFAULT_WEIGHT_UNIT];
-
-      metrics.weight = Number(
-        weightConfig
-          .fromBase(metrics.weight)
-          .toFixed(weightConfig.precision)
-      );
-    }
-
-    if (metrics.distance != null) {
-
-      const displayUnit =
-        getDisplayDistanceUnit(
-          set.inputUnits?.distance ??
-          DEFAULT_DISTANCE_UNIT,
-          settings.distanceSystem
-        );
-
-      const distanceConfig =
-        UNITS.distance[displayUnit];
-
-      metrics.distance = Number(
-        distanceConfig
-          .fromBase(metrics.distance)
-          .toFixed(distanceConfig.precision)
-      );
-    }
-
-    if (metrics.duration != null) {
-      const hours =
-        Math.floor(metrics.duration / 3600);
-
-      const minutes =
-        Math.floor(
-          (metrics.duration % 3600) / 60
-        );
-
-      const seconds =
-        metrics.duration % 60;
-
-      metrics.duration = {
-        hours:
-          hours === 0
-            ? ""
-            : hours,
-
-        minutes:
-          minutes === 0
-            ? ""
-            : minutes,
-
-        seconds:
-          seconds === 0
-            ? ""
-            : seconds
-      };
-    }
-
-    setMetricValues({
-      metrics,
-      inputUnits: {
-        weight: DEFAULT_WEIGHT_UNIT,
-        distance: getDisplayDistanceUnit(
-          set.inputUnits?.distance ??
-          DEFAULT_DISTANCE_UNIT,
-          settings.distanceSystem
-        )
-      }
+    const displaySet = getDisplaySet({
+      set,
+      settings,
+      DEFAULT_WEIGHT_UNIT,
+      DEFAULT_DISTANCE_UNIT
     });
+
+    setMetricValues(displaySet);
 
     requestAnimationFrame(() => {
       firstInputRef.current?.focus();
