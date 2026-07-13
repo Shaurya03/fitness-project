@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { FiEdit, FiTrash2 } from "react-icons/fi";
+import { FiTrash2 } from "react-icons/fi";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
@@ -10,9 +10,8 @@ import "./WorkoutDetails.css";
 
 function WorkoutDetails({
   workout,
-  setEditingWorkout,
-  onDelete,
-  preview = false
+  onSelectedExercise,
+  onDelete
 }) {
 
   const { settings } = useSettings();
@@ -79,6 +78,7 @@ function WorkoutDetails({
               <div
                 className="exercise-item"
                 key={`${exercise.exerciseId?._id}-${index}`}
+                onClick={() => onSelectedExercise(exercise)}
               >
 
                 <h4>{exercise.exerciseId?.name}</h4>
@@ -176,25 +176,14 @@ function WorkoutDetails({
         )}
       </div>
 
-      {!preview && (
-        <div className="workout-actions">
-
-          <button
-            className="edit-button"
-            onClick={() => setEditingWorkout(workout)}
-          >
-            <FiEdit />
-          </button>
-
-          <button
-            className="delete-button"
-            onClick={onDelete}
-          >
-            <FiTrash2 />
-          </button>
-
-        </div>
-      )}
+      <div className="workout-actions">
+        <button
+          className="delete-button"
+          onClick={onDelete}
+        >
+          <FiTrash2 />
+        </button>
+      </div>
 
     </div>
   );

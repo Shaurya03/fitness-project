@@ -1,14 +1,20 @@
 import { useState, useEffect, useRef } from "react";
+import { FaChevronRight } from "react-icons/fa";
 import "./ExerciseCard.css";
 
-function ExerciseCard({ exercise, onHistory, onEdit, onDelete }) {
+function ExerciseCard({
+  exercise,
+  mode = "manage",
+  onClick,
+  onHistory,
+  onEdit,
+  onDelete
+}) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
-    if (!isMenuOpen) {
-      return;
-    }
+    if (!isMenuOpen) return;
 
     const handleClickOutside = (event) => {
       if (
@@ -24,32 +30,41 @@ function ExerciseCard({ exercise, onHistory, onEdit, onDelete }) {
       handleClickOutside
     );
 
-    return () => {
+    return () =>
       document.removeEventListener(
         "mousedown",
         handleClickOutside
       );
-    };
 
   }, [isMenuOpen]);
 
   return (
-    <div className="exercise-card">
+    <div
+      className={`exercise-card ${mode}`}
+      onClick={onClick}
+    >
       <span>{exercise.name}</span>
 
-      <div
-        className="menu-container"
-        ref={menuRef}
-      >
-        <button
-          className="menu-btn"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          ⋮
-        </button>
+      {mode === "select" && (
+        <FaChevronRight className="exercise-arrow" />
+      )}
 
-        {
-          isMenuOpen && (
+      {mode === "manage" && (
+        <div
+          className="menu-container"
+          ref={menuRef}
+          onClick={(event) => event.stopPropagation()}
+        >
+          <button
+            className="menu-btn"
+            onClick={() =>
+              setIsMenuOpen(!isMenuOpen)
+            }
+          >
+            ⋮
+          </button>
+
+          {isMenuOpen && (
             <div className="exercise-menu">
 
               <button
@@ -78,10 +93,13 @@ function ExerciseCard({ exercise, onHistory, onEdit, onDelete }) {
               >
                 Delete
               </button>
+
             </div>
-          )
-        }
-      </div>
+          )}
+
+        </div>
+      )}
+
     </div>
   );
 }

@@ -28,7 +28,6 @@ export const formatMetric = (
       }
 
       const unit =
-        inputUnits.weight ??
         DEFAULT_UNITS[weightSystem].weight;
 
       const config =
@@ -81,11 +80,7 @@ export const formatMetric = (
       const minutes = Math.floor((value % 3600) / 60);
       const seconds = value % 60;
 
-      if (hours > 0) {
-        return `${hours}:${pad(minutes)}:${pad(seconds)}`;
-      }
-
-      return `${pad(minutes)}:${pad(seconds)}`;
+      return `${hours}:${pad(minutes)}:${pad(seconds)}`;
     }
 
     case "pace": {

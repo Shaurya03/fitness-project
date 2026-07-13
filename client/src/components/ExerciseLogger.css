@@ -1,0 +1,286 @@
+.exercise-logger {
+  max-width: 760px;
+  margin: 40px auto;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--card-padding);
+  box-shadow: var(--shadow-md);
+}
+
+.logger-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.back-btn {
+  border: none;
+  background: var(--background);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.back-btn:hover {
+  background: var(--border-light);
+}
+
+.logger-header h2 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.logger-header p {
+  margin-top: 6px;
+  color: var(--text-secondary);
+}
+
+.logger-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.logger-metric label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+.metric-unit {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.metric-input-row {
+  display: grid;
+  grid-template-columns: 46px 1fr 46px;
+  gap: 10px;
+}
+
+.metric-adjust-btn {
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.metric-adjust-btn:hover {
+  background: var(--primary-hover);
+}
+
+.metric-input-row input {
+  height: 48px;
+  padding: 0 14px;
+  font-size: 1.15rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.metric-input-row input::-webkit-inner-spin-button,
+.metric-input-row input::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.metric-input-row input {
+  appearance: textfield;
+}
+
+.metric-input-row input,
+.duration-inputs input {
+  text-align: center;
+}
+
+.metric-input-row input:focus,
+.duration-inputs input:focus,
+.logger-metric select:focus {
+  outline: none;
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
+}
+
+.duration-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.duration-inputs input {
+  height: 48px;
+  text-align: center;
+  font-size: 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+}
+
+.duration-inputs input::-webkit-inner-spin-button,
+.duration-inputs input::-webkit-outer-spin-button {
+  appearance: none;
+}
+
+.duration-inputs input {
+  appearance: textfield;
+}
+
+.logger-metric select {
+  margin-top: var(--space-sm);
+  width: 120px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+
+.save-set-btn,
+.update-set-btn,
+.delete-set-btn {
+  margin-top: var(--space-xl);
+  height: 48px;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: 0 26px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.save-set-btn,
+.update-set-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.delete-set-btn {
+  background: var(--danger);
+  color: white;
+}
+
+.metric-adjust-btn,
+.save-set-btn,
+.update-set-btn,
+.delete-set-btn {
+  transition: var(--transition-fast);
+}
+
+.metric-adjust-btn:hover,
+.save-set-btn:hover,
+.update-set-btn:hover {
+  transform: translateY(-1px);
+}
+
+.metric-adjust-btn:active,
+.save-set-btn:active,
+.update-set-btn:active {
+  transform: scale(.96);
+}
+
+.edit-set-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.logged-sets {
+  margin-top: var(--space-xl);
+}
+
+.logged-sets-body {
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.logged-sets h3 {
+  margin-bottom: var(--space-lg);
+}
+
+.logged-set-header,
+.set-values {
+  display: grid;
+  justify-content: center;
+  gap: var(--space-md);
+  align-items: center;
+}
+
+.logged-set-header span,
+.set-values span {
+  text-align: center;
+}
+
+.logged-set-header {
+  padding: 12px 18px;
+  background: var(--background);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.logged-set {
+  padding: 14px 18px;
+  margin-top: var(--space-sm);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast);
+  background: var(--surface);
+}
+
+.logged-set:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.logged-set.selected {
+  background: rgba(26, 172, 131, .08);
+  border-color: var(--primary);
+  transform: none;
+}
+
+.set-values span {
+  font-size: .95rem;
+}
+
+@media (max-width:640px) {
+
+  .exercise-logger {
+    margin: 0;
+    border-radius: 0;
+    padding: 18px;
+    box-shadow: none;
+  }
+
+  .logger-header {
+    flex-direction: column;
+  }
+
+  .metric-input-row {
+    grid-template-columns: 42px 1fr 42px;
+  }
+
+  .logged-set-header,
+  .set-values {
+    font-size: .82rem;
+    gap: 10px;
+  }
+
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
