@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { METRIC_LABELS } from "../utils/metrics";
 import { getMetricConfig } from "../utils/metricConfig";
 import { DEFAULT_UNITS } from "../utils/settings";
@@ -56,6 +56,53 @@ function ExerciseLogger({
   const distanceUnit =
     metricValues.inputUnits.distance ??
     DEFAULT_DISTANCE_UNIT;
+
+  const initializeInputs = useCallback((set = null) => {
+
+    if (set) {
+
+      setMetricValues(
+        getDisplaySet({
+          set,
+          settings,
+          DEFAULT_WEIGHT_UNIT,
+          DEFAULT_DISTANCE_UNIT
+        })
+      );
+
+      return;
+    }
+
+    const metrics = {};
+    const inputUnits = {};
+
+    if (exercise.metrics.includes("duration")) {
+      metrics.duration = {
+        hours: "",
+        minutes: "",
+        seconds: ""
+      };
+    }
+
+    if (exercise.metrics.includes("weight")) {
+      inputUnits.weight = DEFAULT_WEIGHT_UNIT;
+    }
+
+    if (exercise.metrics.includes("distance")) {
+      inputUnits.distance = DEFAULT_DISTANCE_UNIT;
+    }
+
+    setMetricValues({
+      metrics,
+      inputUnits
+    });
+
+  }, [
+    exercise,
+    settings,
+    DEFAULT_WEIGHT_UNIT,
+    DEFAULT_DISTANCE_UNIT
+  ]);
 
   const todaysWorkout =
     workouts.find(workout => {
@@ -134,58 +181,14 @@ function ExerciseLogger({
 
     if (!exercise) return;
 
-    const loggedExercise =
-      todaysWorkout?.exercises.find(
-        item => item.exerciseId?._id === exercise._id
-      );
-
-    const lastLoggedSet =
-      loggedExercise?.sets.at(-1);
-
-    if (lastLoggedSet) {
-
-      setMetricValues(
-        getDisplaySet({
-          set: lastLoggedSet,
-          settings,
-          DEFAULT_WEIGHT_UNIT,
-          DEFAULT_DISTANCE_UNIT
-        })
-      );
-
-      return;
-    }
-
-    const metrics = {};
-    const inputUnits = {};
-
-    if (exercise.metrics.includes("duration")) {
-      metrics.duration = {
-        hours: "",
-        minutes: "",
-        seconds: ""
-      };
-    }
-
-    if (exercise.metrics.includes("weight")) {
-      inputUnits.weight = DEFAULT_WEIGHT_UNIT;
-    }
-
-    if (exercise.metrics.includes("distance")) {
-      inputUnits.distance = DEFAULT_DISTANCE_UNIT;
-    }
-
-    setMetricValues({
-      metrics,
-      inputUnits
-    });
+    initializeInputs(
+      loggedExercise?.sets.at(-1)
+    );
 
   }, [
     exercise,
-    todaysWorkout,
-    settings,
-    DEFAULT_WEIGHT_UNIT,
-    DEFAULT_DISTANCE_UNIT
+    loggedExercise,
+    initializeInputs
   ]);
 
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -524,14 +527,7 @@ function ExerciseLogger({
 
       toast.success("Set saved.");
 
-      const displaySet = getDisplaySet({
-        set: newSet,
-        settings,
-        DEFAULT_WEIGHT_UNIT,
-        DEFAULT_DISTANCE_UNIT
-      });
-
-      setMetricValues(displaySet);
+      initializeInputs(newSet);
 
       requestAnimationFrame(() => {
         firstInputRef.current?.focus();
@@ -551,46 +547,20 @@ function ExerciseLogger({
 
   const clearInputs = () => {
 
-    const metrics = {};
-
-    if (exercise.metrics.includes("duration")) {
-
-      metrics.duration = {
-        hours: "",
-        minutes: "",
-        seconds: ""
-      };
-
-    }
-
-    setMetricValues({
-      metrics,
-      inputUnits: {
-        weight: DEFAULT_WEIGHT_UNIT,
-        distance: DEFAULT_DISTANCE_UNIT
-      }
-    });
+    initializeInputs();
 
     setSelectedSetIndex(null);
 
     requestAnimationFrame(() => {
       firstInputRef.current?.focus();
     });
-
   };
 
   const handleSelectSet = (set, index) => {
 
     setSelectedSetIndex(index);
 
-    const displaySet = getDisplaySet({
-      set,
-      settings,
-      DEFAULT_WEIGHT_UNIT,
-      DEFAULT_DISTANCE_UNIT
-    });
-
-    setMetricValues(displaySet);
+    initializeInputs(set);
 
     requestAnimationFrame(() => {
       firstInputRef.current?.focus();
@@ -693,6 +663,7 @@ function ExerciseLogger({
       });
 
       setSelectedSetIndex(null);
+      initializeInputs(updatedSets.at(-1));
 
     } catch {
 
