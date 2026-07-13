@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import WorkoutDetails from "../components/WorkoutDetails";
-import DeleteWorkoutModal from "../components/DeleteWorkoutModal";
 import "./Workouts.css";
 
 function Workouts() {
@@ -14,15 +15,26 @@ function Workouts() {
 
   const navigate = useNavigate();
 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] =
-    useState(false);
+  const [currentWorkoutIndex, setCurrentWorkoutIndex] =
+    useState(0);
 
-  const [selectedWorkout, setSelectedWorkout] =
-    useState(null);
+  const sortedWorkouts = [...workouts].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
 
-  const handleDeleteClick = (workout) => {
-    setSelectedWorkout(workout);
-    setIsDeleteModalOpen(true);
+  const currentWorkout =
+    sortedWorkouts[currentWorkoutIndex];
+
+  const handlePrevious = () => {
+    setCurrentWorkoutIndex(index =>
+      Math.min(index + 1, sortedWorkouts.length - 1)
+    );
+  };
+
+  const handleNext = () => {
+    setCurrentWorkoutIndex(index =>
+      Math.max(index - 1, 0)
+    );
   };
 
   return (
@@ -30,13 +42,6 @@ function Workouts() {
 
       <div className="page-header">
         <h2>Workouts</h2>
-
-        <button
-          className="primary-btn"
-          onClick={() => navigate("/exercises")}
-        >
-          Create Workout
-        </button>
       </div>
 
       {isLoading ? (
@@ -49,48 +54,63 @@ function Workouts() {
           {error}
         </div>
 
-      ) : workouts.length === 0 ? (
-        <div className="empty-state">
+      ) : sortedWorkouts.length === 0 ? (
 
-          <p>No workouts yet.</p>
+        <div className="empty-workout-log">
+
+          <h2>Workout Log</h2>
+
+          <p>
+            Your workout log is empty.
+          </p>
 
           <button
             className="primary-btn"
             onClick={() => navigate("/exercises")}
           >
-            Create your first workout
+            Start Workout
           </button>
 
         </div>
 
       ) : (
 
-        <div className="workouts">
+        <>
+          <div className="workout-navigation">
 
-          {workouts.map(workout => (
-
-            <WorkoutDetails
-              key={workout._id}
-              workout={workout}
-              onDelete={() =>
-                handleDeleteClick(workout)
+            <button
+              onClick={handlePrevious}
+              disabled={
+                currentWorkoutIndex ===
+                sortedWorkouts.length - 1
               }
-            />
+            >
+              <FiChevronLeft />
+            </button>
 
-          ))}
+            {currentWorkout && (
+              <span>
+                {format(
+                  new Date(currentWorkout.date),
+                  "EEEE, d MMM yyyy"
+                )}
+              </span>
+            )}
 
-        </div>
+            <button
+              onClick={handleNext}
+              disabled={currentWorkoutIndex === 0}
+            >
+              <FiChevronRight />
+            </button>
 
+          </div>
+
+          <WorkoutDetails
+            workout={currentWorkout}
+          />
+        </>
       )}
-
-      <DeleteWorkoutModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setSelectedWorkout(null);
-        }}
-        onDelete={() => { }}
-      />
 
     </div>
   );

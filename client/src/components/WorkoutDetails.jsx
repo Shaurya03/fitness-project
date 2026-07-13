@@ -1,5 +1,3 @@
-import { format } from "date-fns";
-import { FiTrash2 } from "react-icons/fi";
 import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
@@ -10,8 +8,7 @@ import "./WorkoutDetails.css";
 
 function WorkoutDetails({
   workout,
-  onSelectedExercise,
-  onDelete
+  onSelectedExercise
 }) {
 
   const { settings } = useSettings();
@@ -22,11 +19,6 @@ function WorkoutDetails({
     ].weight;
 
   const exerciseCount = workout.exercises?.length || 0;
-
-  const formattedDate = format(
-    new Date(workout.date),
-    "EEEE, d MMM yyyy"
-  );
 
   const totalSets =
     workout.exercises?.reduce(
@@ -42,15 +34,15 @@ function WorkoutDetails({
         <h2>{workout.title}</h2>
       )}
 
-      <p>{formattedDate}</p>
-
-      <p>
-        {exerciseCount}{" "}
-        {exerciseCount === 1 ? "Exercise" : "Exercises"}
-        {" • "}
-        {totalSets}{" "}
-        {totalSets === 1 ? "Set" : "Sets"}
-      </p>
+      <div className="workout-summary">
+        <p>
+          {exerciseCount}{" "}
+          {exerciseCount === 1 ? "Exercise" : "Exercises"}
+          {" • "}
+          {totalSets}{" "}
+          {totalSets === 1 ? "Set" : "Sets"}
+        </p>
+      </div>
 
       <div className="exercise-list">
         {workout.exercises?.length > 0 ? (
@@ -78,7 +70,7 @@ function WorkoutDetails({
               <div
                 className="exercise-item"
                 key={`${exercise.exerciseId?._id}-${index}`}
-                onClick={() => onSelectedExercise(exercise)}
+                onClick={() => onSelectedExercise(workout, exercise)}
               >
 
                 <h4>{exercise.exerciseId?.name}</h4>
@@ -174,15 +166,6 @@ function WorkoutDetails({
         ) : (
           <p>No exercises found.</p>
         )}
-      </div>
-
-      <div className="workout-actions">
-        <button
-          className="delete-button"
-          onClick={onDelete}
-        >
-          <FiTrash2 />
-        </button>
       </div>
 
     </div>
