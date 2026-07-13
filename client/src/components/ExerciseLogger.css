@@ -1,5 +1,5 @@
 .exercise-logger {
-  max-width: 760px;
+  max-width: 700px;
   margin: 40px auto;
   background: var(--surface);
   border-radius: var(--radius-xl);
@@ -283,4 +283,44 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   appearance: textfield;
   -moz-appearance: textfield;
+}
+
+.logger-tabs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+}
+
+.logger-tab {
+  width: 100px;
+  height: 42px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.logger-tab:hover {
+  background: var(--surface-hover);
+}
+
+.logger-tab.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.exercise-history {
+  margin-top: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.exercise-content {
+  min-height: 700px;
+  position: relative;
 }

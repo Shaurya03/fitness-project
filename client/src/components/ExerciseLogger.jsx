@@ -12,6 +12,7 @@ import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
 import { useSettings } from "../hooks/useSettings";
 import { FiMinus, FiPlus } from "react-icons/fi";
+import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import "./ExerciseLogger.css";
 
 function ExerciseLogger({
@@ -41,6 +42,8 @@ function ExerciseLogger({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedSetIndex, setSelectedSetIndex] = useState(null);
+
+  const [activeTab, setActiveTab] = useState("logger");
 
   const firstInputRef = useRef(null);
 
@@ -130,6 +133,18 @@ function ExerciseLogger({
 
   const loggedSets =
     loggedExercise?.sets || [];
+
+  const exerciseHistory = workouts
+    .filter(workout =>
+      workout.exercises.some(item =>
+        item.exerciseId?._id === exercise._id
+      )
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.date) -
+        new Date(a.date)
+    );
 
   const metricOrder = [
     "distance",
@@ -805,355 +820,427 @@ function ExerciseLogger({
             {exercise.categoryId?.name}
           </p>
 
+          <div className="logger-tabs">
+
+            <button
+              className={`logger-tab ${activeTab === "logger" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("logger")}
+            >
+              Logger
+            </button>
+
+            <button
+              className={`logger-tab ${activeTab === "history" ? "active" : ""
+                }`}
+              onClick={() => setActiveTab("history")}
+            >
+              History
+            </button>
+
+          </div>
+
         </div>
 
       </div>
 
-      <div className="logger-inputs">
+      <div className="exercise-content">
 
-        {exercise.metrics.map(
-          (metric, index) => {
+        {activeTab === "logger" && (
 
-            const config =
-              getMetricConfig(metric);
+          <>
 
-            return (
+            <div className="logger-inputs">
 
-              <div
-                key={metric}
-                className="logger-metric"
+              {exercise.metrics.map(
+                (metric, index) => {
+
+                  const config =
+                    getMetricConfig(metric);
+
+                  return (
+
+                    <div
+                      key={metric}
+                      className="logger-metric"
+                    >
+
+                      <label>
+                        {METRIC_LABELS[metric]}
+
+                        {metricValues.inputUnits[metric] && (
+                          <span className="metric-unit">
+                            {" "}
+                            ({metricValues.inputUnits[metric]})
+                          </span>
+                        )}
+                      </label>
+
+
+
+                      {metric === "duration" ? (
+
+                        <div className="duration-inputs">
+
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            placeholder="hh"
+                            value={metricValues.metrics.duration?.hours ?? ""}
+                            onChange={e =>
+                              handleMetricChange(
+                                "duration",
+                                {
+                                  hours:
+                                    e.target.value === ""
+                                      ? ""
+                                      : Number(e.target.value)
+                                }
+                              )
+                            }
+                          />
+
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            placeholder="mm"
+                            value={metricValues.metrics.duration?.minutes ?? ""}
+                            onChange={e =>
+                              handleMetricChange(
+                                "duration",
+                                {
+                                  minutes:
+                                    e.target.value === ""
+                                      ? ""
+                                      : Number(e.target.value)
+                                }
+                              )
+                            }
+                          />
+
+                          <input
+                            type="number"
+                            inputMode="decimal"
+                            placeholder="ss"
+                            value={metricValues.metrics.duration?.seconds ?? ""}
+                            onChange={e =>
+                              handleMetricChange(
+                                "duration",
+                                {
+                                  seconds:
+                                    e.target.value === ""
+                                      ? ""
+                                      : Number(e.target.value)
+                                }
+                              )
+                            }
+                          />
+
+                        </div>
+
+                      ) : (
+
+                        <div className="metric-input-row">
+
+                          <button
+                            type="button"
+                            className="metric-adjust-btn"
+                            onClick={() =>
+                              adjustMetricValue(
+                                metric,
+                                -1
+                              )
+                            }
+                          >
+                            <FiMinus />
+                          </button>
+
+                          <input
+                            ref={
+                              index === 0
+                                ? firstInputRef
+                                : null
+                            }
+                            type="number"
+                            inputMode="decimal"
+                            value={
+                              metricValues.metrics[metric] ?? ""
+                            }
+                            min={config.min}
+                            max={config.max}
+                            step={
+                              metric === "weight"
+                                ? UNITS.weight[
+                                  weightUnit
+                                ].step
+
+                                : metric === "distance"
+                                  ? UNITS.distance[
+                                    distanceUnit
+                                  ].step
+
+                                  : config.step ?? 1
+                            }
+                            onWheel={e =>
+                              e.currentTarget.blur()
+                            }
+                            onChange={event =>
+                              handleMetricChange(
+                                metric,
+                                event.target.value
+                              )
+                            }
+                          />
+
+                          <button
+                            type="button"
+                            className="metric-adjust-btn"
+                            onClick={() =>
+                              adjustMetricValue(
+                                metric,
+                                1
+                              )
+                            }
+                          >
+                            <FiPlus />
+                          </button>
+
+                        </div>
+
+                      )}
+
+                      {metric === "distance" && (
+
+                        <select
+                          value={distanceUnit}
+                          onChange={event =>
+                            handleUnitChange(
+                              "distance",
+                              event.target.value
+                            )
+                          }
+                        >
+
+                          {DISTANCE_SYSTEMS[
+                            settings.distanceSystem
+                          ].map(unit => (
+
+                            <option
+                              key={unit}
+                              value={unit}
+                            >
+                              {unit}
+                            </option>
+
+                          ))}
+
+                        </select>
+
+                      )}
+
+                    </div>
+
+                  );
+                }
+              )}
+
+            </div>
+
+            {error && (
+              <p className="logger-error">
+                {error}
+              </p>
+            )}
+
+            {selectedSetIndex === null ? (
+
+              <button
+                className="save-set-btn"
+                onClick={handleSaveSet}
+                disabled={isLoading}
               >
+                {isLoading
+                  ? "Saving..."
+                  : "SaveSet"
+                }
+              </button>
 
-                <label>
-                  {METRIC_LABELS[metric]}
+            ) : (
+              <div className="edit-set-actions">
 
-                  {metricValues.inputUnits[metric] && (
-                    <span className="metric-unit">
-                      {" "}
-                      ({metricValues.inputUnits[metric]})
-                    </span>
-                  )}
-                </label>
+                <button
+                  className="update-set-btn"
+                  onClick={handleUpdateSet}
+                >
+                  Update
+                </button>
 
+                <button
+                  className="delete-set-btn"
+                  onClick={handleDeleteSet}
+                >
+                  Delete
+                </button>
 
+              </div>
+            )}
 
-                {metric === "duration" ? (
+            <div className="logged-sets">
 
-                  <div className="duration-inputs">
+              <h3>
+                Today's Sets
+              </h3>
 
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      placeholder="hh"
-                      value={metricValues.metrics.duration?.hours ?? ""}
-                      onChange={e =>
-                        handleMetricChange(
-                          "duration",
-                          {
-                            hours:
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value)
-                          }
-                        )
-                      }
-                    />
+              {loggedSets.length === 0 && (
+                <p>
+                  No sets logged yet.
+                </p>
+              )}
 
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      placeholder="mm"
-                      value={metricValues.metrics.duration?.minutes ?? ""}
-                      onChange={e =>
-                        handleMetricChange(
-                          "duration",
-                          {
-                            minutes:
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value)
-                          }
-                        )
-                      }
-                    />
+              {loggedSets.length > 0 && (() => {
 
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      placeholder="ss"
-                      value={metricValues.metrics.duration?.seconds ?? ""}
-                      onChange={e =>
-                        handleMetricChange(
-                          "duration",
-                          {
-                            seconds:
-                              e.target.value === ""
-                                ? ""
-                                : Number(e.target.value)
-                          }
-                        )
-                      }
-                    />
+                const metrics = getSortedDisplayMetrics(loggedSets[0].metrics);
 
-                  </div>
+                return (
 
-                ) : (
-
-                  <div className="metric-input-row">
-
-                    <button
-                      type="button"
-                      className="metric-adjust-btn"
-                      onClick={() =>
-                        adjustMetricValue(
-                          metric,
-                          -1
-                        )
-                      }
-                    >
-                      <FiMinus />
-                    </button>
-
-                    <input
-                      ref={
-                        index === 0
-                          ? firstInputRef
-                          : null
-                      }
-                      type="number"
-                      inputMode="decimal"
-                      value={
-                        metricValues.metrics[metric] ?? ""
-                      }
-                      min={config.min}
-                      max={config.max}
-                      step={
-                        metric === "weight"
-                          ? UNITS.weight[
-                            weightUnit
-                          ].step
-
-                          : metric === "distance"
-                            ? UNITS.distance[
-                              distanceUnit
-                            ].step
-
-                            : config.step ?? 1
-                      }
-                      onWheel={e =>
-                        e.currentTarget.blur()
-                      }
-                      onChange={event =>
-                        handleMetricChange(
-                          metric,
-                          event.target.value
-                        )
-                      }
-                    />
-
-                    <button
-                      type="button"
-                      className="metric-adjust-btn"
-                      onClick={() =>
-                        adjustMetricValue(
-                          metric,
-                          1
-                        )
-                      }
-                    >
-                      <FiPlus />
-                    </button>
-
-                  </div>
-
-                )}
-
-                {metric === "distance" && (
-
-                  <select
-                    value={distanceUnit}
-                    onChange={event =>
-                      handleUnitChange(
-                        "distance",
-                        event.target.value
-                      )
-                    }
+                  <div
+                    className="logged-set-header"
+                    style={{
+                      gridTemplateColumns: `repeat(${metrics.length}, minmax(140px, 1fr))`
+                    }}
                   >
 
-                    {DISTANCE_SYSTEMS[
-                      settings.distanceSystem
-                    ].map(unit => (
+                    {metrics.map(({ key }) => {
 
-                      <option
-                        key={unit}
-                        value={unit}
+                      const config = getMetricConfig(key);
+
+                      const unit =
+                        key === "distance"
+                          ? getDisplayDistanceUnit(
+                            loggedSets[0].inputUnits?.distance ??
+                            DEFAULT_DISTANCE_UNIT,
+                            settings.distanceSystem
+                          )
+                          : key === "weight"
+                            ? DEFAULT_WEIGHT_UNIT
+                            : config.unit;
+
+                      return (
+                        <span key={key}>
+                          {config.label}
+                          {config.showUnit ? ` (${unit})` : ""}
+                        </span>
+                      );
+
+                    })}
+
+                  </div>
+
+                );
+
+              })()}
+
+              <div className="logged-sets-body">
+
+                {loggedSets.map(
+                  (set, index) => {
+
+                    const displayMetrics =
+                      getSortedDisplayMetrics(
+                        set.metrics
+                      );
+
+                    return (
+
+                      <div
+                        key={index}
+                        className={`logged-set ${selectedSetIndex === index
+                          ? "selected"
+                          : ""
+                          }`}
+                        onClick={() => handleSelectSet(set, index)}
                       >
-                        {unit}
-                      </option>
 
-                    ))}
+                        <div
+                          className="set-values"
+                          style={{
+                            gridTemplateColumns: `repeat(${displayMetrics.length}, minmax(140px, 1fr))`
+                          }}
+                        >
 
-                  </select>
+                          {displayMetrics.map(({ key, value }) => (
 
+                            <span key={key}>
+
+                              {formatMetric(
+                                key,
+                                value,
+                                settings,
+                                set.inputUnits,
+                                false
+                              )}
+
+                            </span>
+
+                          ))}
+
+                        </div>
+
+                      </div>
+                    );
+                  }
                 )}
 
               </div>
 
-            );
-          }
-        )}
-
-      </div>
-
-      {error && (
-        <p className="logger-error">
-          {error}
-        </p>
-      )}
-
-      {selectedSetIndex === null ? (
-
-        <button
-          className="save-set-btn"
-          onClick={handleSaveSet}
-          disabled={isLoading}
-        >
-          {isLoading
-            ? "Saving..."
-            : "SaveSet"
-          }
-        </button>
-
-      ) : (
-        <div className="edit-set-actions">
-
-          <button
-            className="update-set-btn"
-            onClick={handleUpdateSet}
-          >
-            Update
-          </button>
-
-          <button
-            className="delete-set-btn"
-            onClick={handleDeleteSet}
-          >
-            Delete
-          </button>
-
-        </div>
-      )}
-
-      <div className="logged-sets">
-
-        <h3>
-          Today's Sets
-        </h3>
-
-        {loggedSets.length === 0 && (
-          <p>
-            No sets logged yet.
-          </p>
-        )}
-
-        {loggedSets.length > 0 && (() => {
-
-          const metrics = getSortedDisplayMetrics(loggedSets[0].metrics);
-
-          return (
-
-            <div
-              className="logged-set-header"
-              style={{
-                gridTemplateColumns: `repeat(${metrics.length}, minmax(140px, 1fr))`
-              }}
-            >
-
-              {metrics.map(({ key }) => {
-
-                const config = getMetricConfig(key);
-
-                const unit =
-                  key === "distance"
-                    ? getDisplayDistanceUnit(
-                      loggedSets[0].inputUnits?.distance ??
-                      DEFAULT_DISTANCE_UNIT,
-                      settings.distanceSystem
-                    )
-                    : key === "weight"
-                      ? DEFAULT_WEIGHT_UNIT
-                      : config.unit;
-
-                return (
-                  <span key={key}>
-                    {config.label}
-                    {config.showUnit ? ` (${unit})` : ""}
-                  </span>
-                );
-
-              })}
-
             </div>
 
-          );
+          </>
 
-        })()}
+        )}
 
-        <div className="logged-sets-body">
+        {activeTab === "history" && (
 
-          {loggedSets.map(
-            (set, index) => {
+          <div className="exercise-history">
 
-              const displayMetrics =
-                getSortedDisplayMetrics(
-                  set.metrics
+            {exerciseHistory.length === 0 ? (
+
+              <p>
+                No history yet.
+              </p>
+
+            ) : (
+
+              exerciseHistory.map(workout => {
+
+                const exerciseData =
+                  workout.exercises.find(
+                    item =>
+                      item.exerciseId._id ===
+                      exercise._id
+                  );
+
+                return (
+
+                  <HistoryWorkoutCard
+                    key={workout._id}
+                    workout={{
+                      ...workout,
+                      sets: exerciseData.sets
+                    }}
+                  />
+
                 );
 
-              return (
+              })
 
-                <div
-                  key={index}
-                  className={`logged-set ${selectedSetIndex === index
-                    ? "selected"
-                    : ""
-                    }`}
-                  onClick={() => handleSelectSet(set, index)}
-                >
+            )}
 
-                  <div
-                    className="set-values"
-                    style={{
-                      gridTemplateColumns: `repeat(${displayMetrics.length}, minmax(140px, 1fr))`
-                    }}
-                  >
+          </div>
 
-                    {displayMetrics.map(({ key, value }) => (
-
-                      <span key={key}>
-
-                        {formatMetric(
-                          key,
-                          value,
-                          settings,
-                          set.inputUnits,
-                          false
-                        )}
-
-                      </span>
-
-                    ))}
-
-                  </div>
-
-                </div>
-              );
-            }
-          )}
-
-        </div>
+        )}
 
       </div>
-
     </div>
   );
 };
