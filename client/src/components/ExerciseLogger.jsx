@@ -14,11 +14,13 @@ import { getDisplaySet } from "../utils/getDisplaySet";
 import { useSettings } from "../hooks/useSettings";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { getHistoryWithPRs } from "../utils/prHistory";
+import { useNavigate } from "react-router-dom";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import "./ExerciseLogger.css";
 
 function ExerciseLogger({
   exercise,
+  workoutId,
   onBack
 }) {
   const { workouts, dispatch } = useWorkoutContext();
@@ -26,6 +28,8 @@ function ExerciseLogger({
   const { user } = useAuthContext();
 
   const { settings } = useSettings();
+
+  const navigate = useNavigate();
 
   const DEFAULT_DISTANCE_UNIT =
     DEFAULT_UNITS[
@@ -104,29 +108,21 @@ function ExerciseLogger({
     DEFAULT_DISTANCE_UNIT
   ]);
 
-  const todaysWorkout =
-    workouts.find(workout => {
-
-      const workoutDate =
-        new Date(workout.date);
-
-      const today =
-        new Date();
+  const activeWorkout = workoutId
+    ? workouts.find(workout => workout._id === workoutId)
+    : workouts.find(workout => {
+      const workoutDate = new Date(workout.date);
+      const today = new Date();
 
       return (
-        workoutDate.getFullYear() ===
-        today.getFullYear() &&
-
-        workoutDate.getMonth() ===
-        today.getMonth() &&
-
-        workoutDate.getDate() ===
-        today.getDate()
+        workoutDate.getFullYear() === today.getFullYear() &&
+        workoutDate.getMonth() === today.getMonth() &&
+        workoutDate.getDate() === today.getDate()
       );
     });
 
   const loggedExercise =
-    todaysWorkout?.exercises.find(
+    activeWorkout?.exercises.find(
       item =>
         item.exerciseId?._id === exercise._id
     );
@@ -143,6 +139,18 @@ function ExerciseLogger({
         new Date(a.date)
     );
 
+  const initialSet = workoutId
+
+    ? loggedExercise?.sets.at(-1)
+
+    : exerciseHistory
+      .at(0)
+      ?.exercises
+      .find(
+        item => item.exerciseId._id === exercise._id
+      )
+      ?.sets.at(-1);
+
   const historyWithPRs = getHistoryWithPRs(
 
     exerciseHistory.map(workout => {
@@ -158,21 +166,13 @@ function ExerciseLogger({
     })
   );
 
-  const todaysWorkoutWithPRs =
-    historyWithPRs.find(workout => {
-
-      const workoutDate = new Date(workout.date);
-      const today = new Date();
-
-      return (
-        workoutDate.getFullYear() === today.getFullYear() &&
-        workoutDate.getMonth() === today.getMonth() &&
-        workoutDate.getDate() === today.getDate()
-      );
-    });
+  const activeWorkoutWithPRs =
+    historyWithPRs.find(
+      workout => workout._id === activeWorkout?._id
+    );
 
   const loggedSetsWithPRs =
-    todaysWorkoutWithPRs?.sets ?? [];
+    activeWorkoutWithPRs?.sets ?? [];
 
 
   /* eslint-disable react-hooks/set-state-in-effect */
@@ -181,13 +181,11 @@ function ExerciseLogger({
 
     if (!exercise) return;
 
-    initializeInputs(
-      loggedExercise?.sets.at(-1)
-    );
+    initializeInputs(initialSet);
 
   }, [
     exercise,
-    loggedExercise,
+    initialSet,
     initializeInputs
   ]);
 
@@ -432,7 +430,7 @@ function ExerciseLogger({
       let url;
       let dispatchType;
 
-      if (!todaysWorkout) {
+      if (!activeWorkout) {
 
         workout = {
           title: "",
@@ -452,7 +450,7 @@ function ExerciseLogger({
       } else {
 
         workout = JSON.parse(
-          JSON.stringify(todaysWorkout)
+          JSON.stringify(activeWorkout)
         );
 
         const existingExercise =
@@ -498,7 +496,7 @@ function ExerciseLogger({
         }
 
         method = "PATCH";
-        url = `${API_BASE_URL}/workouts/${todaysWorkout._id}`;
+        url = `${API_BASE_URL}/workouts/${activeWorkout._id}`;
         dispatchType = "UPDATE_WORKOUT";
       }
 
@@ -580,7 +578,7 @@ function ExerciseLogger({
     if (updatedSets.length === 0) {
 
       updatedExercises =
-        todaysWorkout.exercises.filter(
+        activeWorkout.exercises.filter(
           exerciseItem =>
             exerciseItem.exerciseId._id !==
             exercise._id
@@ -589,7 +587,7 @@ function ExerciseLogger({
     } else {
 
       updatedExercises =
-        todaysWorkout.exercises.map(exerciseItem => {
+        activeWorkout.exercises.map(exerciseItem => {
 
           if (
             exerciseItem.exerciseId._id !==
@@ -613,7 +611,7 @@ function ExerciseLogger({
     try {
 
       const response = await fetch(
-        `${API_BASE_URL}/workouts/${todaysWorkout._id}`,
+        `${API_BASE_URL}/workouts/${activeWorkout._id}`,
         {
           method:
             deleteWorkout
@@ -629,8 +627,8 @@ function ExerciseLogger({
             ? {}
             : {
               body: JSON.stringify({
-                title: todaysWorkout.title,
-                date: todaysWorkout.date,
+                title: activeWorkout.title,
+                date: activeWorkout.date,
                 exercises: updatedExercises
               })
             })
@@ -658,7 +656,7 @@ function ExerciseLogger({
 
         payload:
           deleteWorkout
-            ? todaysWorkout
+            ? activeWorkout
             : json
       });
 
@@ -716,7 +714,7 @@ function ExerciseLogger({
     };
 
     const updatedExercises =
-      todaysWorkout.exercises.map(exerciseItem => {
+      activeWorkout.exercises.map(exerciseItem => {
 
         if (
           exerciseItem.exerciseId._id !==
@@ -741,7 +739,7 @@ function ExerciseLogger({
     try {
 
       const response = await fetch(
-        `${API_BASE_URL}/workouts/${todaysWorkout._id}`,
+        `${API_BASE_URL}/workouts/${activeWorkout._id}`,
         {
           method: "PATCH",
 
@@ -751,8 +749,8 @@ function ExerciseLogger({
           },
 
           body: JSON.stringify({
-            title: todaysWorkout.title,
-            date: todaysWorkout.date,
+            title: activeWorkout.title,
+            date: activeWorkout.date,
             exercises: updatedExercises
           })
         }
@@ -788,7 +786,13 @@ function ExerciseLogger({
 
       <button
         className="back-btn"
-        onClick={onBack}
+        onClick={() => {
+          if (workoutId) {
+            navigate(-1);
+          } else {
+            onBack();
+          }
+        }}
       >
         ←
       </button>
@@ -1082,7 +1086,7 @@ function ExerciseLogger({
             <div className="logged-sets">
 
               <h3>
-                Today's Sets
+                {workoutId ? "Workout Sets" : "Today's Sets"}
               </h3>
 
               {loggedSetsWithPRs.length === 0 && (

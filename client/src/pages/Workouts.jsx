@@ -25,6 +25,15 @@ function Workouts() {
   const currentWorkout =
     sortedWorkouts[currentWorkoutIndex];
 
+  const handleExerciseClick = (workout, exercise) => {
+    navigate("/exercises", {
+      state: {
+        selectedExerciseId: exercise.exerciseId._id,
+        workoutId: workout._id
+      }
+    });
+  };
+
   const handlePrevious = () => {
     setCurrentWorkoutIndex(index =>
       Math.min(index + 1, sortedWorkouts.length - 1)
@@ -108,6 +117,7 @@ function Workouts() {
 
           <WorkoutDetails
             workout={currentWorkout}
+            onSelectedExercise={handleExerciseClick}
           />
         </>
       )}

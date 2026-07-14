@@ -35,15 +35,13 @@ function Exercises() {
     useState(null);
 
   const [selectedExercise, setSelectedExercise] =
-    useState(location.state?.exercise || null);
+    useState(null);
 
-  useEffect(() => {
-    if (location.state?.exercise) {
-      setSelectedCategory(
-        location.state.exercise.categoryId
-      );
-    }
-  }, [location.state]);
+  const selectedExerciseId =
+    location.state?.selectedExerciseId;
+
+  const workoutId =
+    location.state?.workoutId;
 
   /* eslint-disable react-hooks/exhaustive-deps */
 
@@ -53,6 +51,29 @@ function Exercises() {
   }, []);
 
   /* eslint-enable react-hooks/exhaustive-deps */
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+
+  useEffect(() => {
+    if (
+      !selectedExerciseId ||
+      exercises.length === 0
+    ) {
+      return;
+    }
+
+    const exercise = exercises.find(
+      e => e._id === selectedExerciseId
+    );
+
+    if (!exercise) return;
+
+    setSelectedCategory(exercise.categoryId);
+    setSelectedExercise(exercise);
+
+  }, [selectedExerciseId, exercises]);
+
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   if (!selectedCategory) {
     return (
@@ -89,9 +110,8 @@ function Exercises() {
   return (
     <ExerciseLogger
       exercise={selectedExercise}
-      onBack={() =>
-        setSelectedExercise(null)
-      }
+      workoutId={workoutId}
+      onBack={() => setSelectedExercise(null)}
     />
   );
 }
