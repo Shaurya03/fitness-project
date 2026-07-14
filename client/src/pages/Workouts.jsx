@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { format } from "date-fns";
+import {
+  format,
+  addDays,
+  subDays,
+  isSameDay
+} from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -15,15 +20,16 @@ function Workouts() {
 
   const navigate = useNavigate();
 
-  const [currentWorkoutIndex, setCurrentWorkoutIndex] =
-    useState(0);
-
-  const sortedWorkouts = [...workouts].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  );
+  const [selectedDate, setSelectedDate] =
+    useState(new Date());
 
   const currentWorkout =
-    sortedWorkouts[currentWorkoutIndex];
+    workouts.find(workout =>
+      isSameDay(
+        new Date(workout.date),
+        selectedDate
+      )
+    );
 
   const handleExerciseClick = (workout, exercise) => {
     navigate("/exercises", {
@@ -35,15 +41,25 @@ function Workouts() {
   };
 
   const handlePrevious = () => {
-    setCurrentWorkoutIndex(index =>
-      Math.min(index + 1, sortedWorkouts.length - 1)
+    setSelectedDate(date =>
+      subDays(date, 1)
     );
   };
 
   const handleNext = () => {
-    setCurrentWorkoutIndex(index =>
-      Math.max(index - 1, 0)
-    );
+
+    const today = new Date();
+
+    setSelectedDate(date => {
+
+      const nextDate = addDays(date, 1);
+
+      return nextDate > today
+        ? date
+        : nextDate;
+
+    });
+
   };
 
   return (
@@ -58,19 +74,50 @@ function Workouts() {
           Loading workouts...
         </div>
 
-      ) : error ? (
+      ) : (
         <div className="error">
           {error}
         </div>
 
-      ) : sortedWorkouts.length === 0 ? (
+      )}
+
+      <div className="workout-navigation">
+
+        <button
+          onClick={handlePrevious}
+        >
+          <FiChevronLeft />
+        </button>
+
+        <span>
+          {format(
+            selectedDate,
+            "EEEE, d MMM yyyy"
+          )}
+        </span>
+
+        <button
+          onClick={handleNext}
+          disabled={
+            isSameDay(
+              selectedDate,
+              new Date()
+            )
+          }
+        >
+          <FiChevronRight />
+        </button>
+
+      </div>
+
+      {!currentWorkout ? (
 
         <div className="empty-workout-log">
 
-          <h2>Workout Log</h2>
+          <h2>No workout logged</h2>
 
           <p>
-            Your workout log is empty.
+            Start today's workout.
           </p>
 
           <button
@@ -84,42 +131,10 @@ function Workouts() {
 
       ) : (
 
-        <>
-          <div className="workout-navigation">
-
-            <button
-              onClick={handlePrevious}
-              disabled={
-                currentWorkoutIndex ===
-                sortedWorkouts.length - 1
-              }
-            >
-              <FiChevronLeft />
-            </button>
-
-            {currentWorkout && (
-              <span>
-                {format(
-                  new Date(currentWorkout.date),
-                  "EEEE, d MMM yyyy"
-                )}
-              </span>
-            )}
-
-            <button
-              onClick={handleNext}
-              disabled={currentWorkoutIndex === 0}
-            >
-              <FiChevronRight />
-            </button>
-
-          </div>
-
-          <WorkoutDetails
-            workout={currentWorkout}
-            onSelectedExercise={handleExerciseClick}
-          />
-        </>
+        <WorkoutDetails
+          workout={currentWorkout}
+          onSelectedExercise={handleExerciseClick}
+        />
       )}
 
     </div>
