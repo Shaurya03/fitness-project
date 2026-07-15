@@ -7,7 +7,7 @@ import {
 } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiCalendar } from "react-icons/fi";
 import { getWorkoutHistoryWithPRs } from "../utils/workoutPRHistory";
 import { useLocation } from "react-router-dom";
 import WorkoutDetails from "../components/WorkoutDetails";
@@ -106,41 +106,29 @@ function Workouts() {
 
         <button
           onClick={handlePrevious}
+          className="nav-btn"
         >
           <FiChevronLeft />
         </button>
 
-        <span>
+        <h3 className="workout-date">
           {format(
             selectedDate,
             "EEEE, d MMM yyyy"
           )}
-        </span>
+        </h3>
 
         <button
+          className="nav-btn"
           onClick={() => setIsCalendarOpen(true)}
         >
-          Calendar
+          <FiCalendar />
         </button>
-
-        <WorkoutCalendarModal
-          isOpen={isCalendarOpen}
-          workouts={workoutsWithPRs}
-          onSelectWorkoutDate={(date) => {
-            setSelectedDate(date);
-            setIsCalendarOpen(false);
-          }}
-          onClose={() => setIsCalendarOpen(false)}
-        />
 
         <button
           onClick={handleNext}
-          disabled={
-            isSameDay(
-              selectedDate,
-              new Date()
-            )
-          }
+          className="nav-btn"
+          disabled={isSameDay(selectedDate, new Date())}
         >
           <FiChevronRight />
         </button>
@@ -174,7 +162,18 @@ function Workouts() {
         />
       )}
 
+      <WorkoutCalendarModal
+        isOpen={isCalendarOpen}
+        workouts={workoutsWithPRs}
+        onSelectWorkoutDate={(date) => {
+          setSelectedDate(date);
+          setIsCalendarOpen(false);
+        }}
+        onClose={() => setIsCalendarOpen(false)}
+      />
+
     </div>
+
   );
 }
 

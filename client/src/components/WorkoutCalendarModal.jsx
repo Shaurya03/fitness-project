@@ -53,10 +53,11 @@ function WorkoutCalendarModal({
           onClick={onClose}
         >
           <div
-            className="modal"
+            className="modal calendar-modal"
             onClick={(event) => event.stopPropagation()}
           >
-            Workout Calendar
+
+            <h2>Workout Calendar</h2>
 
             <DatePicker
               inline
