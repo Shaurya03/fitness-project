@@ -11,6 +11,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { getWorkoutHistoryWithPRs } from "../utils/workoutPRHistory";
 import { useLocation } from "react-router-dom";
 import WorkoutDetails from "../components/WorkoutDetails";
+import WorkoutCalendarModal from "../components/WorkoutCalendarModal";
 import "./Workouts.css";
 
 function Workouts() {
@@ -29,6 +30,8 @@ function Workouts() {
       ? new Date(location.state.selectedDate)
       : new Date()
   );
+
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const workoutsWithPRs = useMemo(
     () => getWorkoutHistoryWithPRs(workouts),
@@ -113,6 +116,22 @@ function Workouts() {
             "EEEE, d MMM yyyy"
           )}
         </span>
+
+        <button
+          onClick={() => setIsCalendarOpen(true)}
+        >
+          Calendar
+        </button>
+
+        <WorkoutCalendarModal
+          isOpen={isCalendarOpen}
+          workouts={workoutsWithPRs}
+          onSelectWorkoutDate={(date) => {
+            setSelectedDate(date);
+            setIsCalendarOpen(false);
+          }}
+          onClose={() => setIsCalendarOpen(false)}
+        />
 
         <button
           onClick={handleNext}
