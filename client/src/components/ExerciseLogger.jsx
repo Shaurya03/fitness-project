@@ -199,35 +199,6 @@ function ExerciseLogger({
     );
   }
 
-  const metricOrder = [
-    "distance",
-    "duration",
-    "pace",
-    "speed",
-    "weight",
-    "reps",
-    "calories",
-    "heartRate",
-    "rpe",
-    "laps"
-  ];
-
-  const getSortedDisplayMetrics = metrics => {
-
-    const displayMetrics = getDisplayMetrics(
-      metrics,
-      settings.distanceSystem
-    );
-
-    displayMetrics.sort(
-      (a, b) =>
-        metricOrder.indexOf(a.key) -
-        metricOrder.indexOf(b.key)
-    );
-
-    return displayMetrics;
-  };
-
   const handleMetricChange = (
     metric,
     value
@@ -1097,7 +1068,7 @@ function ExerciseLogger({
 
               {loggedSetsWithPRs.length > 0 && (() => {
 
-                const metrics = getSortedDisplayMetrics(
+                const metrics = getDisplayMetrics(
                   loggedSetsWithPRs[0].metrics
                 );
 
@@ -1146,7 +1117,7 @@ function ExerciseLogger({
                   (set, index) => {
 
                     const displayMetrics =
-                      getSortedDisplayMetrics(
+                      getDisplayMetrics(
                         set.metrics
                       );
 

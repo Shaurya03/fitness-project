@@ -115,6 +115,19 @@ export const getDerivedMetrics = (
   return derivedMetrics;
 };
 
+const METRIC_ORDER = [
+  "weight",
+  "reps",
+  "distance",
+  "duration",
+  "pace",
+  "speed",
+  "calories",
+  "heartRate",
+  "rpe",
+  "laps"
+];
+
 export const getDisplayMetrics = (
   metrics,
   distanceSystem
@@ -133,5 +146,7 @@ export const getDisplayMetrics = (
       metrics,
       distanceSystem
     )
-  ];
+  ].sort((a, b) =>
+    METRIC_ORDER.indexOf(a.key) - METRIC_ORDER.indexOf(b.key)
+  );
 };
