@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { getWorkoutHistoryWithPRs } from "../utils/workoutPRHistory";
+import { useLocation } from "react-router-dom";
 import WorkoutDetails from "../components/WorkoutDetails";
 import "./Workouts.css";
 
@@ -21,8 +22,13 @@ function Workouts() {
 
   const navigate = useNavigate();
 
-  const [selectedDate, setSelectedDate] =
-    useState(new Date());
+  const location = useLocation();
+
+  const [selectedDate, setSelectedDate] = useState(
+    location.state?.selectedDate
+      ? new Date(location.state.selectedDate)
+      : new Date()
+  );
 
   const workoutsWithPRs = useMemo(
     () => getWorkoutHistoryWithPRs(workouts),
@@ -41,7 +47,8 @@ function Workouts() {
     navigate("/exercises", {
       state: {
         selectedExerciseId: exercise.exerciseId._id,
-        workoutId: workout._id
+        workoutId: workout._id,
+        workoutDate: workout.date
       }
     });
   };

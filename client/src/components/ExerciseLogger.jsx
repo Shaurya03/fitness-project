@@ -21,6 +21,7 @@ import "./ExerciseLogger.css";
 function ExerciseLogger({
   exercise,
   workoutId,
+  workoutDate,
   onBack
 }) {
   const { workouts, dispatch } = useWorkoutContext();
@@ -759,7 +760,11 @@ function ExerciseLogger({
         className="back-btn"
         onClick={() => {
           if (workoutId) {
-            navigate(-1);
+            navigate("/workouts", {
+              state: {
+                selectedDate: workoutDate
+              }
+            });
           } else {
             onBack();
           }
