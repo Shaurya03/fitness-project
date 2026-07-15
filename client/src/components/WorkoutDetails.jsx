@@ -145,6 +145,12 @@ function WorkoutDetails({
                                     set.inputUnits,
                                     false
                                   )}
+
+                                  {set.personalRecords?.[metric] && (
+                                    <span className="pr-trophies">
+                                      🏆
+                                    </span>
+                                  )}
                                 </span>
 
                               );

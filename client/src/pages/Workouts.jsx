@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   format,
   addDays,
@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { getWorkoutHistoryWithPRs } from "../utils/workoutPRHistory";
 import WorkoutDetails from "../components/WorkoutDetails";
 import "./Workouts.css";
 
@@ -23,8 +24,13 @@ function Workouts() {
   const [selectedDate, setSelectedDate] =
     useState(new Date());
 
+  const workoutsWithPRs = useMemo(
+    () => getWorkoutHistoryWithPRs(workouts),
+    [workouts]
+  );
+
   const currentWorkout =
-    workouts.find(workout =>
+    workoutsWithPRs.find(workout =>
       isSameDay(
         new Date(workout.date),
         selectedDate
@@ -60,6 +66,14 @@ function Workouts() {
 
     });
 
+    if (isLoading) {
+      return <div className="loading">Loading workouts...</div>;
+    }
+
+    if (error) {
+      return <div className="error">{error}</div>;
+    }
+
   };
 
   return (
@@ -68,18 +82,6 @@ function Workouts() {
       <div className="page-header">
         <h2>Workouts</h2>
       </div>
-
-      {isLoading ? (
-        <div className="loading">
-          Loading workouts...
-        </div>
-
-      ) : (
-        <div className="error">
-          {error}
-        </div>
-
-      )}
 
       <div className="workout-navigation">
 
