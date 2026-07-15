@@ -64,24 +64,33 @@ function Workouts() {
     const today = new Date();
 
     setSelectedDate(date => {
-
       const nextDate = addDays(date, 1);
 
       return nextDate > today
         ? date
         : nextDate;
-
     });
-
-    if (isLoading) {
-      return <div className="loading">Loading workouts...</div>;
-    }
-
-    if (error) {
-      return <div className="error">{error}</div>;
-    }
-
   };
+
+  if (isLoading) {
+    return (
+      <div className="workouts-page">
+        <div className="loading">
+          Loading workouts...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="workouts-page">
+        <div className="error">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="workouts-page">
