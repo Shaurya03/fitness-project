@@ -1,8 +1,5 @@
-import { useState } from "react";
 import { createPortal } from 'react-dom';
-import { isSameDay } from 'date-fns';
 import DatePicker from "react-datepicker";
-import WorkoutPreviewModal from "./WorkoutPreviewModal";
 import './Modal.css';
 
 function WorkoutCalendarModal({
@@ -11,15 +8,6 @@ function WorkoutCalendarModal({
   workouts,
   onSelectWorkoutDate
 }) {
-
-  const [selectedWorkout, setSelectedWorkout] =
-    useState(null);
-
-  const [selectedDate, setSelectedDate] =
-    useState(null);
-
-  const [isPreviewOpen, setIsPreviewOpen] =
-    useState(false);
 
   if (!isOpen) {
     return null;
@@ -31,57 +19,32 @@ function WorkoutCalendarModal({
     );
 
   const handleDateChange = (date) => {
-
-    const workout = workouts.find(workout =>
-      isSameDay(
-        new Date(workout.date),
-        date
-      )
-    );
-
-    setSelectedWorkout(workout ?? null);
-    setSelectedDate(date);
-    setIsPreviewOpen(true);
-
+    onSelectWorkoutDate(date);
+    onClose();
   };
 
-  return (
-    <>
-      {createPortal(
-        <div
-          className="modal-overlay"
-          onClick={onClose}
-        >
-          <div
-            className="modal calendar-modal"
-            onClick={(event) => event.stopPropagation()}
-          >
+  return createPortal(
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+    >
+      <div
+        className="modal calendar-modal"
+        onClick={(event) => event.stopPropagation()}
+      >
 
-            <h2>Workout Calendar</h2>
+        <h2>Workout Calendar</h2>
 
-            <DatePicker
-              inline
-              highlightDates={workoutDates}
-              onChange={handleDateChange}
-            />
+        <DatePicker
+          inline
+          highlightDates={workoutDates}
+          onChange={handleDateChange}
+          maxDate={new Date()}
+        />
 
-          </div>
-        </div>,
-        document.body
-      )}
-
-      <WorkoutPreviewModal
-        isOpen={isPreviewOpen}
-        workout={selectedWorkout}
-        selectedDate={selectedDate}
-        onClose={() => setIsPreviewOpen(false)}
-        onGoToWorkout={() => {
-          onSelectWorkoutDate(selectedDate);
-          setIsPreviewOpen(false);
-          onClose();
-        }}
-      />
-    </>
+      </div>
+    </div>,
+    document.body
   );
 }
 

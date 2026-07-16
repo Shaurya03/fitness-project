@@ -8,8 +8,7 @@ import "./WorkoutDetails.css";
 
 function WorkoutDetails({
   workout,
-  onSelectedExercise,
-  showHeader = true
+  onSelectedExercise
 }) {
 
   const { settings } = useSettings();
@@ -31,21 +30,19 @@ function WorkoutDetails({
   return (
     <div className="workout-details">
 
-      {showHeader && workout.title && (
+      {workout.title && (
         <h2>{workout.title}</h2>
       )}
 
-      {showHeader && (
-        <div className="workout-summary">
-          <p>
-            {exerciseCount}{" "}
-            {exerciseCount === 1 ? "Exercise" : "Exercises"}
-            {" • "}
-            {totalSets}{" "}
-            {totalSets === 1 ? "Set" : "Sets"}
-          </p>
-        </div>
-      )}
+      <div className="workout-summary">
+        <p>
+          {exerciseCount}{" "}
+          {exerciseCount === 1 ? "Exercise" : "Exercises"}
+          {" • "}
+          {totalSets}{" "}
+          {totalSets === 1 ? "Set" : "Sets"}
+        </p>
+      </div>
 
       <div className="exercise-list">
         {workout.exercises?.length > 0 ? (
@@ -71,10 +68,9 @@ function WorkoutDetails({
             return (
 
               <div
-                className={`exercise-item ${onSelectedExercise ? "clickable" : ""
-                  }`}
+                className="exercise-item"
                 key={`${exercise.exerciseId?._id}-${index}`}
-                onClick={() => onSelectedExercise?.(workout, exercise)}
+                onClick={() => onSelectedExercise(workout, exercise)}
               >
 
                 <h4>{exercise.exerciseId?.name}</h4>
