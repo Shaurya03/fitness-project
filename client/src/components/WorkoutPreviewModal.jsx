@@ -1,12 +1,11 @@
 import { createPortal } from 'react-dom';
 import { format } from 'date-fns';
-import WorkoutDetails from './WorkoutDetails';
+import WorkoutPreviewContent from './WorkoutPreviewContent';
 import './Modal.css';
 
 function WorkoutPreviewModal({
   isOpen,
   workout,
-  selectedDate,
   onClose,
   onGoToWorkout
 }) {
@@ -25,33 +24,24 @@ function WorkoutPreviewModal({
         onClick={(event) => event.stopPropagation()}
       >
         <h2>
-          {format(selectedDate, "EEEE, d MMM yyyy")}
+          {format(
+            new Date(workout.date),
+            "EEEE, d MMM yyyy"
+          )}
         </h2>
 
-        {workout ? (
+        <p>
+          {workout.exercises.length}{" "}
+          {workout.exercises.length === 1
+            ? "Exercise"
+            : "Exercises"}
+        </p>
 
-          <>
-            <p>
-              {workout.exercises.length}{" "}
-              {workout.exercises.length === 1
-                ? "Exercise"
-                : "Exercises"}
-            </p>
-
-            <WorkoutDetails
-              workout={workout}
-              showHeader={false}
-            />
-
-          </>
-
-        ) : (
-
-          <p>
-            No workout logged for this day.
-          </p>
-
-        )}
+        <div className="workout-preview-body">
+          <WorkoutPreviewContent
+            workout={workout}
+          />
+        </div>
 
         <div className="modal-actions">
 
@@ -64,7 +54,7 @@ function WorkoutPreviewModal({
           <button
             onClick={onGoToWorkout}
           >
-            Open Day
+            Go To Workout
           </button>
 
         </div>

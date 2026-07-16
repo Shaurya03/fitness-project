@@ -1,0 +1,82 @@
+.workout-preview-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-exercise {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.preview-exercise:last-child {
+  border-bottom: none;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 10px;
+}
+
+.preview-header h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.preview-category {
+  font-size: .8rem;
+  color: var(--text-secondary);
+}
+
+.preview-sets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preview-set {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: .9rem;
+}
+
+.preview-metric {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.preview-metric strong {
+  color: var(--text-secondary);
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.preview-metrics-header,
+.preview-set {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+  gap: 12px;
+}
+
+.preview-metrics-header {
+  margin: 12px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--divider);
+
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.pr-trophies {
+  font-size: .9rem;
+  margin-left: 2px;
+}

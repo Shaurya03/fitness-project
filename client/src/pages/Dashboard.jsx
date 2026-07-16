@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { format } from "date-fns";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { getDashboardStats } from "../utils/dashboardStats";
@@ -7,11 +7,12 @@ import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
 import { filterWorkouts } from "../utils/filterWorkouts";
 import { getPeriodLabel, getDisableNext, getPreviousPeriodDate, getNextPeriodDate } from "../utils/dashboardNavigation";
+import { useNavigate } from "react-router-dom";
+import { getWorkoutHistoryWithPRs } from "../utils/workoutPRHistory";
 import DashboardFilter from "../components/DashboardFilter";
 import StatCard from "../components/StatCard";
 import PersonalRecordCard from "../components/PersonalRecordCard";
 import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
-import WorkoutDetails from "../components/WorkoutDetails";
 import VolumeChart from "../components/VolumeChart";
 import CategoryBreakdownChart from "../components/CategoryBreakdownChart";
 import "./Dashboard.css";
@@ -27,6 +28,8 @@ function Dashboard() {
     startDate: "",
     endDate: ""
   });
+
+  const navigate = useNavigate();
 
   const getDefaultCustomRange = useCallback(() => {
     const endDate = new Date();
@@ -63,6 +66,11 @@ function Dashboard() {
     selectedPeriod,
     selectedDate,
     customRange
+  );
+
+  const workoutsWithPRs = useMemo(
+    () => getWorkoutHistoryWithPRs(filteredWorkouts),
+    [filteredWorkouts]
   );
 
   const periodLabel = getPeriodLabel(
@@ -107,7 +115,7 @@ function Dashboard() {
   const prs = getPersonalRecords(filteredWorkouts);
 
   const openWorkoutPreview = (workoutId) => {
-    const workout = filteredWorkouts.find(
+    const workout = workoutsWithPRs.find(
       workout => workout._id === workoutId
     );
 
@@ -288,13 +296,19 @@ function Dashboard() {
 
       {selectedWorkout && (
         <WorkoutPreviewModal
+          isOpen={!!selectedWorkout}
+          workout={selectedWorkout}
           onClose={() => setSelectedWorkout(null)}
-        >
-          <WorkoutDetails
-            workout={selectedWorkout}
-            preview={true}
-          />
-        </WorkoutPreviewModal>
+          onGoToWorkout={() => {
+            navigate("/workouts", {
+              state: {
+                selectedDate: selectedWorkout.date
+              }
+            });
+
+            setSelectedWorkout(null);
+          }}
+        />
       )}
 
       <h2 className="dashboard-title">Progress Charts</h2>
