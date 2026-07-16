@@ -78,45 +78,49 @@ function Exercises() {
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
-  if (!selectedCategory) {
-    return (
-      <CategoryList
-        categories={categories || []}
-        createCategory={createCategory}
-        updateCategory={updateCategory}
-        deleteCategory={deleteCategory}
-        onSelectCategory={setSelectedCategory}
-      />
-    );
-  }
-
-  if (!selectedExercise) {
-    return (
-      <ExerciseList
-        category={selectedCategory}
-        categories={categories || []}
-        exercises={exercises || []}
-        createExercise={createExercise}
-        updateExercise={updateExercise}
-        deleteExercise={deleteExercise}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        onBack={() => {
-          setSearchTerm("");
-          setSelectedCategory(null);
-        }}
-        onSelectExercise={setSelectedExercise}
-      />
-    );
-  }
-
   return (
-    <ExerciseLogger
-      exercise={selectedExercise}
-      workoutId={workoutId}
-      workoutDate={workoutDate}
-      onBack={() => setSelectedExercise(null)}
-    />
+    <div className="exercises-page">
+      <div className="exercises-container">
+
+        {!selectedCategory && (
+          <CategoryList
+            categories={categories || []}
+            createCategory={createCategory}
+            updateCategory={updateCategory}
+            deleteCategory={deleteCategory}
+            onSelectCategory={setSelectedCategory}
+          />
+        )}
+
+        {selectedCategory && !selectedExercise && (
+          <ExerciseList
+            category={selectedCategory}
+            categories={categories || []}
+            exercises={exercises || []}
+            createExercise={createExercise}
+            updateExercise={updateExercise}
+            deleteExercise={deleteExercise}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            onBack={() => {
+              setSearchTerm("");
+              setSelectedCategory(null);
+            }}
+            onSelectExercise={setSelectedExercise}
+          />
+        )}
+
+        {selectedExercise && (
+          <ExerciseLogger
+            exercise={selectedExercise}
+            workoutId={workoutId}
+            workoutDate={workoutDate}
+            onBack={() => setSelectedExercise(null)}
+          />
+        )}
+
+      </div>
+    </div>
   );
 }
 

@@ -1,8 +1,9 @@
-import { useRef, useState, useEffect } from "react";
-import CategoryHeader from "./CategoryHeader";
+import { useState } from "react";
+import CategoryCard from "./CategoryCard";
 import CreateCategoryModal from "./CreateCategoryModal";
 import EditCategoryModal from "./EditCategoryModal";
 import DeleteCategoryModal from "./DeleteCategoryModal";
+import "./CategoryList.css";
 
 function CategoryList({
   categories,
@@ -23,29 +24,6 @@ function CategoryList({
 
   const [deleteCategoryError, setDeleteCategoryError] = useState(null);
 
-  const categoryMenuRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        categoryMenuRef.current &&
-        !categoryMenuRef.current.contains(event.target)
-      ) {
-        setOpenCategoryMenu(null);
-      }
-    };
-
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
-  }, []);
 
   const handleCreateCategory = async (categoryData) => {
     await createCategory(categoryData);
@@ -113,26 +91,21 @@ function CategoryList({
 
       </div>
 
-      <div ref={categoryMenuRef}>
+      <div
+        className="category-list"
+      >
 
         {categories.map((category) => (
-
-          <div
+          <CategoryCard
             key={category._id}
-            className="category-section"
-            onClick={() =>
-              onSelectCategory(category)
-            }
-          >
-            <CategoryHeader
-              category={category}
-              openCategoryMenu={openCategoryMenu}
-              setOpenCategoryMenu={setOpenCategoryMenu}
-              onEditCategory={handleEditCategory}
-              onDeleteCategory={handleDeleteCategory}
-            />
-          </div>
-
+            category={category}
+            exerciseCount={category.exercises?.length ?? 0}
+            openCategoryMenu={openCategoryMenu}
+            setOpenCategoryMenu={setOpenCategoryMenu}
+            onSelect={() => onSelectCategory(category)}
+            onEditCategory={handleEditCategory}
+            onDeleteCategory={handleDeleteCategory}
+          />
         ))}
 
       </div>
