@@ -3,7 +3,9 @@ import {
   format,
   addDays,
   subDays,
-  isSameDay
+  isSameDay,
+  startOfDay,
+  isAfter
 } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
@@ -27,8 +29,8 @@ function Workouts() {
 
   const [selectedDate, setSelectedDate] = useState(
     location.state?.selectedDate
-      ? new Date(location.state.selectedDate)
-      : new Date()
+      ? startOfDay(new Date(location.state.selectedDate))
+      : startOfDay(new Date())
   );
 
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -64,12 +66,12 @@ function Workouts() {
 
   const handleNext = () => {
 
-    const today = new Date();
+    const today = startOfDay(new Date());
 
     setSelectedDate(date => {
-      const nextDate = addDays(date, 1);
+      const nextDate = startOfDay(addDays(date, 1));
 
-      return nextDate > today
+      return isAfter(nextDate, today)
         ? date
         : nextDate;
     });
