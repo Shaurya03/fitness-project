@@ -1,42 +1,21 @@
-import { useState, useEffect, useRef } from "react";
+import { useRef } from "react";
+import MenuPortal from "./MenuPortal";
 import { FaChevronRight } from "react-icons/fa";
+import { FiMoreVertical } from "react-icons/fi";
 import "./ExerciseCard.css";
 
 function ExerciseCard({
   exercise,
   mode = "manage",
+  openExerciseMenu,
+  setOpenExerciseMenu,
   onClick,
   onHistory,
   onEdit,
   onDelete
 }) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const menuRef = useRef(null);
 
-  useEffect(() => {
-    if (!isMenuOpen) return;
-
-    const handleClickOutside = (event) => {
-      if (
-        menuRef.current &&
-        !menuRef.current.contains(event.target)
-      ) {
-        setIsMenuOpen(false);
-      }
-    };
-
-    document.addEventListener(
-      "mousedown",
-      handleClickOutside
-    );
-
-    return () =>
-      document.removeEventListener(
-        "mousedown",
-        handleClickOutside
-      );
-
-  }, [isMenuOpen]);
+  const menuButtonRef = useRef(null);
 
   return (
     <div
@@ -52,24 +31,36 @@ function ExerciseCard({
       {mode === "manage" && (
         <div
           className="menu-container"
-          ref={menuRef}
-          onClick={(event) => event.stopPropagation()}
         >
           <button
             className="menu-btn"
-            onClick={() =>
-              setIsMenuOpen(!isMenuOpen)
-            }
+            ref={menuButtonRef}
+            onClick={(event) => {
+              event.stopPropagation();
+
+              setOpenExerciseMenu(
+                openExerciseMenu === exercise._id
+                  ? null
+                  : exercise._id
+              );
+            }}
           >
-            ⋮
+            <FiMoreVertical />
           </button>
 
-          {isMenuOpen && (
-            <div className="exercise-menu">
+          <MenuPortal
+            anchorRef={menuButtonRef}
+            isOpen={openExerciseMenu === exercise._id}
+            onClose={() => setOpenExerciseMenu(null)}
+          >
+            <div
+              className="exercise-menu"
+              onClick={(event) => event.stopPropagation()}
+            >
 
               <button
                 onClick={() => {
-                  setIsMenuOpen(false);
+                  setOpenExerciseMenu(null);
                   onHistory();
                 }}
               >
@@ -78,7 +69,7 @@ function ExerciseCard({
 
               <button
                 onClick={() => {
-                  setIsMenuOpen(false);
+                  setOpenExerciseMenu(null);
                   onEdit();
                 }}
               >
@@ -87,7 +78,7 @@ function ExerciseCard({
 
               <button
                 onClick={() => {
-                  setIsMenuOpen(false);
+                  setOpenExerciseMenu(null);
                   onDelete();
                 }}
               >
@@ -95,12 +86,12 @@ function ExerciseCard({
               </button>
 
             </div>
-          )}
+          </MenuPortal>
 
         </div>
       )}
 
-    </div>
+    </div >
   );
 }
 

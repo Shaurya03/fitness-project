@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { FiArrowLeft } from "react-icons/fi";
 import ExerciseCard from "./ExerciseCard";
 import CreateExerciseModal from "./CreateExerciseModal";
 import EditExerciseModal from "./EditExerciseModal";
 import DeleteExerciseModal from "./DeleteExerciseModal";
 import ExerciseHistoryModal from "./ExerciseHistoryModal";
+import "./ExerciseList.css";
 
 function ExerciseList({
   category,
@@ -17,6 +19,8 @@ function ExerciseList({
   onBack,
   onSelectExercise
 }) {
+
+  const [openExerciseMenu, setOpenExerciseMenu] = useState(null);
 
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -84,13 +88,13 @@ function ExerciseList({
           className="back-btn"
           onClick={onBack}
         >
-          ← Back
+          <FiArrowLeft />
         </button>
 
         <h2>{category.name}</h2>
 
         <button
-          className="add-category-btn"
+          className="add-exercise-btn"
           onClick={() =>
             setIsCreateModalOpen(true)
           }
@@ -110,29 +114,44 @@ function ExerciseList({
         }
       />
 
-      {filteredExercises.map((exercise) => (
+      {filteredExercises.length === 0 ? (
 
-        <ExerciseCard
-          key={exercise._id}
-          mode="manage"
-          exercise={exercise}
-          onClick={() =>
-            onSelectExercise(exercise)
-          }
-          onHistory={() =>
-            setHistoryExercise(exercise)
-          }
-          onEdit={() =>
-            handleEditExercise(exercise)
-          }
-          onDelete={() =>
-            handleDeleteExercise(exercise)
-          }
-        />
+        <div className="empty-exercise-list">
+          <h3>No exercises found</h3>
 
-      ))}
+          <p>
+            Create an exercise or change your search.
+          </p>
+        </div>
 
-      <CreateExerciseModal
+      ) : (
+
+        filteredExercises.map((exercise) => (
+
+          <ExerciseCard
+            key={exercise._id}
+            mode="manage"
+            exercise={exercise}
+            openExerciseMenu={openExerciseMenu}
+            setOpenExerciseMenu={setOpenExerciseMenu}
+            onClick={() =>
+              onSelectExercise(exercise)
+            }
+            onHistory={() =>
+              setHistoryExercise(exercise)
+            }
+            onEdit={() =>
+              handleEditExercise(exercise)
+            }
+            onDelete={() =>
+              handleDeleteExercise(exercise)
+            }
+          />
+
+        ))
+      )}
+
+      < CreateExerciseModal
         isOpen={isCreateModalOpen}
         selectedCategory={category}
         onClose={() =>
