@@ -17,6 +17,7 @@ import { getHistoryWithPRs } from "../utils/prHistory";
 import { useNavigate } from "react-router-dom";
 import { reactSelectStyles } from "../styles/reactSelectStyles";
 import { getInitialSet } from "../utils/getInitialSet";
+import { isSameDay } from "date-fns";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import Select from "react-select";
 import "./ExerciseLogger.css";
@@ -112,18 +113,32 @@ function ExerciseLogger({
     DEFAULT_DISTANCE_UNIT
   ]);
 
-  const activeWorkout = workoutId
-    ? workouts.find(workout => workout._id === workoutId)
-    : workouts.find(workout => {
-      const workoutDate = new Date(workout.date);
-      const today = new Date();
+  let activeWorkout;
 
-      return (
-        workoutDate.getFullYear() === today.getFullYear() &&
-        workoutDate.getMonth() === today.getMonth() &&
-        workoutDate.getDate() === today.getDate()
-      );
-    });
+  if (workoutId) {
+    // Editing an existing workout
+    activeWorkout = workouts.find(
+      workout => workout._id === workoutId
+    );
+  }
+  else if (workoutDate) {
+    // Creating/editing a workout for a specific date
+    activeWorkout = workouts.find(workout =>
+      isSameDay(
+        new Date(workout.date),
+        new Date(workoutDate)
+      )
+    );
+  }
+  else {
+    // Exercise page -> use today's workout
+    activeWorkout = workouts.find(workout =>
+      isSameDay(
+        new Date(workout.date),
+        new Date()
+      )
+    );
+  }
 
   const loggedExercise =
     activeWorkout?.exercises.find(
@@ -404,6 +419,7 @@ function ExerciseLogger({
 
         workout = {
           title: "",
+          date: workoutDate ?? new Date(),
           exercises: [
             {
               categoryId: exercise.categoryId._id,
@@ -1053,7 +1069,7 @@ function ExerciseLogger({
             <div className="logged-sets">
 
               <h3>
-                {workoutId ? "Workout Sets" : "Today's Sets"}
+                Sets
               </h3>
 
               {loggedSetsWithPRs.length === 0 && (

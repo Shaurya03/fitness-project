@@ -143,13 +143,15 @@ function Workouts() {
 
           <h2>No workout logged</h2>
 
-          <p>
-            Start today's workout.
-          </p>
-
           <button
             className="primary-btn"
-            onClick={() => navigate("/exercises")}
+            onClick={() =>
+              navigate("/exercises", {
+                state: {
+                  workoutDate: selectedDate
+                }
+              })
+            }
           >
             Start Workout
           </button>

@@ -152,7 +152,7 @@ const getWorkout = async (req, res, next) => {
 const createWorkout = async (req, res, next) => {
   try {
     const user_id = req.user._id;
-    const { title, exercises } = req.body;
+    const { title, exercises, date } = req.body;
 
     validateExercises(exercises);
 
@@ -162,6 +162,7 @@ const createWorkout = async (req, res, next) => {
           ? title.trim()
           : "",
       exercises,
+      date: date ?? new Date(),
       user_id
     });
 
