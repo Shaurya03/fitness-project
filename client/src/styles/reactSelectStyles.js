@@ -1,0 +1,77 @@
+export const reactSelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: 48,
+    borderRadius: 10,
+    borderColor: state.isFocused
+      ? "var(--primary)"
+      : "var(--border)",
+    backgroundColor: "var(--background)",
+    boxShadow: "none",
+    cursor: "pointer",
+    transition: "all .15s ease",
+
+    "&:hover": {
+      borderColor: "var(--primary)"
+    }
+  }),
+
+  valueContainer: (base) => ({
+    ...base,
+    padding: "2px 12px"
+  }),
+
+  singleValue: (base) => ({
+    ...base,
+    color: "var(--text-primary)"
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none"
+  }),
+
+  dropdownIndicator: (base, state) => ({
+    ...base,
+    color: state.isFocused
+      ? "var(--primary)"
+      : "var(--text-secondary)",
+
+    "&:hover": {
+      color: "var(--primary)"
+    }
+  }),
+
+  menu: (base) => ({
+    ...base,
+    marginTop: 6,
+    borderRadius: 10,
+    overflow: "hidden",
+    zIndex: 10000,
+    boxShadow: "var(--shadow-md)"
+  }),
+
+  menuList: (base) => ({
+    ...base,
+    padding: 4,
+    scrollbarWidth: "none",
+    msOverflowStyle: "none"
+  }),
+
+  option: (base, state) => ({
+    ...base,
+    borderRadius: 8,
+    cursor: "pointer",
+
+    backgroundColor: state.isSelected
+      ? "var(--primary)"
+      : state.isFocused
+        ? "rgba(26, 172, 131, 0.15)"
+        : "transparent",
+
+    color: state.isSelected
+      ? "white"
+      : "var(--text-primary)",
+
+    transition: "all .15s ease"
+  })
+};

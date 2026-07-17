@@ -41,6 +41,17 @@ const createExercise = async (req, res) => {
 
   const user_id = req.user._id;
 
+  const category = await Category.findOne({
+    _id: categoryId,
+    user_id
+  });
+
+  if (!category) {
+    return res.status(404).json({
+      error: "Category not found"
+    });
+  }
+
   const normalizedName = name.trim();
 
   if (!normalizedName) {
@@ -52,6 +63,12 @@ const createExercise = async (req, res) => {
   if (!categoryId) {
     return res.status(400).json({
       error: "Category is required"
+    });
+  }
+
+  if (!metrics || metrics.length === 0) {
+    return res.status(400).json({
+      error: "At least one metric is required"
     });
   }
 
@@ -120,6 +137,12 @@ const updateExercise = async (req, res) => {
     if (!normalizedName) {
       return res.status(400).json({
         error: "Exercise name is required"
+      });
+    }
+
+    if (!metrics || metrics.length === 0) {
+      return res.status(400).json({
+        error: "At least one metric is required"
       });
     }
 

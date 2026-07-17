@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { reactSelectStyles } from "../styles/reactSelectStyles";
 import MetricSelector from "./MetricSelector";
+import Select from "react-select";
 import "./Modal.css";
 
 function EditExerciseModal({
@@ -31,6 +33,18 @@ function EditExerciseModal({
     return null;
   }
 
+  const formatExerciseName = (name) =>
+    name
+      .trim()
+      .replace(/\s+/g, " ")
+      .split(" ")
+      .map(
+        word =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1).toLowerCase()
+      )
+      .join(" ");
+
   const toggleMetric = (metric) => {
     setError("");
 
@@ -44,10 +58,12 @@ function EditExerciseModal({
   const handleSubmit = async () => {
 
     if (!name.trim()) {
+      setError("Exercise name is required.")
       return;
     }
 
     if (metrics.length === 0) {
+      setError("Select at least one metric.")
       return;
     }
 
@@ -55,7 +71,7 @@ function EditExerciseModal({
       setError("");
 
       await onSave({
-        name: name.trim(),
+        name: formatExerciseName(name),
         metrics,
         categoryId
       });
@@ -73,6 +89,16 @@ function EditExerciseModal({
 
     onClose();
   };
+
+  const categoryOptions = categories.map(category => ({
+    value: category._id,
+    label: category.name
+  }));
+
+  const selectedOption =
+    categoryOptions.find(
+      option => option.value === categoryId
+    ) || null;
 
   return createPortal(
     <div
@@ -101,22 +127,16 @@ function EditExerciseModal({
 
         <label>Category</label>
 
-        <select
-          value={categoryId}
-          onChange={(event) => {
-            setCategoryId(event.target.value);
+        <Select
+          options={categoryOptions}
+          value={selectedOption}
+          styles={reactSelectStyles}
+          onChange={(option) => {
+            setCategoryId(option.value);
             setError("");
           }}
-        >
-          {categories.map(category => (
-            <option
-              key={category._id}
-              value={category._id}
-            >
-              {category.name}
-            </option>
-          ))}
-        </select>
+          isSearchable={false}
+        />
 
         <h3>Metrics</h3>
 

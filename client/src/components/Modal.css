@@ -71,6 +71,12 @@
   border-color: var(--primary);
 }
 
+.modal .modal-category {
+  margin-bottom: var(--space-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .modal-actions {
   flex-shrink: 0;
   display: flex;
@@ -92,6 +98,7 @@
   background: var(--primary);
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
 .modal-actions button:hover {
@@ -100,7 +107,6 @@
 
 .modal-actions button:disabled {
   opacity: .5;
-  cursor: not-allowed;
 }
 
 .modal p.modal-error {
@@ -108,9 +114,19 @@
   font-weight: 300;
 }
 
-.modal p.modal-warning {
-  color: var(--warning);
-  font-weight: 300;
+.modal-warning {
+  margin: 1rem 0;
+  padding: 1rem;
+
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-md);
+
+  color: var(--danger)
+}
+
+.modal-warning p {
+  margin-top: .5rem;
+  color: inherit;
 }
 
 .delete-warning h3 {
@@ -136,6 +152,12 @@
   gap: var(--space-sm);
 
   margin-top: var(--space-md);
+}
+
+.delete-confirmation input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
 }
 
 /* ---------------- History Modal ---------------- */

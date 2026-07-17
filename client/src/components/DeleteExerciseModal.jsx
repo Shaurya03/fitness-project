@@ -51,23 +51,23 @@ function DeleteExerciseModal({
 
         <p>
           Are you sure you want to permanently delete
-          <strong> {exercise?.name}</strong>?
+          <strong> "{exercise?.name}"</strong>?
         </p>
 
         {workoutCount > 0 ? (
           <>
-            <p>
-              This exercise is used in{" "}
-              <strong>
-                {workoutCount}
-              </strong>{" "}
-              {workoutCount === 1
-                ? "workout"
-                : "workouts"}.
-            </p>
+            <div className="modal-warning">
+              <strong>⚠ Warning</strong>
+
+              <p>
+                This exercise is used in{" "}
+                <strong>{workoutCount}</strong>{" "}
+                {workoutCount === 1 ? "workout" : "workouts"}.
+              </p>
+            </div>
 
             <p>
-              Deleting it will:
+              Deleting this exercise will:
             </p>
 
             <ul className="delete-warning-list">

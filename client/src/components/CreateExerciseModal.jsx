@@ -28,6 +28,18 @@ function CreateExerciseModal({
     return null;
   }
 
+  const formatExerciseName = (name) =>
+    name
+      .trim()
+      .replace(/\s+/g, " ")
+      .split(" ")
+      .map(
+        word =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1).toLowerCase()
+      )
+      .join(" ");
+
   const toggleMetric = (metric) => {
     setError("");
 
@@ -41,10 +53,12 @@ function CreateExerciseModal({
   const handleSubmit = async () => {
 
     if (!name.trim()) {
+      setError("Exercise name is required.");
       return;
     }
 
     if (metrics.length === 0) {
+      setError("Select at least one metric.")
       return;
     }
 
@@ -53,7 +67,7 @@ function CreateExerciseModal({
       setError("");
 
       await onCreate({
-        name: name.trim(),
+        name: formatExerciseName(name),
         metrics
       });
 
@@ -88,7 +102,7 @@ function CreateExerciseModal({
 
         <h2>Create Exercise</h2>
 
-        <p>
+        <p className="modal-category">
           Category: {selectedCategory?.name}
         </p>
 
