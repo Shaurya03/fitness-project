@@ -267,6 +267,10 @@
   font-weight: 600;
 }
 
+.distance-unit-select {
+  width: 90px;
+}
+
 @media (max-width:640px) {
 
   .exercise-logger {

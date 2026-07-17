@@ -12,10 +12,13 @@ import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
 import { getDisplaySet } from "../utils/getDisplaySet";
 import { useSettings } from "../hooks/useSettings";
-import { FiMinus, FiPlus } from "react-icons/fi";
+import { FiMinus, FiPlus, FiArrowLeft } from "react-icons/fi";
 import { getHistoryWithPRs } from "../utils/prHistory";
 import { useNavigate } from "react-router-dom";
+import { reactSelectStyles } from "../styles/reactSelectStyles";
+import { getInitialSet } from "../utils/getInitialSet";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
+import Select from "react-select";
 import "./ExerciseLogger.css";
 
 function ExerciseLogger({
@@ -140,17 +143,12 @@ function ExerciseLogger({
         new Date(a.date)
     );
 
-  const initialSet = workoutId
-
-    ? loggedExercise?.sets.at(-1)
-
-    : exerciseHistory
-      .at(0)
-      ?.exercises
-      .find(
-        item => item.exerciseId._id === exercise._id
-      )
-      ?.sets.at(-1);
+  const initialSet = getInitialSet({
+    exercise,
+    exerciseHistory,
+    workoutId,
+    workoutDate
+  });
 
   const historyWithPRs = getHistoryWithPRs(
 
@@ -770,7 +768,7 @@ function ExerciseLogger({
           }
         }}
       >
-        ←
+        <FiArrowLeft />
       </button>
 
       <div className="logger-header">
@@ -976,30 +974,23 @@ function ExerciseLogger({
 
                       {metric === "distance" && (
 
-                        <select
-                          value={distanceUnit}
-                          onChange={event =>
-                            handleUnitChange(
-                              "distance",
-                              event.target.value
-                            )
-                          }
-                        >
-
-                          {DISTANCE_SYSTEMS[
-                            settings.distanceSystem
-                          ].map(unit => (
-
-                            <option
-                              key={unit}
-                              value={unit}
-                            >
-                              {unit}
-                            </option>
-
-                          ))}
-
-                        </select>
+                        <div className="distance-unit-select">
+                          <Select
+                            value={{
+                              value: distanceUnit,
+                              label: distanceUnit
+                            }}
+                            options={DISTANCE_SYSTEMS[settings.distanceSystem].map(unit => ({
+                              value: unit,
+                              label: unit
+                            }))}
+                            styles={reactSelectStyles}
+                            isSearchable={false}
+                            onChange={(option) =>
+                              handleUnitChange("distance", option.value)
+                            }
+                          />
+                        </div>
 
                       )}
 
