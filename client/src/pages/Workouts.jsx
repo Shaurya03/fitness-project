@@ -53,9 +53,22 @@ function Workouts() {
       state: {
         selectedExerciseId: exercise.exerciseId._id,
         workoutId: workout._id,
-        workoutDate: workout.date
+        workoutDate: workout.date,
+        mode: "edit"
       }
     });
+  };
+
+  const handleAddExercise = (workout) => {
+
+    navigate("/exercises", {
+      state: {
+        workoutId: workout._id,
+        workoutDate: workout.date,
+        mode: "add"
+      }
+    });
+
   };
 
   const handlePrevious = () => {
@@ -163,6 +176,7 @@ function Workouts() {
         <WorkoutDetails
           workout={currentWorkout}
           onSelectedExercise={handleExerciseClick}
+          onAddExercise={handleAddExercise}
         />
       )}
 

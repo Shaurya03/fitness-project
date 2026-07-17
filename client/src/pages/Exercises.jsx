@@ -46,6 +46,8 @@ function Exercises() {
   const workoutDate =
     location.state?.workoutDate;
 
+  const mode = location.state?.mode;
+
   /* eslint-disable react-hooks/exhaustive-deps */
 
   useEffect(() => {
@@ -117,6 +119,7 @@ function Exercises() {
             workoutId={workoutId}
             workoutDate={workoutDate}
             onBack={() => setSelectedExercise(null)}
+            mode={mode}
           />
         )}
 

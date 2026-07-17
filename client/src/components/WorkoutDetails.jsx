@@ -4,11 +4,13 @@ import { useSettings } from "../hooks/useSettings";
 import { DEFAULT_UNITS } from "../utils/settings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
+import { FiPlus } from "react-icons/fi";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({
   workout,
-  onSelectedExercise
+  onSelectedExercise,
+  onAddExercise
 }) {
 
   const { settings } = useSettings();
@@ -173,6 +175,13 @@ function WorkoutDetails({
           <p>No exercises found.</p>
         )}
       </div>
+
+      <button
+        className="add-exercise-workout-btn"
+        onClick={() => onAddExercise(workout)}
+      >
+        <FiPlus size={28} />
+      </button>
 
     </div>
   );
