@@ -103,14 +103,22 @@
   cursor: not-allowed;
 }
 
-.modal-error {
+.modal p.modal-error {
   color: var(--danger);
-  font-weight: 600;
+  font-weight: 300;
 }
 
-.modal-warning {
+.modal p.modal-warning {
   color: var(--warning);
-  font-weight: 600;
+  font-weight: 300;
+}
+
+.delete-warning h3 {
+  color: var(--danger);
+}
+
+.delete-warning p {
+  margin-bottom: var(--space-sm);
 }
 
 .delete-warning-list {

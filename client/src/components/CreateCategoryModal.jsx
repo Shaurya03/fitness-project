@@ -26,13 +26,27 @@ function CreateCategoryModal({
     );
   };
 
+  const formatCategoryName = (name) =>
+    name
+      .trim()
+      .replace(/\s+/g, " ")
+      .split(" ")
+      .map(
+        word =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1).toLowerCase()
+      )
+      .join(" ");
+
   const handleSubmit = async () => {
 
     if (!categoryName.trim()) {
+      setError("Category name is required.");
       return;
     }
 
     if (metrics.length === 0) {
+      setError("Select at least one metric.");
       return;
     }
 
@@ -40,7 +54,7 @@ function CreateCategoryModal({
       setError("");
 
       await onCreate({
-        name: categoryName.trim(),
+        name: formatCategoryName(categoryName),
         defaultMetrics: metrics
       });
       setCategoryName("");
@@ -71,6 +85,8 @@ function CreateCategoryModal({
 
         <input
           value={categoryName}
+          maxLength={40}
+          autoFocus
           onChange={(event) => {
             setCategoryName(event.target.value);
             setError("");

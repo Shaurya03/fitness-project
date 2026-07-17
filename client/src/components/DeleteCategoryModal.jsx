@@ -36,7 +36,7 @@ function DeleteCategoryModal({
           <>
             <p>
               Are you sure you want to delete
-              <strong> {category?.name}</strong>?
+              <strong> "{category?.name}"</strong>?
             </p>
 
             <div className="modal-actions">
@@ -52,7 +52,7 @@ function DeleteCategoryModal({
         ) : (
           <>
             <div className="delete-warning">
-              <strong>⚠ Cannot delete category</strong>
+              <h3>⚠ Cannot delete category</h3>
 
               <p>
                 This category contains{" "}
@@ -63,7 +63,7 @@ function DeleteCategoryModal({
               </p>
 
               <p>
-                Delete or move them before deleting this category.
+                Move the exercises to another category or delete them first.
               </p>
             </div>
 

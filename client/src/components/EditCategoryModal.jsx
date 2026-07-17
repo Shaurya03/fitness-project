@@ -28,6 +28,18 @@ function EditCategoryModal({
     return null;
   }
 
+  const formatCategoryName = (name) =>
+    name
+      .trim()
+      .replace(/\s+/g, " ")
+      .split(" ")
+      .map(
+        word =>
+          word.charAt(0).toUpperCase() +
+          word.slice(1).toLowerCase()
+      )
+      .join(" ");
+
   const toggleMetric = (metric) => {
     setError("");
 
@@ -41,26 +53,31 @@ function EditCategoryModal({
   const handleSubmit = async () => {
 
     if (!categoryName.trim()) {
+      setError("Category name is required.");
       return;
     }
 
     if (metrics.length === 0) {
+      setError("Select at least one metric.");
       return;
     }
 
     try {
+
       setError("");
 
       await onSave({
-        name: categoryName.trim(),
+        name: formatCategoryName(categoryName),
         defaultMetrics: metrics
       });
+
       setCategoryName("");
       setMetrics([]);
 
     } catch (error) {
       setError(error.message);
     }
+
   };
 
   const handleClose = () => {
@@ -88,6 +105,8 @@ function EditCategoryModal({
             setError("");
           }}
           placeholder="Enter Category name"
+          maxLength={40}
+          autoFocus
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               handleSubmit();

@@ -28,6 +28,15 @@ const createCategory = async (req, res) => {
     });
   }
 
+  if (
+    !Array.isArray(defaultMetrics) ||
+    defaultMetrics.length === 0
+  ) {
+    return res.status(400).json({
+      error: "Select at least one metric"
+    });
+  }
+
   const existingCategory = await Category.findOne({
     user_id,
     name: {
@@ -84,6 +93,15 @@ const updateCategory = async (req, res) => {
   if (name !== undefined && !normalizedName) {
     return res.status(400).json({
       error: "Category name is required"
+    });
+  }
+
+  if (
+    !Array.isArray(defaultMetrics) ||
+    defaultMetrics.length === 0
+  ) {
+    return res.status(400).json({
+      error: "Select at least one metric"
     });
   }
 
