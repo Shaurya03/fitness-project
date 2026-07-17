@@ -85,6 +85,7 @@ function Exercises() {
         {!selectedCategory && (
           <CategoryList
             categories={categories || []}
+            exercises={exercises || []}
             createCategory={createCategory}
             updateCategory={updateCategory}
             deleteCategory={deleteCategory}

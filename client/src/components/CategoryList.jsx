@@ -7,6 +7,7 @@ import "./CategoryList.css";
 
 function CategoryList({
   categories,
+  exercises,
   createCategory,
   updateCategory,
   deleteCategory,
@@ -74,6 +75,20 @@ function CategoryList({
     }
   };
 
+  const exerciseCounts = exercises.reduce(
+    (counts, exercise) => {
+
+      const categoryId = exercise.categoryId?._id;
+
+      counts[categoryId] =
+        (counts[categoryId] || 0) + 1;
+
+      return counts;
+
+    },
+    {}
+  );
+
   return (
     <>
       <div className="page-header">
@@ -99,7 +114,7 @@ function CategoryList({
           <CategoryCard
             key={category._id}
             category={category}
-            exerciseCount={category.exercises?.length ?? 0}
+            exerciseCount={exerciseCounts[category._id ?? 0]}
             openCategoryMenu={openCategoryMenu}
             setOpenCategoryMenu={setOpenCategoryMenu}
             onSelect={() => onSelectCategory(category)}
