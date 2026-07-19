@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { useAuthContext } from '../hooks/useAuthContext';
-import { useLogout } from '../hooks/useLogout';
 import { useSettings } from '../hooks/useSettings';
+import { PiBarbellDuotone } from "react-icons/pi";
 import './Navbar.css';
 
 function Navbar() {
   const { user } = useAuthContext();
-  const { logout } = useLogout();
   const { settings, fetchSettings } = useSettings();
 
   /* eslint-disable react-hooks/exhaustive-deps */
@@ -31,26 +30,23 @@ function Navbar() {
   return (
     <header className="navbar">
       <div className="container">
-        <Link to="/">
-          <h1>Fitness Tracker</h1>
-        </Link>
+        <NavLink className="logo" to="/">
+          <PiBarbellDuotone className="logo-icon" />
+          <h1>ForgeFit</h1>
+        </NavLink>
 
         <nav>
           {user ? (
             <div className="nav-links">
-              <Link to="/">Dashboard</Link>
-              <Link to="/workouts">Workouts</Link>
-              <Link to="/exercises">Exercises</Link>
-              <Link to="/settings">Settings</Link>
-
-              <span>{user.email}</span>
-
-              <button onClick={logout}>Logout</button>
+              <NavLink to="/">Dashboard</NavLink>
+              <NavLink to="/workouts">Workouts</NavLink>
+              <NavLink to="/exercises">Exercises</NavLink>
+              <NavLink to="/settings">Settings</NavLink>
             </div>
           ) : (
             <div className="nav-links">
-              <Link to="/login">Login</Link>
-              <Link to="/signup">Signup</Link>
+              <NavLink to="/login">Login</NavLink>
+              <NavLink to="/signup">Sign Up</NavLink>
             </div>
           )}
         </nav>

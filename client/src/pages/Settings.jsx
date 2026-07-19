@@ -1,14 +1,21 @@
-import { FiMoon, FiSun } from "react-icons/fi";
+import { FiMoon, FiSun, FiLogOut } from "react-icons/fi";
 import { FaWeightHanging } from "react-icons/fa";
 import { MdSocialDistance } from "react-icons/md";
 import { useSettings } from "../hooks/useSettings";
+import { useAuthContext } from "../hooks/useAuthContext";
+import { useLogout } from "../hooks/useLogout";
 import "./Settings.css";
 
 function Settings() {
+
   const {
     settings,
     updateSettings
   } = useSettings();
+
+  const { user } = useAuthContext();
+
+  const { logout } = useLogout();
 
   if (!settings) {
     return (
@@ -33,6 +40,8 @@ function Settings() {
       <div className="page-header">
         <h2>Settings</h2>
       </div>
+
+      {/* ---------------- Appearance ---------------- */}
 
       <section className="settings-section">
 
@@ -84,6 +93,8 @@ function Settings() {
 
       </section>
 
+      {/* ---------------- Weight ---------------- */}
+
       <section className="settings-section">
 
         <div className="settings-header">
@@ -134,6 +145,8 @@ function Settings() {
 
       </section>
 
+      {/* ---------------- Distance ---------------- */}
+
       <section className="settings-section">
 
         <div className="settings-header">
@@ -179,6 +192,80 @@ function Settings() {
             <MdSocialDistance />
             Imperial (mi / ft)
           </button>
+
+        </div>
+
+      </section>
+
+      {/* ---------------- Account ---------------- */}
+
+      <section className="settings-section">
+
+        <div className="settings-header">
+          <h3>Account</h3>
+
+          <p>
+            Manage your account.
+          </p>
+        </div>
+
+        <div className="account-info">
+
+          <span className="account-label">
+            Signed in as
+          </span>
+
+          <span className="account-email">
+            {user.email}
+          </span>
+
+        </div>
+
+        <div className="logout-container">
+          <button
+            className="logout-btn"
+            onClick={logout}
+          >
+            <FiLogOut />
+            Logout
+          </button>
+        </div>
+
+      </section>
+
+      {/* ---------------- About ---------------- */}
+
+      <section className="settings-section">
+
+        <div className="settings-header">
+          <h3>About</h3>
+
+          <p>
+            Application information.
+          </p>
+        </div>
+
+        <div className="about-info">
+
+          <div className="about-row">
+            <span className="about-label">
+              Application
+            </span>
+
+            <span className="about-value">
+              ForgeFit
+            </span>
+          </div>
+
+          <div className="about-row">
+            <span className="about-label">
+              Version
+            </span>
+
+            <span className="about-value">
+              v1.0.0
+            </span>
+          </div>
 
         </div>
 
