@@ -1,0 +1,111 @@
+.settings-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+}
+
+.settings-page .page-header {
+  margin-bottom: var(--space-xl);
+}
+
+.settings-page .page-header h2 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.settings-section {
+  padding: var(--card-padding);
+  margin-bottom: var(--space-lg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.settings-header {
+  padding-bottom: var(--space-md);
+  margin-bottom: var(--space-lg);
+  border-bottom: 1px solid var(--divider);
+}
+
+.settings-header h3 {
+  margin: 0 0 var(--space-xs);
+  color: var(--text-primary);
+}
+
+.settings-header p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: .95rem;
+}
+
+.settings-options {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.setting-pill {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .8rem 1.2rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+
+  transition:
+    background var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.setting-pill svg {
+  font-size: 1.1rem;
+}
+
+.setting-pill:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.setting-pill.active {
+  color: white;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+.setting-pill.active:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.setting-pill:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 768px) {
+
+  .settings-page {
+    padding: var(--space-lg);
+  }
+
+  .settings-options {
+    flex-direction: column;
+  }
+
+  .setting-pill {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+}

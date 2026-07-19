@@ -1,5 +1,8 @@
+import { FiMoon, FiSun } from "react-icons/fi";
+import { FaWeightHanging } from "react-icons/fa";
+import { MdSocialDistance } from "react-icons/md";
 import { useSettings } from "../hooks/useSettings";
-
+import "./Settings.css";
 
 function Settings() {
   const {
@@ -27,129 +30,159 @@ function Settings() {
   return (
     <div className="settings-page">
 
-      <h2>Settings</h2>
+      <div className="page-header">
+        <h2>Settings</h2>
+      </div>
 
-      <div className="settings-section">
+      <section className="settings-section">
 
-        <h3>Appearance</h3>
+        <div className="settings-header">
+          <h3>Appearance</h3>
 
-        <label className="settings-option">
-          <input
-            type="radio"
-            name="theme"
-            value="light"
-            checked={settings.theme === "light"}
-            onChange={() =>
+          <p>
+            Choose how the application looks.
+          </p>
+        </div>
+
+        <div className="settings-options">
+
+          <button
+            className={
+              settings.theme === "light"
+                ? "setting-pill active"
+                : "setting-pill"
+            }
+            onClick={() =>
               handleSettingChange(
                 "theme",
                 "light"
               )
             }
-          />
-          Light
-        </label>
+          >
+            <FiSun />
+            Light
+          </button>
 
-        <label className="settings-option">
-          <input
-            type="radio"
-            name="theme"
-            value="dark"
-            checked={settings.theme === "dark"}
-            onChange={() =>
+          <button
+            className={
+              settings.theme === "dark"
+                ? "setting-pill active"
+                : "setting-pill"
+            }
+            onClick={() =>
               handleSettingChange(
                 "theme",
                 "dark"
               )
             }
-          />
-          Dark
-        </label>
+          >
+            <FiMoon />
+            Dark
+          </button>
 
-      </div>
+        </div>
 
-      <div className="settings-section">
+      </section>
 
-        <h3>Weight</h3>
+      <section className="settings-section">
 
-        <label className="settings-option">
-          <input
-            type="radio"
-            name="weightSystem"
-            value="metric"
-            checked={
+        <div className="settings-header">
+          <h3>Weight Unit</h3>
+
+          <p>
+            Used throughout workouts and history.
+          </p>
+        </div>
+
+        <div className="settings-options">
+
+          <button
+            className={
               settings.weightSystem === "metric"
+                ? "setting-pill active"
+                : "setting-pill"
             }
-            onChange={() =>
+            onClick={() =>
               handleSettingChange(
                 "weightSystem",
                 "metric"
               )
             }
-          />
-          Metric (kg)
-        </label>
+          >
+            <FaWeightHanging />
+            Kilograms (kg)
+          </button>
 
-        <label className="settings-option">
-          <input
-            type="radio"
-            name="weightSystem"
-            value="imperial"
-            checked={
+          <button
+            className={
               settings.weightSystem === "imperial"
+                ? "setting-pill active"
+                : "setting-pill"
             }
-            onChange={() =>
+            onClick={() =>
               handleSettingChange(
                 "weightSystem",
                 "imperial"
               )
             }
-          />
-          Imperial (lb)
-        </label>
+          >
+            <FaWeightHanging />
+            Pounds (lb)
+          </button>
 
-      </div>
+        </div>
 
-      <div className="settings-section">
+      </section>
 
-        <h3>Distance</h3>
+      <section className="settings-section">
 
-        <label className="settings-option">
-          <input
-            type="radio"
-            name="distanceSystem"
-            value="metric"
-            checked={
+        <div className="settings-header">
+          <h3>Distance Unit</h3>
+
+          <p>
+            Used for cardio exercises.
+          </p>
+        </div>
+
+        <div className="settings-options">
+
+          <button
+            className={
               settings.distanceSystem === "metric"
+                ? "setting-pill active"
+                : "setting-pill"
             }
-            onChange={() =>
+            onClick={() =>
               handleSettingChange(
                 "distanceSystem",
                 "metric"
               )
             }
-          />
-          Metric (km / m)
-        </label>
+          >
+            <MdSocialDistance />
+            Metric (km / m)
+          </button>
 
-        <label className="settings-option">
-          <input
-            type="radio"
-            name="distanceSystem"
-            value="imperial"
-            checked={
+          <button
+            className={
               settings.distanceSystem === "imperial"
+                ? "setting-pill active"
+                : "setting-pill"
             }
-            onChange={() =>
+            onClick={() =>
               handleSettingChange(
                 "distanceSystem",
                 "imperial"
               )
             }
-          />
-          Imperial (mi / ft)
-        </label>
+          >
+            <MdSocialDistance />
+            Imperial (mi / ft)
+          </button>
 
-      </div>
+        </div>
+
+      </section>
 
     </div>
   );
