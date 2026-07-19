@@ -81,14 +81,10 @@
   position: relative;
 
   color: var(--text-primary);
-
+  text-decoration: none;
   font-weight: 600;
 
   transition: color var(--transition-fast);
-}
-
-.nav-links a:hover {
-  color: var(--primary);
 }
 
 .nav-links a::after {
@@ -98,19 +94,28 @@
   left: 0;
   bottom: -6px;
 
-  width: 100%;
+  width: 0;
   height: 2px;
 
   background: var(--primary);
 
-  transform: scaleX(0);
-  transform-origin: center;
+  transition: width var(--transition-fast);
+}
 
-  transition: transform var(--transition-fast);
+.nav-links a:hover {
+  color: var(--primary);
 }
 
 .nav-links a:hover::after {
-  transform: scaleX(1);
+  width: 100%;
+}
+
+.nav-links a.active {
+  color: var(--primary);
+}
+
+.nav-links a.active::after {
+  width: 100%;
 }
 
 @media (max-width: 900px) {

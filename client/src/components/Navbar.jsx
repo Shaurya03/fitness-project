@@ -38,7 +38,7 @@ function Navbar() {
         <nav>
           {user ? (
             <div className="nav-links">
-              <NavLink to="/">Dashboard</NavLink>
+              <NavLink to="/" end>Dashboard</NavLink>
               <NavLink to="/workouts">Workouts</NavLink>
               <NavLink to="/exercises">Exercises</NavLink>
               <NavLink to="/settings">Settings</NavLink>
