@@ -1,26 +1,27 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  PiBarbellDuotone,
-  PiEye,
-  PiEyeSlash
-} from "react-icons/pi";
-import { FcGoogle } from "react-icons/fc";
+import { PiBarbellDuotone, PiEye, PiEyeSlash } from "react-icons/pi";
 import { useSignup } from "../hooks/useSignup";
+import { GoogleLogin } from "@react-oauth/google";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
 import "./Signup.css";
 
 function Signup() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] =
-    useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const {
     signup,
     error,
     isLoading
   } = useSignup();
+
+  const {
+    googleAuth,
+    error: googleError
+  } = useGoogleAuth();
 
   const navigate = useNavigate();
 
@@ -112,9 +113,9 @@ function Signup() {
 
         </div>
 
-        {error && (
+        {(error || googleError) && (
           <div className="auth-error">
-            {error}
+            {error || googleError}
           </div>
         )}
 
@@ -132,15 +133,15 @@ function Signup() {
           <span>or</span>
         </div>
 
-        <button
-          type="button"
-          className="google-btn"
-          disabled
-        >
-          <FcGoogle />
-
-          Continue with Google
-        </button>
+        <GoogleLogin
+          onSuccess={async (credentialResponse) => {
+            await googleAuth(
+              credentialResponse.credential
+            );
+          }}
+          text="continue_with"
+          useOneTap={false}
+        />
 
         <p className="auth-footer">
 
