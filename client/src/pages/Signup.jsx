@@ -4,7 +4,7 @@ import { PiBarbellDuotone, PiEye, PiEyeSlash } from "react-icons/pi";
 import { useSignup } from "../hooks/useSignup";
 import { GoogleLogin } from "@react-oauth/google";
 import { useGoogleAuth } from "../hooks/useGoogleAuth";
-import "./Signup.css";
+import "./Auth.css";
 
 function Signup() {
 
