@@ -39,9 +39,33 @@ export const getPersonalRecords = (workouts) => {
     id: highestWeightSet.workoutId
   };
 
+  const highestRepsSet = allSets.reduce((maxSet, set) =>
+
+    (set.metrics?.reps || 0) >
+      (maxSet.metrics?.reps || 0)
+      ? set
+      : maxSet,
+
+    {
+      metrics: {
+        reps: 0
+      }
+    }
+  );
+
+  const highestRepsRecord = {
+
+    value: highestRepsSet.metrics?.reps || 0,
+    weight: highestRepsSet.metrics?.weight || 0,
+    title: highestRepsSet.workoutTitle,
+    exerciseName: highestRepsSet.exerciseName,
+    date: highestRepsSet.workoutDate,
+    id: highestRepsSet.workoutId
+  };
+
   const longestDistanceSet = allSets.reduce((maxSet, set) =>
 
-    (set.metrics?.distance || 0) > 
+    (set.metrics?.distance || 0) >
       (maxSet.metrics?.distance || 0)
       ? set
       : maxSet,
@@ -64,7 +88,7 @@ export const getPersonalRecords = (workouts) => {
   const longestDurationSet = allSets.reduce((maxSet, set) =>
 
     (set.metrics?.duration || 0) >
-     (maxSet.metrics?.duration || 0)
+      (maxSet.metrics?.duration || 0)
       ? set
       : maxSet,
     {
@@ -127,6 +151,7 @@ export const getPersonalRecords = (workouts) => {
 
   return {
     highestWeightRecord,
+    highestRepsRecord,
     longestDistanceRecord,
     longestDurationRecord,
     mostExercisesRecord,

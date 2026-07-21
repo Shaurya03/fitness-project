@@ -19,6 +19,16 @@ export const getDashboardStats = (workouts) => {
     ), 0
   );
 
+  const totalReps = workouts.reduce((total, workout) =>
+    total +
+    (workout.exercises?.reduce((exerciseTotal, exercise) =>
+      exerciseTotal +
+      (exercise.sets?.reduce((setTotal, set) =>
+        setTotal + (set.metrics?.reps || 0), 0
+      ) || 0), 0
+    )
+    ), 0);
+
   const categoryCounts = {};
 
   workouts.forEach((workout) => {
@@ -68,6 +78,7 @@ export const getDashboardStats = (workouts) => {
     totalWorkouts,
     totalExercises,
     totalSets,
+    totalReps,
     mostTrainedCategory,
     totalVolume,
     totalDistance,

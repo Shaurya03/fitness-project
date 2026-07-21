@@ -9,6 +9,24 @@ import {
 } from "recharts";
 import './DashboardCharts.css';
 
+const metricLabels = {
+  sets: {
+    singular: "set",
+    plural: "sets",
+    total: "total sets"
+  },
+  reps: {
+    singular: "rep",
+    plural: "reps",
+    total: "total reps"
+  },
+  volume: {
+    singular: "kg",
+    plural: "kg",
+    total: "kg total volume"
+  }
+};
+
 const renderActiveShape = (props) => {
   const {
     cx,
@@ -50,6 +68,9 @@ const renderActiveShape = (props) => {
 };
 
 function CategoryBreakdownChart({ workouts }) {
+
+  const [metric, setMetric] = useState("sets");
+
   const categoryTotals = {};
 
   workouts?.forEach(workout => {
@@ -69,13 +90,36 @@ function CategoryBreakdownChart({ workouts }) {
         };
       }
 
-      categoryTotals[category._id].value +=
-        exercise.sets?.length || 0;
+      switch (metric) {
+        case "reps":
+          categoryTotals[category._id].value +=
+            exercise.sets?.reduce(
+              (sum, set) => sum + (set.metrics?.reps || 0),
+              0
+            );
+          break;
+
+        case "volume":
+          categoryTotals[category._id].value +=
+            exercise.sets?.reduce(
+              (sum, set) =>
+                sum +
+                ((set.metrics?.weight || 0) *
+                  (set.metrics?.reps || 0)),
+              0
+            );
+          break;
+
+        default:
+          categoryTotals[category._id].value +=
+            exercise.sets?.length || 0;
+      }
 
     });
   });
 
   const chartData = Object.values(categoryTotals)
+    .filter(category => category.value > 0)
     .sort((a, b) => b.value - a.value);
 
   const [activeCategory, setActiveCategory] = useState(null);
@@ -83,8 +127,9 @@ function CategoryBreakdownChart({ workouts }) {
 
   const displayedCategory = activeCategory || chartData[0];
 
-  const totalSets = chartData.reduce((sum, item) =>
-    sum + item.value, 0
+  const totalValue = chartData.reduce(
+    (sum, item) => sum + item.value,
+    0
   );
 
   if (chartData.length === 0) {
@@ -100,9 +145,36 @@ function CategoryBreakdownChart({ workouts }) {
 
   return (
     <div className="chart-card">
+
       <h3>Category Breakdown</h3>
+
+      <div className="chart-toggle">
+
+        <button
+          className={metric === "sets" ? "active" : ""}
+          onClick={() => setMetric("sets")}
+        >
+          Sets
+        </button>
+
+        <button
+          className={metric === "reps" ? "active" : ""}
+          onClick={() => setMetric("reps")}
+        >
+          Reps
+        </button>
+
+        <button
+          className={metric === "volume" ? "active" : ""}
+          onClick={() => setMetric("volume")}
+        >
+          Volume
+        </button>
+
+      </div>
+
       <p className="chart-summary">
-        {totalSets} total {totalSets === 1 ? "set" : "sets"}
+        {totalValue} {metricLabels[metric].total}
       </p>
 
       <ResponsiveContainer
@@ -167,7 +239,7 @@ function CategoryBreakdownChart({ workouts }) {
                       fill="var(--text-secondary)"
                     >
                       {(
-                        (displayedCategory.value / totalSets) * 100
+                        (displayedCategory.value / totalValue) * 100
                       ).toFixed(1)}
                       %
                     </tspan>
@@ -204,13 +276,18 @@ function CategoryBreakdownChart({ workouts }) {
             </div>
 
             <div className="category-breakdown-stats">
-              <span>{item.value}{" "}
-                {item.value === 1 ? "set" : "sets"}
+              <span>
+                {metric === "volume"
+                  ? `${item.value.toFixed(1)} kg`
+                  : `${item.value} ${item.value === 1
+                    ? metricLabels[metric].singular
+                    : metricLabels[metric].plural
+                  }`}
               </span>
 
               <span>
                 {(
-                  (item.value / totalSets) * 100
+                  (item.value / totalValue) * 100
                 ).toFixed(1)}
                 %
               </span>

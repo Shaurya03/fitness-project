@@ -15,18 +15,24 @@ function PersonalRecordCard({
       <div className="pr-content">
 
         <h3 className="pr-title">{title}</h3>
+
         <p className="pr-value">{value}</p>
 
-        <small className="pr-exercise">{exercise || "\u00A0"}</small>
+        <div className="pr-details">
 
-        {
-          workout &&
-          <span className="pr-workout" >{workout}</span>
-        }
-        {
-          date &&
-          <span className="pr-date">{date}</span>
-        }
+          <small className="pr-exercise">
+            {exercise || "\u00A0"}
+          </small>
+
+          {workout && (
+            <span className="pr-workout">{workout}</span>
+          )}
+
+          {date && (
+            <span className="pr-date">{date}</span>
+          )}
+
+        </div>
 
       </div>
 
@@ -34,7 +40,7 @@ function PersonalRecordCard({
         className="view-workout-btn"
         onClick={onViewWorkout}
       >
-        View Workout
+        View
       </button>
 
     </div>

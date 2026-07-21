@@ -1,7 +1,6 @@
 import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
-import { getMetricConfig } from "../utils/metricConfig";
 
 import "./WorkoutPreviewContent.css";
 
@@ -37,24 +36,6 @@ function WorkoutPreviewContent({ workout }) {
 
             </div>
 
-            <div className="preview-metrics-header">
-
-              {getDisplayMetrics(
-                exercise.sets?.[0]?.metrics || {},
-                settings.distanceSystem
-              ).map(metric => (
-
-                <span
-                  key={metric.key}
-                  className="preview-metric-header"
-                >
-                  {getMetricConfig(metric.key).label}
-                </span>
-
-              ))}
-
-            </div>
-
             <div className="preview-sets">
 
               {exercise.sets.map((set, setIndex) => {
@@ -84,7 +65,7 @@ function WorkoutPreviewContent({ workout }) {
                           metric.value,
                           settings,
                           set.inputUnits,
-                          false
+                          true
                         )}
 
                         {set.personalRecords?.[metric.key] && (

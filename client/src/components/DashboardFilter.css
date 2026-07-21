@@ -143,7 +143,7 @@
   outline: none;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
 
   .filter-toolbar {
     flex-direction: column;
@@ -155,19 +155,35 @@
     width: 100%;
   }
 
+  .dashboard-filter {
+    padding: var(--space-md);
+    margin: var(--space-lg) 0;
+  }
+
   .dashboard-filter select {
     width: 100%;
   }
 
   .period-navigation {
-    justify-content: center;
+    justify-content: space-between;
     flex-wrap: wrap;
+    gap: var(--space-sm);
   }
 
   .date-display,
   .react-datepicker-wrapper {
     width: 100%;
     min-width: 100%;
+  }
+
+  .period-label {
+    font-size: 1rem;
+    min-width: 120px;
+  }
+
+  .period-nav-btn {
+    width: 38px;
+    height: 38px;
   }
 
 }

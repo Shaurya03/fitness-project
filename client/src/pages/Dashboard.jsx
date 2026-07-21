@@ -16,6 +16,7 @@ import WorkoutPreviewModal from "../components/WorkoutPreviewModal";
 import VolumeChart from "../components/VolumeChart";
 import CategoryBreakdownChart from "../components/CategoryBreakdownChart";
 import "./Dashboard.css";
+import DashboardTabs from "../components/DashboardTabs";
 
 function Dashboard() {
   const { workouts } = useWorkoutContext();
@@ -28,6 +29,8 @@ function Dashboard() {
     startDate: "",
     endDate: ""
   });
+
+  const [activeTab, setActiveTab] = useState("overview");
 
   const navigate = useNavigate();
 
@@ -138,185 +141,223 @@ function Dashboard() {
         setCustomRange={setCustomRange}
       />
 
-      <div className="stats-grid">
+      <DashboardTabs
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
-        <StatCard
-          title="Total Workouts"
-          value={stats.totalWorkouts}
-        />
+      {activeTab === "overview" && (
+        <>
+          <div className="stats-grid">
 
-        <StatCard
-          title="Exercises"
-          value={stats.totalExercises}
-        />
+            <StatCard
+              title="Total Workouts"
+              value={stats.totalWorkouts}
+            />
 
-        <StatCard
-          title="Sets"
-          value={stats.totalSets}
-        />
+            <StatCard
+              title="Exercises"
+              value={stats.totalExercises}
+            />
 
-        <StatCard
-          title="Top Body Part"
-          value={stats.mostTrainedCategory}
-        />
+            <StatCard
+              title="Sets"
+              value={stats.totalSets}
+            />
 
-        <StatCard
-          title="Volume"
-          value={formatMetric(
-            "weight",
-            stats.totalVolume,
-            settings
-          )}
-        />
+            <StatCard
+              title="Reps"
+              value={stats.totalReps}
+            />
 
-        <StatCard
-          title="Total Distance"
-          value={formatMetric(
-            "distance",
-            stats.totalDistance,
-            settings
-          )}
-        />
+            <StatCard
+              title="Top Category"
+              value={stats.mostTrainedCategory}
+            />
 
-        <StatCard
-          title="Total Duration"
-          value={formatMetric(
-            "duration",
-            stats.totalDuration,
-            settings
-          )}
-        />
+            <StatCard
+              title="Volume"
+              value={formatMetric(
+                "weight",
+                stats.totalVolume,
+                settings
+              )}
+            />
 
-      </div>
+            <StatCard
+              title="Total Distance"
+              value={formatMetric(
+                "distance",
+                stats.totalDistance,
+                settings
+              )}
+            />
 
-      <h2 className="dashboard-title">Personal Records</h2>
+            <StatCard
+              title="Total Duration"
+              value={formatMetric(
+                "duration",
+                stats.totalDuration,
+                settings
+              )}
+            />
 
-      <div className="stats-grid">
-
-        <PersonalRecordCard
-          title="Highest Weight"
-          value={formatMetric(
-            "weight",
-            prs.highestWeightRecord?.value || 0,
-            settings
-          )}
-          exercise={prs.highestWeightRecord?.exerciseName || "None"}
-          workout={prs.highestWeightRecord?.title}
-          date={
-            prs.highestWeightRecord.date
-              ?
-              format(new Date(prs.highestWeightRecord?.date), "d MMM yyyy")
-              :
-              "No Date"
-          }
-          onViewWorkout={() =>
-            openWorkoutPreview(prs.highestWeightRecord?.id)
-          }
-        />
-
-        <PersonalRecordCard
-          title="Longest Distance"
-          value={formatMetric(
-            "distance",
-            prs.longestDistanceRecord?.value || 0,
-            settings
-          )}
-          exercise={prs.longestDistanceRecord.exerciseName || "None"}
-          workout={prs.longestDistanceRecord?.title}
-          date={
-            prs.longestDistanceRecord.date
-              ?
-              format(new Date(prs.longestDistanceRecord?.date), "d MMM yyyy")
-              :
-              "No Date"
-          }
-          onViewWorkout={() =>
-            openWorkoutPreview(prs.longestDistanceRecord?.id)
-          }
-        />
-
-        <PersonalRecordCard
-          title="Longest Duration"
-          value={formatMetric(
-            "duration",
-            prs.longestDurationRecord?.value || 0,
-            settings
-          )}
-          exercise={prs.longestDurationRecord.exerciseName || "None"}
-          workout={prs.longestDurationRecord?.title}
-          date={
-            prs.longestDurationRecord.date
-              ?
-              format(new Date(prs.longestDurationRecord?.date), "d MMM yyyy")
-              :
-              "No Date"
-          }
-          onViewWorkout={() =>
-            openWorkoutPreview(prs.longestDurationRecord?.id)
-          }
-        />
-
-        <PersonalRecordCard
-          title="Most Exercises"
-          value={prs.mostExercisesRecord?.value || 0}
-          workout={prs.mostExercisesRecord?.title}
-          date={
-            prs.mostExercisesRecord.date
-              ?
-              format(new Date(prs.mostExercisesRecord?.date), "d MMM yyyy")
-              :
-              "No Date"
-          }
-          onViewWorkout={() =>
-            openWorkoutPreview(prs.mostExercisesRecord?.id)
-          }
-        />
-
-        <PersonalRecordCard
-          title="Highest Volume Workout"
-          value={formatMetric(
-            "weight",
-            prs.highestVolumeRecord?.volume || 0,
-            settings
-          )}
-          workout={prs.highestVolumeRecord?.title}
-          date={
-            prs.highestVolumeRecord.date
-              ?
-              format(new Date(prs.highestVolumeRecord?.date), "d MMM yyyy")
-              :
-              "No Date"
-          }
-          onViewWorkout={() =>
-            openWorkoutPreview(prs.highestVolumeRecord?.id)
-          }
-        />
-
-      </div>
-
-      {selectedWorkout && (
-        <WorkoutPreviewModal
-          isOpen={!!selectedWorkout}
-          workout={selectedWorkout}
-          onClose={() => setSelectedWorkout(null)}
-          onGoToWorkout={() => {
-            navigate("/workouts", {
-              state: {
-                selectedDate: selectedWorkout.date
-              }
-            });
-
-            setSelectedWorkout(null);
-          }}
-        />
+          </div>
+        </>
       )}
 
-      <h2 className="dashboard-title">Progress Charts</h2>
 
-      <div className="charts-section">
-        <CategoryBreakdownChart workouts={filteredWorkouts} />
-        <VolumeChart workouts={filteredWorkouts} />
-      </div>
+      {activeTab === "records" && (
+        <>
+          <div className="stats-grid">
+
+            <PersonalRecordCard
+              title="Highest Weight"
+              value={formatMetric(
+                "weight",
+                prs.highestWeightRecord?.value || 0,
+                settings
+              )}
+              exercise={prs.highestWeightRecord?.exerciseName || "None"}
+              workout={prs.highestWeightRecord?.title}
+              date={
+                prs.highestWeightRecord.date
+                  ?
+                  format(new Date(prs.highestWeightRecord?.date), "d MMM yyyy")
+                  :
+                  "No Date"
+              }
+              onViewWorkout={() =>
+                openWorkoutPreview(prs.highestWeightRecord?.id)
+              }
+            />
+
+            <PersonalRecordCard
+              title="Highest Reps"
+              value={prs.highestRepsRecord?.value || 0}
+              exercise={prs.highestRepsRecord?.exerciseName || "None"}
+              workout={prs.highestRepsRecord?.title}
+              date={
+                prs.highestRepsRecord.date
+                  ?
+                  format(new Date(prs.highestRepsRecord?.date), "d MMM yyyy")
+                  :
+                  "No Date"
+              }
+              onViewWorkout={() =>
+                openWorkoutPreview(prs.highestRepsRecord?.id)
+              }
+            />
+
+            <PersonalRecordCard
+              title="Longest Distance"
+              value={formatMetric(
+                "distance",
+                prs.longestDistanceRecord?.value || 0,
+                settings
+              )}
+              exercise={prs.longestDistanceRecord.exerciseName || "None"}
+              workout={prs.longestDistanceRecord?.title}
+              date={
+                prs.longestDistanceRecord.date
+                  ?
+                  format(new Date(prs.longestDistanceRecord?.date), "d MMM yyyy")
+                  :
+                  "No Date"
+              }
+              onViewWorkout={() =>
+                openWorkoutPreview(prs.longestDistanceRecord?.id)
+              }
+            />
+
+            <PersonalRecordCard
+              title="Longest Duration"
+              value={formatMetric(
+                "duration",
+                prs.longestDurationRecord?.value || 0,
+                settings
+              )}
+              exercise={prs.longestDurationRecord.exerciseName || "None"}
+              workout={prs.longestDurationRecord?.title}
+              date={
+                prs.longestDurationRecord.date
+                  ?
+                  format(new Date(prs.longestDurationRecord?.date), "d MMM yyyy")
+                  :
+                  "No Date"
+              }
+              onViewWorkout={() =>
+                openWorkoutPreview(prs.longestDurationRecord?.id)
+              }
+            />
+
+            <PersonalRecordCard
+              title="Most Exercises"
+              value={prs.mostExercisesRecord?.value || 0}
+              workout={prs.mostExercisesRecord?.title}
+              date={
+                prs.mostExercisesRecord.date
+                  ?
+                  format(new Date(prs.mostExercisesRecord?.date), "d MMM yyyy")
+                  :
+                  "No Date"
+              }
+              onViewWorkout={() =>
+                openWorkoutPreview(prs.mostExercisesRecord?.id)
+              }
+            />
+
+            <PersonalRecordCard
+              title="Highest Volume Workout"
+              value={formatMetric(
+                "weight",
+                prs.highestVolumeRecord?.volume || 0,
+                settings
+              )}
+              workout={prs.highestVolumeRecord?.title}
+              date={
+                prs.highestVolumeRecord.date
+                  ?
+                  format(new Date(prs.highestVolumeRecord?.date), "d MMM yyyy")
+                  :
+                  "No Date"
+              }
+              onViewWorkout={() =>
+                openWorkoutPreview(prs.highestVolumeRecord?.id)
+              }
+            />
+
+          </div>
+
+          {selectedWorkout && (
+            <WorkoutPreviewModal
+              isOpen={!!selectedWorkout}
+              workout={selectedWorkout}
+              onClose={() => setSelectedWorkout(null)}
+              onGoToWorkout={() => {
+                navigate("/workouts", {
+                  state: {
+                    selectedDate: selectedWorkout.date
+                  }
+                });
+
+                setSelectedWorkout(null);
+              }}
+            />
+          )}
+
+        </>
+      )}
+
+
+      {activeTab === "charts" && (
+        <>
+          <div className="charts-section">
+            <CategoryBreakdownChart workouts={filteredWorkouts} />
+            <VolumeChart workouts={filteredWorkouts} />
+          </div>
+        </>
+      )}
 
     </div>
 

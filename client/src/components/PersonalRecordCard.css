@@ -19,6 +19,14 @@
 
 .pr-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.pr-details {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .pr-card:hover {
@@ -97,4 +105,41 @@
 
 .view-workout-btn:active {
   transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+
+  .pr-card {
+    min-height: 220px;
+    padding: 16px;
+  }
+
+  .pr-title {
+    font-size: .85rem;
+  }
+
+  .pr-value {
+    margin: 12px 0;
+    font-size: 1.7rem;
+
+    line-height: 1.1;
+    word-break: break-word;
+  }
+
+  .pr-exercise {
+    font-size: 1rem;
+    min-height: 1.3rem;
+  }
+
+  .pr-workout,
+  .pr-date {
+    font-size: .8rem;
+  }
+
+  .view-workout-btn {
+    margin-top: 12px;
+    padding: .65rem;
+    font-size: .8rem;
+  }
+
 }

@@ -30,20 +30,38 @@
 
 .stat-value {
   margin: var(--space-lg) 0 0;
-
   color: var(--text-primary);
-
   font-size: 2rem;
   font-weight: 700;
   line-height: 1.1;
-
   letter-spacing: -0.03em;
 }
 
 .stat-subtitle {
   margin-top: var(--space-sm);
-
   color: var(--text-secondary);
-
   font-size: .95rem;
+}
+
+@media (max-width: 600px) {
+
+  .stat-card {
+    min-height: 110px;
+    padding: 16px;
+  }
+
+  .stat-title {
+    font-size: .9rem;
+  }
+
+  .stat-value {
+    margin-top: 12px;
+    font-size: 1.7rem;
+  }
+
+  .stat-subtitle {
+    margin-top: 4px;
+    font-size: .8rem;
+  }
+
 }

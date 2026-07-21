@@ -1,4 +1,6 @@
 .dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
   padding: var(--space-xl);
 }
 
@@ -20,53 +22,20 @@
   gap: var(--space-lg);
 }
 
-.dashboard-section .dashboard-title,
-.dashboard-title:not(:first-child) {
-  margin-top: calc(var(--space-xl) * 2);
-}
+@media (max-width: 600px) {
 
-.category-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: var(--space-lg);
-}
+  .dashboard {
+    padding: var(--space-lg);
+  }
 
-.category-card {
-  background: var(--surface);
-  padding: var(--card-padding);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-normal);
-}
+  .dashboard-title {
+    font-size: 1.8rem;
+    margin-bottom: var(--space-lg);
+  }
 
-.category-card:hover {
-  box-shadow: var(--shadow-md);
-}
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
 
-.recent-workouts {
-  display: grid;
-  gap: var(--space-md);
-}
-
-.recent-workout-card {
-  background: var(--surface);
-  padding: var(--card-padding);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-light);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition-normal);
-}
-
-.recent-workout-card:hover {
-  box-shadow: var(--shadow-md);
-}
-
-.recent-workout-card h4 {
-  margin-bottom: var(--space-md);
-}
-
-.recent-workout-card p {
-  margin: var(--space-xs) 0;
-  color: var(--text-secondary);
 }
