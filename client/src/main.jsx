@@ -6,12 +6,14 @@ import { AuthContextProvider } from './context/AuthContextProvider.jsx';
 import { CategoryContextProvider } from './context/CategoryContextProvider.jsx';
 import { ExerciseContextProvider } from './context/ExerciseContextProvider.jsx';
 import { SettingsContextProvider } from './context/SettingsContextProvider.jsx';
-import { ToastContainer } from 'react-toastify';
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import 'react-toastify/dist/ReactToastify.css';
+import AppToastContainer from "./components/AppToastContainer.jsx"
 import App from './App.jsx';
+import "react-datepicker/dist/react-datepicker.css";
+import 'react-toastify/dist/ReactToastify.css';
 import "./styles/theme.css";
 import "./index.css";
+import "./styles/reactDatePicker.css";
 
 
 createRoot(document.getElementById('root')).render(
@@ -29,7 +31,7 @@ createRoot(document.getElementById('root')).render(
                 </ExerciseContextProvider>
               </CategoryContextProvider>
             </WorkoutContextProvider>
-            <ToastContainer />
+            <AppToastContainer />
           </SettingsContextProvider>
         </AuthContextProvider>
       </BrowserRouter>

@@ -85,24 +85,27 @@ function ExerciseHistoryModal({
 
         <h2>Exercise History</h2>
 
-        {isLoading && <p>Loading history...</p>}
+        <div className="history-modal-content">
 
-        {error && <p>{error}</p>}
+          {isLoading && <p>Loading history...</p>}
 
-        {!isLoading &&
-          !error &&
-          history.length === 0 && (
-            <p>No workout history yet.</p>
-          )}
+          {error && <p>{error}</p>}
 
-        {!isLoading &&
-          !error &&
-          historyWithPRs.map(workout => (
-            <HistoryWorkoutCard
-              key={workout.workoutId}
-              workout={workout}
-            />
-          ))}
+          {!isLoading &&
+            !error &&
+            history.length === 0 && (
+              <p>No workout history yet.</p>
+            )}
+
+          {!isLoading &&
+            !error &&
+            historyWithPRs.map(workout => (
+              <HistoryWorkoutCard
+                key={workout.workoutId}
+                workout={workout}
+              />
+            ))}
+        </div>
 
         <div className="modal-actions">
           <button

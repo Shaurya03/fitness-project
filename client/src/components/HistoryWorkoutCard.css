@@ -1,5 +1,7 @@
 .history-workout-card {
   background: var(--surface);
+  margin-bottom: var(--space-md);
+  margin-top: var(--space-md);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--card-padding);

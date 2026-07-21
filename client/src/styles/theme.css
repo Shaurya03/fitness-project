@@ -1,5 +1,79 @@
 :root {
 
+  /* Brand */
+
+  --primary: #1AAC83;
+  --primary-hover: #15946f;
+
+  --success: #22C55E;
+  --warning: #FBBF24;
+  --danger: #EF4444;
+
+  /* Backgrounds */
+
+  --background: #111315;
+  --surface: #1A1D21;
+  --surface-hover: #242830;
+
+  /* Text */
+
+  --text-primary: #F5F5F5;
+  --text-secondary: #A1A1AA;
+
+  /* Borders */
+
+  --border: #30343B;
+  --border-light: #3A3F47;
+  --divider: #2A2E35;
+
+  /* Misc */
+
+  --disabled: #5A616B;
+  --focus: #22C55E;
+
+  /* Shadows */
+
+  --shadow-sm:
+    0 1px 3px rgba(0, 0, 0, .45);
+
+  --shadow-md:
+    0 6px 18px rgba(0, 0, 0, .45),
+    0 1px 3px rgba(0, 0, 0, .25);
+
+  --shadow-lg:
+    0 18px 48px rgba(0, 0, 0, .55);
+
+  /* Border Radius */
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Spacing */
+
+  --space-xs: .25rem;
+  --space-sm: .5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+
+  /* Layout */
+
+  --max-content-width: 1400px;
+  --card-padding: 24px;
+  --navbar-height: 72px;
+
+  /* Animation */
+
+  --transition-fast: .15s ease;
+  --transition-normal: .25s ease;
+
+}
+
+
+[data-theme="light"] {
+
   /* Colors */
 
   --primary: #1AAC83;
@@ -23,16 +97,10 @@
   --disabled: #CBD5E1;
   --focus: #22C55E;
 
-  /* Border Radius */
-
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-
   /* Shadows */
 
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, .08);
+  --shadow-sm:
+    0 1px 3px rgba(15, 23, 42, .08);
 
   --shadow-md:
     0 4px 12px rgba(15, 23, 42, .08),
@@ -40,24 +108,5 @@
 
   --shadow-lg:
     0 16px 40px rgba(15, 23, 42, .12);
-
-  /* Spacing */
-
-  --space-xs: .25rem;
-  --space-sm: .5rem;
-  --space-md: 1rem;
-  --space-lg: 1.5rem;
-  --space-xl: 2rem;
-
-  /* Layout */
-
-  --max-content-width: 1400px;
-  --card-padding: 24px;
-  --navbar-height: 72px;
-
-  /* Animation */
-
-  --transition-fast: .15s ease;
-  --transition-normal: .25s ease;
 
 }

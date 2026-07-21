@@ -2,39 +2,77 @@ import { useSettingsContext } from "./useSettingsContext";
 import { useAuthContext } from "./useAuthContext";
 
 export const useSettings = () => {
-  const { settings, dispatch } = useSettingsContext();
+
+  const {
+    settings,
+    dispatch
+  } = useSettingsContext();
+
   const { user } = useAuthContext();
 
+  const applyTheme = (theme) => {
+
+    if (theme === "light") {
+
+      document.documentElement.setAttribute(
+        "data-theme",
+        "light"
+      );
+    } else {
+
+      document.documentElement.removeAttribute(
+        "data-theme"
+      );
+    }
+  };
+
   const fetchSettings = async () => {
+
     if (!user) return;
 
-    const response = await fetch("/api/settings", {
-      headers: {
-        Authorization: `Bearer ${user.token}`
+    const response = await fetch(
+      "/api/settings",
+      {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
       }
-    });
+    );
 
     const json = await response.json();
 
     if (response.ok) {
+
+      applyTheme(json.theme);
+
       dispatch({
         type: "SET_SETTINGS",
         payload: json
       });
+
     }
+
   };
 
-  const updateSettings = async (settingsData) => {
+  const updateSettings = async (
+    settingsData
+  ) => {
+
     if (!user) return;
 
-    const response = await fetch("/api/settings", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`
-      },
-      body: JSON.stringify(settingsData)
-    });
+    const response = await fetch(
+      "/api/settings",
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${user.token}`
+        },
+        body: JSON.stringify(
+          settingsData
+        )
+      }
+    );
 
     const json = await response.json();
 
@@ -42,12 +80,15 @@ export const useSettings = () => {
       throw new Error(json.error);
     }
 
+    applyTheme(json.theme);
+
     dispatch({
       type: "UPDATE_SETTINGS",
       payload: json
     });
 
     return json;
+
   };
 
   return {
@@ -55,4 +96,5 @@ export const useSettings = () => {
     fetchSettings,
     updateSettings
   };
+
 };

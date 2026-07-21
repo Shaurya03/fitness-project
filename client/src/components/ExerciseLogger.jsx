@@ -218,6 +218,7 @@ function ExerciseLogger({
     metric,
     value
   ) => {
+    setError(null);
 
     if (metric === "duration") {
 
@@ -322,7 +323,6 @@ function ExerciseLogger({
   const handleSaveSet = async () => {
 
     if (!user) {
-      toast.error("You must be logged in");
       return;
     }
 
@@ -350,7 +350,7 @@ function ExerciseLogger({
     });
 
     if (hasEmptyMetric) {
-      toast.error("Please fill all metrics.");
+      setError("Please fill all metrics.")
       return;
     }
 
@@ -510,8 +510,7 @@ function ExerciseLogger({
         payload: json
       });
 
-      toast.success("Set saved.");
-
+      setError(null);
       initializeInputs(newSet);
 
       requestAnimationFrame(() => {
@@ -521,7 +520,6 @@ function ExerciseLogger({
     } catch (error) {
 
       setError(error.message);
-      toast.error(error.message);
 
     } finally {
 
@@ -532,8 +530,8 @@ function ExerciseLogger({
 
   const clearInputs = () => {
 
+    setError(null);
     initializeInputs();
-
     setSelectedSetIndex(null);
 
     requestAnimationFrame(() => {
@@ -543,8 +541,8 @@ function ExerciseLogger({
 
   const handleSelectSet = (set, index) => {
 
+    setError(null);
     setSelectedSetIndex(index);
-
     initializeInputs(set);
 
     requestAnimationFrame(() => {

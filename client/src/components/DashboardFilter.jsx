@@ -1,9 +1,9 @@
 import { forwardRef } from "react";
 import { format } from "date-fns";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { reactSelectStyles } from "../styles/reactSelectStyles";
 import DatePicker from "react-datepicker";
 import Select from "react-select";
-import "react-datepicker/dist/react-datepicker.css";
 import "./DashboardFilter.css";
 
 const DateButton = forwardRef(({ label, onClick }, ref) => (
@@ -63,16 +63,15 @@ function DashboardFilter({
 
         <div className="filter-period">
           <Select
-            className="period-select"
-            classNamePrefix="period-select"
             options={periodOptions}
             value={periodOptions.find(
               option => option.value === selectedPeriod
             )}
-            onChange={(option) => onPeriodChange(option.value)}
+            onChange={option => onPeriodChange(option.value)}
             isSearchable={false}
             menuPortalTarget={document.body}
             menuPosition="fixed"
+            styles={reactSelectStyles}
           />
         </div>
 
@@ -80,6 +79,7 @@ function DashboardFilter({
           selectedPeriod !== "custom" && (
             <div className="period-navigation">
               <button
+                className="period-nav-btn"
                 onClick={onPrevious}
               >
                 <FaChevronLeft />
@@ -89,7 +89,9 @@ function DashboardFilter({
                 {periodLabel}
               </span>
 
-              <button onClick={onNext}
+              <button
+                className="period-nav-btn"
+                onClick={onNext}
                 disabled={disableNext}
               >
                 <FaChevronRight />

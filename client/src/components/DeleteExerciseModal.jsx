@@ -114,7 +114,7 @@ function DeleteExerciseModal({
             onClick={handleDelete}
             disabled={!confirmed}
           >
-            Delete Permanently
+            Delete
           </button>
 
           <button onClick={handleClose}>

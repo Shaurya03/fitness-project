@@ -1,6 +1,7 @@
 .chart-card {
   background: var(--surface);
   padding: var(--card-padding);
+  margin-bottom: var(--space-xl);
 
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);

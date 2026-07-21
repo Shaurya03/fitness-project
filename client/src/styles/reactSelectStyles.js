@@ -47,12 +47,15 @@ export const reactSelectStyles = {
     borderRadius: 10,
     overflow: "hidden",
     zIndex: 10000,
+    backgroundColor: "var(--surface)",
+    border: "1px solid var(--border)",
     boxShadow: "var(--shadow-md)"
   }),
 
   menuList: (base) => ({
     ...base,
     padding: 4,
+    backgroundColor: "var(--surface)",
     scrollbarWidth: "none",
     msOverflowStyle: "none"
   }),
@@ -65,13 +68,29 @@ export const reactSelectStyles = {
     backgroundColor: state.isSelected
       ? "var(--primary)"
       : state.isFocused
-        ? "rgba(26, 172, 131, 0.15)"
-        : "transparent",
+        ? "var(--surface-hover)"
+        : "var(--surface)",
 
     color: state.isSelected
       ? "white"
       : "var(--text-primary)",
 
-    transition: "all .15s ease"
-  })
+    transition: "all .15s ease",
+
+    "&:active": {
+      backgroundColor: state.isSelected
+        ? "var(--primary)"
+        : "var(--surface-hover)"
+    }
+  }),
+
+  placeholder: (base) => ({
+    ...base,
+    color: "var(--text-secondary)"
+  }),
+
+  input: (base) => ({
+    ...base,
+    color: "var(--text-primary)"
+  }),
 };

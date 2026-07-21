@@ -135,11 +135,11 @@
 
   padding: 14px 20px;
 
-  border: 1px solid var(--primary);
+  border: 1px solid var(--danger);
   border-radius: var(--radius-md);
 
   background: transparent;
-  color: var(--primary);
+  color: var(--danger);
 
   font-size: 1rem;
   font-weight: 600;

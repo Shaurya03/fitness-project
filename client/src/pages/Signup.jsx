@@ -133,15 +133,21 @@ function Signup() {
           <span>or</span>
         </div>
 
-        <GoogleLogin
-          onSuccess={async (credentialResponse) => {
-            await googleAuth(
-              credentialResponse.credential
-            );
-          }}
-          text="continue_with"
-          useOneTap={false}
-        />
+        <div className="google-login-wrapper">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              await googleAuth(
+                credentialResponse.credential
+              );
+            }}
+            text="continue_with"
+            theme="filled_black"
+            shape="rectangular"
+            size="large"
+            width="100%"
+            useOneTap={false}
+          />
+        </div>
 
         <p className="auth-footer">
 

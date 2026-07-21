@@ -91,7 +91,7 @@
 }
 
 .modal-actions button {
-  width: fit-content;
+  width: 120px;
   height: 30px;
   border: none;
   border-radius: var(--radius-sm);
@@ -112,6 +112,8 @@
 .modal p.modal-error {
   color: var(--danger);
   font-weight: 300;
+  color: var(--danger);
+  margin-top: var(--space-sm);
 }
 
 .modal-warning {
@@ -163,16 +165,29 @@
 /* ---------------- History Modal ---------------- */
 
 .history-modal {
+  display: flex;
+  flex-direction: column;
   width: min(500px, 90vw);
   max-height: 85vh;
+}
+
+.history-modal-content {
+  flex: 1;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  min-height: 0;
+}
+
+.history-modal::-webkit-scrollbar {
+  display: none;
 }
 
 /* ---------------- Calendar Modal ---------------- */
 
 .calendar-modal {
-  width: 370px;
-  height: 370px;
+  width: 380px;
+  min-height: 430px;
   padding: 28px;
   max-width: 95vw;
   display: flex;
@@ -191,11 +206,6 @@
   flex: 1;
   border: none;
   font-family: inherit;
-}
-
-.calendar-modal .react-datepicker__header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
 }
 
 .calendar-modal .react-datepicker__day--highlighted {
@@ -220,15 +230,6 @@
   background: var(--primary);
 }
 
-.calendar-modal .react-datepicker__day--selected {
-  background: var(--primary);
-  color: white;
-}
-
-.react-datepicker__day {
-  line-height: 2rem;
-}
-
 /* ---------------- Workout Preview ---------------- */
 
 .workout-preview-modal {
@@ -249,4 +250,11 @@
 
   margin-top: 1rem;
   padding-right: 0.5rem;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.workout-preview-body::-webkit-scrollbar {
+  display: none;
 }

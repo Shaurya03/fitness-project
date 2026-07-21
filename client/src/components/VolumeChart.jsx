@@ -90,6 +90,7 @@ function VolumeChart({ workouts }) {
           }}
         >
           <CartesianGrid
+            stroke="var(--border)"
             strokeDasharray="3 3"
             vertical={false}
           />
@@ -98,6 +99,10 @@ function VolumeChart({ workouts }) {
             dataKey="date"
             axisLine={false}
             tickLine={false}
+            tick={{
+              fill: "var(--text-secondary)",
+              fontSize: 13
+            }}
           />
 
           <YAxis
@@ -107,10 +112,26 @@ function VolumeChart({ workouts }) {
             ]}
             axisLine={false}
             tickLine={false}
+            tick={{
+              fill: "var(--text-secondary)",
+              fontSize: 13
+            }}
             tickFormatter={(value) => value.toFixed(0)}
           />
 
           <Tooltip
+            contentStyle={{
+              backgroundColor: "var(--surface)",
+              border: "1px solid var(--border)",
+              borderRadius: "10px",
+              color: "var(--text-primary)"
+            }}
+            labelStyle={{
+              color: "var(--text-primary)"
+            }}
+            itemStyle={{
+              color: "var(--text-primary)"
+            }}
             formatter={(value) => [
               `${Number(value).toFixed(1)} ${weightUnit}`,
               "Volume"
@@ -120,11 +141,16 @@ function VolumeChart({ workouts }) {
           <Line
             type="monotone"
             dataKey="volume"
-            stroke="#10B981"
+            stroke="var(--primary)"
             strokeWidth={3}
             strokeLinecap="round"
             dot={{ r: 3 }}
-            activeDot={{ r: 6 }}
+            activeDot={{
+              r: 6,
+              fill: "var(--primary)",
+              stroke: "var(--surface)",
+              strokeWidth: 2
+            }}
           />
 
         </LineChart>

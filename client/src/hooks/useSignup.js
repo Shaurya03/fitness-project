@@ -26,20 +26,18 @@ export const useSignup = () => {
 
       if (!response.ok) {
         setError(json.error);
-        toast.error(json.error);
 
         return false;
       }
 
       localStorage.setItem("user", JSON.stringify(json));
       dispatch({ type: "LOGIN", payload: json });
-      toast.success("Signup successful!");
 
       return true;
 
     } catch {
       setError("An error occurred. Please try again.");
-      toast.error("An error occurred. Please try again.");
+      toast.error("Couldn't connect to the server.");
 
       return false;
 

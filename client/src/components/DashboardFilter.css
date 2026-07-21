@@ -53,7 +53,7 @@
   box-shadow: 0 0 0 3px rgba(22, 163, 74, .15);
 }
 
-.period-navigation button:not(.date-display) {
+.period-nav-btn {
   width: 42px;
   height: 42px;
 
@@ -75,13 +75,13 @@
     box-shadow var(--transition-fast);
 }
 
-.period-navigation button:not(.date-display):hover:not(:disabled) {
+.period-nav-btn:hover:not(:disabled) {
   background: var(--primary);
   color: white;
   box-shadow: var(--shadow-sm);
 }
 
-.period-navigation button:disabled {
+.period-nav-btn:disabled {
   opacity: .45;
   cursor: not-allowed;
   pointer-events: none;
@@ -141,127 +141,6 @@
 .date-display:focus,
 .date-display:active {
   outline: none;
-}
-
-.react-datepicker-wrapper {
-  width: 260px;
-}
-
-.react-datepicker__input-container {
-  width: 100%;
-}
-
-.react-datepicker {
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-}
-
-.react-datepicker__header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border-light);
-}
-
-.react-datepicker__current-month {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.react-datepicker__day--selected,
-.react-datepicker__day--in-range,
-.react-datepicker__day--keyboard-selected {
-  background: var(--primary);
-}
-
-.react-datepicker__day:hover {
-  border-radius: 50%;
-}
-
-.period-select {
-  width: 150px;
-}
-
-.period-select__control {
-  min-height: 38px !important;
-  height: 38px;
-
-  border: 1px solid var(--border) !important;
-  border-radius: var(--radius-md) !important;
-
-  background: var(--surface) !important;
-
-  box-shadow: none !important;
-
-  cursor: pointer;
-
-  transition: var(--transition-fast);
-}
-
-.period-select__value-container {
-  padding: 0 10px !important;
-}
-
-.period-select__input-container {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.period-select__control:hover {
-  border-color: var(--primary) !important;
-}
-
-.period-select__control--is-focused {
-  border-color: var(--primary) !important;
-  box-shadow: 0 0 0 3px rgba(22, 163, 74, .15) !important;
-}
-
-.period-select__single-value {
-  font-size: .95rem;
-  color: var(--text-primary) !important;
-  font-weight: 500;
-}
-
-.period-select__menu {
-  margin-top: 6px !important;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-}
-
-.period-select__menu-list {
-  padding: 4px 0 !important;
-}
-
-.period-select__option {
-  padding: 10px 14px !important;
-  font-size: .95rem;
-}
-
-.period-select__option {
-  cursor: pointer;
-}
-
-.period-select__option--is-focused {
-  background: rgba(22, 163, 74, .12) !important;
-  color: var(--text-primary);
-}
-
-.period-select__option--is-selected {
-  background: var(--primary) !important;
-  color: white;
-}
-
-.period-select__dropdown-indicator {
-  color: var(--text-secondary) !important;
-  height: 38px;
-}
-
-.period-select__dropdown-indicator:hover {
-  color: var(--primary) !important;
-}
-
-.period-select__indicator-separator {
-  display: none;
 }
 
 @media (max-width: 768px) {

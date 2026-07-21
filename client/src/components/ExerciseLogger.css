@@ -20,6 +20,7 @@
   font-size: 1rem;
   border: none;
   background: var(--surface);
+  color: var(--text-primary);
   border-radius: var(--radius-sm);
   padding: 8px 14px;
   cursor: pointer;
@@ -90,6 +91,18 @@
 .metric-input-row input::-webkit-outer-spin-button {
   appearance: none;
   margin: 0;
+}
+
+.metric-input-row input,
+.duration-inputs input {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.metric-input-row input::placeholder,
+.duration-inputs input::placeholder {
+  color: var(--text-secondary);
 }
 
 .metric-input-row input {
@@ -210,7 +223,14 @@
 .logged-sets-body {
   max-height: 320px;
   overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+
+.logged-sets-body::-webkit-scrollbar {
+  display: none;
+}
+
 
 .logged-sets h3 {
   margin-bottom: var(--space-lg);
@@ -352,7 +372,14 @@ input[type="number"] {
   max-height: 500px;
   overflow-y: auto;
   padding-right: var(--space-sm);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+
+.exercise-history::-webkit-scrollbar {
+  display: none;
+}
+
 
 .exercise-content {
   min-height: 700px;

@@ -31,6 +31,7 @@ const renderActiveShape = (props) => {
         endAngle={endAngle}
         fill={fill}
         opacity={0.4}
+        stroke="none"
       />
 
       <Sector
@@ -41,6 +42,8 @@ const renderActiveShape = (props) => {
         startAngle={startAngle}
         endAngle={endAngle}
         fill={fill}
+        stroke="var(--surface)"
+        strokeWidth={2}
       />
     </g>
   );
@@ -114,6 +117,8 @@ function CategoryBreakdownChart({ workouts }) {
             innerRadius={70}
             outerRadius={120}
             paddingAngle={2}
+            stroke="var(--surface)"
+            strokeWidth={2}
             onMouseEnter={(_, index) => {
               setActiveCategory(chartData[index])
               setActiveIndex(index)
@@ -150,6 +155,7 @@ function CategoryBreakdownChart({ workouts }) {
                       dy="-10"
                       fontSize="20"
                       fontWeight="700"
+                      fill="var(--text-primary)"
                     >
                       {displayedCategory.name}
                     </tspan>
@@ -158,7 +164,7 @@ function CategoryBreakdownChart({ workouts }) {
                       x="50%"
                       dy="24"
                       fontSize="14"
-                      fill="#666"
+                      fill="var(--text-secondary)"
                     >
                       {(
                         (displayedCategory.value / totalSets) * 100
