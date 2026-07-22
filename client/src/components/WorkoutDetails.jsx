@@ -1,9 +1,6 @@
-import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
-import { DEFAULT_UNITS } from "../utils/settings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
-import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
 import { FiPlus } from "react-icons/fi";
 import "./WorkoutDetails.css";
 
@@ -14,11 +11,6 @@ function WorkoutDetails({
 }) {
 
   const { settings } = useSettings();
-
-  const DEFAULT_WEIGHT_UNIT =
-    DEFAULT_UNITS[
-      settings.weightSystem
-    ].weight;
 
   const exerciseCount = workout.exercises?.length || 0;
 
@@ -47,16 +39,10 @@ function WorkoutDetails({
       </div>
 
       <div className="exercise-list">
+
         {workout.exercises?.length > 0 ? (
+
           workout.exercises.map((exercise, index) => {
-
-            const displayMetrics = getDisplayMetrics(
-              exercise.sets?.[0]?.metrics || {},
-              settings.distanceSystem
-            );
-
-            const metricKeys =
-              displayMetrics.map(metric => metric.key);
 
             const setsWithDisplayMetrics =
               exercise.sets?.map(set => ({
@@ -72,7 +58,9 @@ function WorkoutDetails({
               <div
                 className="exercise-item"
                 key={`${exercise.exerciseId?._id}-${index}`}
-                onClick={() => onSelectedExercise(workout, exercise)}
+                onClick={() =>
+                  onSelectedExercise(workout, exercise)
+                }
               >
 
                 <h4>{exercise.exerciseId?.name}</h4>
@@ -83,97 +71,56 @@ function WorkoutDetails({
 
                 <div className="sets-list">
 
-                  {Array.from(
-                    { length: Math.ceil(metricKeys.length / 4) },
-                    (_, index) =>
-                      metricKeys.slice(index * 4, index * 4 + 4)
-                  ).map((metricRow, rowIndex) => (
+                  {setsWithDisplayMetrics.map((set, setIndex) => (
 
                     <div
-                      className="metrics-grid"
-                      key={rowIndex}
+                      className="set-row"
+                      key={set._id || setIndex}
                     >
 
-                      {metricRow.map(metric => {
+                      {set.displayMetrics.map(metric => (
 
-                        const config = getMetricConfig(metric);
+                        <span
+                          key={metric.key}
+                          className="set-metric"
+                        >
 
-                        const firstSet = exercise.sets?.[0];
+                          {formatMetric(
+                            metric.key,
+                            metric.value,
+                            settings,
+                            set.inputUnits,
+                            true
+                          )}
 
-                        const unit =
-                          metric === "distance"
-                            ? getDisplayDistanceUnit(
-                              firstSet?.inputUnits?.distance ??
-                              DEFAULT_UNITS[
-                                settings.distanceSystem
-                              ].distance,
-                              settings.distanceSystem
-                            )
-                            : metric === "weight"
-                              ? DEFAULT_WEIGHT_UNIT
-                              : config.unit;
-
-                        return (
-
-                          <div
-                            className="metric-item"
-                            key={metric}
-                          >
-
-                            <span className="metric-header">
-                              {config.label}
-                              {config.showUnit
-                                ? ` (${unit})`
-                                : ""}
+                          {set.personalRecords?.[metric.key] && (
+                            <span className="pr-trophies">
+                              {" "}🏆
                             </span>
+                          )}
 
-                            {setsWithDisplayMetrics.map((set, setIndex) => {
+                        </span>
 
-                              const value =
-                                set.displayMetrics.find(
-                                  item => item.key === metric
-                                )?.value;
-
-                              return (
-
-                                <span
-                                  className="metric-value"
-                                  key={set._id || setIndex}
-                                >
-                                  {formatMetric(
-                                    metric,
-                                    value,
-                                    settings,
-                                    set.inputUnits,
-                                    false
-                                  )}
-
-                                  {set.personalRecords?.[metric] && (
-                                    <span className="pr-trophies">
-                                      🏆
-                                    </span>
-                                  )}
-                                </span>
-
-                              );
-                            })}
-
-                          </div>
-
-                        );
-                      })}
+                      ))}
 
                     </div>
 
                   ))}
 
                 </div>
+
               </div>
+
             );
+
           })
+
         ) : (
+
           <p>No exercises found.</p>
+
         )}
+
       </div>
 
       <button
@@ -185,6 +132,7 @@ function WorkoutDetails({
 
     </div>
   );
+
 }
 
 export default WorkoutDetails;
