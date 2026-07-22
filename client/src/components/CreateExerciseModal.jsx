@@ -24,6 +24,9 @@ function CreateExerciseModal({
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  const shouldAutoFocus =
+    !window.matchMedia("(pointer: coarse)").matches;
+
   if (!isOpen) {
     return null;
   }
@@ -112,6 +115,7 @@ function CreateExerciseModal({
             setName(event.target.value);
             setError("");
           }}
+          autoFocus={shouldAutoFocus}
           placeholder="Exercise name"
           onKeyDown={(event) => {
             if (event.key === "Enter") {

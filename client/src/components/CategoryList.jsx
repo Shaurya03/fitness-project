@@ -91,37 +91,47 @@ function CategoryList({
 
   return (
     <>
-      <div className="page-header">
+      <div className="category-list-page">
 
-        <h2>Exercises</h2>
+        <div className="category-list-top">
 
-        <button
-          className="add-category-btn"
-          onClick={() =>
-            setIsCreateCategoryModalOpen(true)
-          }
-        >
-          + Category
-        </button>
+          <div className="page-header">
 
-      </div>
+            <h2>Exercises</h2>
 
-      <div
-        className="category-list"
-      >
+            <button
+              className="add-category-btn"
+              onClick={() =>
+                setIsCreateCategoryModalOpen(true)
+              }
+            >
+              + Category
+            </button>
 
-        {categories.map((category) => (
-          <CategoryCard
-            key={category._id}
-            category={category}
-            exerciseCount={exerciseCounts[category._id ?? 0]}
-            openCategoryMenu={openCategoryMenu}
-            setOpenCategoryMenu={setOpenCategoryMenu}
-            onSelect={() => onSelectCategory(category)}
-            onEditCategory={handleEditCategory}
-            onDeleteCategory={handleDeleteCategory}
-          />
-        ))}
+          </div>
+
+        </div>
+
+        <div className="category-list-body">
+
+          <div className="category-list">
+
+            {categories.map((category) => (
+              <CategoryCard
+                key={category._id}
+                category={category}
+                exerciseCount={exerciseCounts[category._id ?? 0]}
+                openCategoryMenu={openCategoryMenu}
+                setOpenCategoryMenu={setOpenCategoryMenu}
+                onSelect={() => onSelectCategory(category)}
+                onEditCategory={handleEditCategory}
+                onDeleteCategory={handleDeleteCategory}
+              />
+            ))}
+
+          </div>
+
+        </div>
 
       </div>
 

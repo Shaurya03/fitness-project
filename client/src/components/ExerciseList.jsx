@@ -82,76 +82,86 @@ function ExerciseList({
   return (
     <div className="exercise-list">
 
-      <div className="page-header">
+      <div className="exercise-list-top">
 
-        <button
-          className="back-btn"
-          onClick={onBack}
-        >
-          <FiArrowLeft />
-        </button>
+        <div className="page-header">
 
-        <h2>{category.name}</h2>
+          <button
+            className="back-button"
+            onClick={onBack}
+          >
+            <FiArrowLeft />
+          </button>
 
-        <button
-          className="add-exercise-btn"
-          onClick={() =>
-            setIsCreateModalOpen(true)
+          <h2>{category.name}</h2>
+
+          <button
+            className="add-exercise-btn"
+            onClick={() =>
+              setIsCreateModalOpen(true)
+            }
+          >
+            + Exercise
+          </button>
+
+        </div>
+
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Search exercises..."
+          value={searchTerm}
+          onChange={(event) =>
+            setSearchTerm(event.target.value)
           }
-        >
-          + Exercise
-        </button>
+        />
 
       </div>
 
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Search exercises..."
-        value={searchTerm}
-        onChange={(event) =>
-          setSearchTerm(event.target.value)
-        }
-      />
+      <div className="exercise-list-body">
 
-      {filteredExercises.length === 0 ? (
+        {filteredExercises.length === 0 ? (
 
-        <div className="empty-exercise-list">
-          <h3>No exercises found</h3>
+          <div className="empty-exercise-list">
+            <h3>No exercises found</h3>
 
-          <p>
-            Create an exercise or change your search.
-          </p>
-        </div>
+            <p>
+              Create an exercise or change your search.
+            </p>
+          </div>
 
-      ) : (
+        ) : (
 
-        filteredExercises.map((exercise) => (
+          filteredExercises.map((exercise) => (
 
-          <ExerciseCard
-            key={exercise._id}
-            mode="manage"
-            exercise={exercise}
-            openExerciseMenu={openExerciseMenu}
-            setOpenExerciseMenu={setOpenExerciseMenu}
-            onClick={() =>
-              onSelectExercise(exercise)
-            }
-            onHistory={() =>
-              setHistoryExercise(exercise)
-            }
-            onEdit={() =>
-              handleEditExercise(exercise)
-            }
-            onDelete={() =>
-              handleDeleteExercise(exercise)
-            }
-          />
+            <div className="exercise-cards">
+              <ExerciseCard
+                key={exercise._id}
+                mode="manage"
+                exercise={exercise}
+                openExerciseMenu={openExerciseMenu}
+                setOpenExerciseMenu={setOpenExerciseMenu}
+                onClick={() =>
+                  onSelectExercise(exercise)
+                }
+                onHistory={() =>
+                  setHistoryExercise(exercise)
+                }
+                onEdit={() =>
+                  handleEditExercise(exercise)
+                }
+                onDelete={() =>
+                  handleDeleteExercise(exercise)
+                }
+              />
+            </div>
 
-        ))
-      )}
+          ))
+        )}
 
-      < CreateExerciseModal
+      </div>
+
+      <CreateExerciseModal
         isOpen={isCreateModalOpen}
         selectedCategory={category}
         onClose={() =>

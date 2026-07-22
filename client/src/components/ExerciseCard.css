@@ -2,10 +2,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   padding: var(--card-padding);
+
   background: var(--surface);
+
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+
   cursor: pointer;
 
   transition:
@@ -17,13 +21,18 @@
 .exercise-card:hover {
   background: var(--surface-hover);
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
 }
 
-.exercise-card span {
+.exercise-name {
+  flex: 1;
+  min-width: 0;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .exercise-arrow {
@@ -33,11 +42,13 @@
 .menu-container {
   display: flex;
   align-items: center;
+  position: relative;
+  flex-shrink: 0;
 }
 
 .menu-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -82,4 +93,12 @@
 
 .exercise-menu button:hover {
   background: var(--surface-hover);
+}
+
+@media (max-width: 600px) {
+
+  .exercise-card {
+    padding: var(--space-md);
+  }
+
 }

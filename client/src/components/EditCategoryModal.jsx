@@ -24,6 +24,9 @@ function EditCategoryModal({
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  const shouldAutoFocus =
+    !window.matchMedia("(pointer: coarse)").matches;
+
   if (!isOpen) {
     return null;
   }
@@ -106,7 +109,7 @@ function EditCategoryModal({
           }}
           placeholder="Enter Category name"
           maxLength={40}
-          autoFocus
+          autoFocus={shouldAutoFocus}
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               handleSubmit();

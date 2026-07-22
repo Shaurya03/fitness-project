@@ -22,7 +22,9 @@ function ExerciseCard({
       className={`exercise-card ${mode}`}
       onClick={onClick}
     >
-      <span>{exercise.name}</span>
+      <span className="exercise-name">
+        {exercise.name}
+      </span>
 
       {mode === "select" && (
         <FaChevronRight className="exercise-arrow" />

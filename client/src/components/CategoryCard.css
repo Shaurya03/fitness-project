@@ -1,5 +1,4 @@
 .category-card {
-  position: relative;
 
   display: flex;
   justify-content: space-between;
@@ -99,4 +98,16 @@
 
 .category-menu button:hover {
   background: var(--surface-hover);
+}
+
+@media (max-width: 600px) {
+
+  .category-menu-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .category-card {
+    padding: var(--space-md);
+  }
 }

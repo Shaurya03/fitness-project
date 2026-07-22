@@ -1,5 +1,4 @@
 import { format } from "date-fns";
-import { getMetricConfig } from "../utils/metricConfig";
 import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
@@ -32,49 +31,56 @@ function HistoryWorkoutCard({ workout }) {
         )}
       </h3>
 
-      <table className="history-table">
+      <div className="history-sets">
+        {setsWithDisplayMetrics.map((set, index) => (
 
-        <thead>
-          <tr>
-            {metricKeys.map(metric => (
-              <th key={metric}>
-                {getMetricConfig(metric).label.toUpperCase()}
-              </th>
-            ))}
-          </tr>
-        </thead>
+          <div className="history-set" key={index}>
 
-        <tbody>
-          {setsWithDisplayMetrics.map((set, index) => (
-            <tr key={index}>
+            <div
+              className="history-values"
+              style={{
+                gridTemplateColumns: `repeat(${metricKeys.length}, minmax(0,1fr))`
+              }}
+            >
+
               {metricKeys.map(metric => {
+
                 const value = set.displayMetrics.find(
                   item => item.key === metric
                 )?.value;
 
                 return (
-                  <td key={metric}>
-                    <div className="history-value">
+                  <div
+                    className="history-value"
+                    key={metric}
+                  >
+
+                    <span>
                       {formatMetric(
                         metric,
                         value,
                         settings,
                         set.inputUnits
                       )}
+                    </span>
 
-                      {set.personalRecords?.[metric] && (
-                        <span className="pr-trophy">
-                          🏆
-                        </span>
-                      )}
-                    </div>
-                  </td>
+                    {set.personalRecords?.[metric] && (
+                      <span className="pr-trophy">
+                        🏆
+                      </span>
+                    )}
+
+                  </div>
                 );
+
               })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+            </div>
+
+          </div>
+
+        ))}
+      </div>
 
     </div>
   );

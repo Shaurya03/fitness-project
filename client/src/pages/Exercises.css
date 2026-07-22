@@ -5,5 +5,10 @@
 .exercises-container {
   max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: var(--space-xl);
+  padding: 0;
+}
+
+.exercises-container.logger-mode {
+  max-width: 700px;
+  padding: 0;
 }

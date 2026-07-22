@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
 
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-md);
 }
 
 .exercise-list .page-header h2 {
@@ -15,18 +15,33 @@
   font-size: 1.6rem;
 }
 
-.back-btn,
-.add-exercise-btn {
+.back-button {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 22px;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
 
-  height: 42px;
+.back-button:hover {
+  background: var(--surface-hover);
+}
 
-  padding: 0 18px;
+.add-exercise-btn {
+  padding: 10px 18px;
 
   border: none;
   border-radius: var(--radius-md);
+
+  background: var(--primary);
+  color: white;
 
   font-size: .95rem;
   font-weight: 600;
@@ -38,22 +53,9 @@
     transform var(--transition-fast);
 }
 
-.back-btn {
-  background: var(--border-light);
-  color: var(--text-primary);
-}
-
-.back-btn:hover {
-  background: var(--border);
-}
-
-.add-exercise-btn {
-  background: var(--primary);
-  color: white;
-}
-
 .add-exercise-btn:hover {
   background: var(--primary-hover);
+  transform: translateY(-1px);
 }
 
 .search-input {
@@ -61,7 +63,7 @@
 
   padding: 12px 16px;
 
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-sm);
 
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
@@ -81,7 +83,39 @@
 .exercise-list {
   display: flex;
   flex-direction: column;
+  height: calc(100vh - 73px);
   gap: var(--space-md);
+}
+
+.exercise-list-top {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  width: 100%;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 24px;
+}
+
+.exercise-list-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.exercise-list-body::-webkit-scrollbar {
+  display: none;
+}
+
+.exercise-cards {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
 
 .empty-exercise-list {
@@ -101,4 +135,42 @@
 
 .empty-exercise-list h3 {
   margin-bottom: 8px;
+}
+
+@media (max-width: 600px) {
+
+  .exercise-list {
+    height: calc(100vh - 165px);
+  }
+
+  .exercise-list-top {
+    padding: 16px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, .25);
+  }
+
+  .page-header {
+    margin-bottom: 12px;
+  }
+
+  .exercise-list .page-header h2 {
+    font-size: 1.8rem;
+  }
+
+  .back-button {
+    width: 34px;
+    height: 34px;
+    font-size: 20px;
+  }
+
+  .add-exercise-btn {
+    height: 40px;
+    padding: 0 14px;
+    font-size: .9rem;
+  }
+
+  .search-input {
+    margin-bottom: 12px;
+    padding: 10px 14px;
+  }
+
 }

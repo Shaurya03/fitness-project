@@ -1,77 +1,152 @@
+/* ==========================================================================
+   ExerciseLogger — FitNotes-style dark layout
+
+   Structure:
+     .exercise-logger   full-height column, fills its parent
+       .logger-top      fixed section: header, tabs, track inputs — never scrolls
+       .logger-bottom   flexible section: sets list / history / graph — scrolls
+   ========================================================================== */
+
 .exercise-logger {
-  max-width: 700px;
-  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 73px);
   background: var(--surface);
+  color: var(--text-primary);
   border-radius: var(--radius-xl);
-  padding: var(--card-padding);
-  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.exercise-logger.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-primary);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Fixed top: header + tabs + track inputs                                */
+/* ---------------------------------------------------------------------- */
+
+.logger-top {
+  flex-shrink: 0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .logger-header {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-lg);
-  margin-bottom: var(--space-xl);
-  width: 100%;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px 8px;
+  background: var(--surface);
 }
 
 .back-btn {
-  font-weight: bold;
-  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
   border: none;
-  background: var(--surface);
+  border-radius: 50%;
+  background: transparent;
   color: var(--text-primary);
-  border-radius: var(--radius-sm);
-  padding: 8px 14px;
+  font-size: 22px;
   cursor: pointer;
   transition: var(--transition-fast);
 }
 
 .back-btn:hover {
-  color: white;
-  background: var(--primary-hover);
+  background: var(--surface-hover);
 }
 
-.logger-header h2 {
+.exercise-info h2 {
   margin: 0;
-  font-size: 2rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
 }
 
-.logger-header p {
-  margin-top: 6px;
+.exercise-info p {
+  margin-top: 1px;
+  font-size: .85rem;
   color: var(--text-secondary);
 }
 
-.logger-inputs {
+/* Tabs */
+.logger-tabs {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
+  background: var(--surface);
+  border-top: none;
+  padding: 0 24px;
 }
 
-.logger-metric label {
-  display: block;
+.logger-tab {
+  flex: 1;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.logger-tab.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--primary);
+}
+
+/* Track inputs */
+.logger-inputs {
+  padding: 16px 20px;
+}
+
+.logger-metric {
+  margin-bottom: 16px;
+}
+
+.logger-metric-label {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 6px;
   margin-bottom: 8px;
-  font-weight: 600;
-  font-size: .95rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--logger-text);
 }
 
 .metric-unit {
   color: var(--text-secondary);
-  font-weight: 500;
+  text-transform: none;
+  font-weight: 400;
 }
 
 .metric-input-row {
   display: grid;
-  grid-template-columns: 46px 1fr 46px;
+  grid-template-columns: 56px 1fr 56px;
+  align-items: stretch;
   gap: 10px;
 }
 
 .metric-adjust-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: 6px;
   background: var(--primary);
-  color: white;
-  font-size: 18px;
+  color: var(--text-primary);
+  font-size: 20px;
   cursor: pointer;
 }
 
@@ -79,47 +154,42 @@
   background: var(--primary-hover);
 }
 
+.metric-adjust-btn:active {
+  background: var(--primary);
+}
+
 .metric-input-row input {
-  height: 48px;
-  padding: 0 14px;
-  font-size: 1.15rem;
+  width: 100%;
+  height: 50px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--logger-text);
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.metric-input-row input:focus {
+  outline: none;
+  border-bottom-color: var(--border);
+}
+
+.metric-input-row input,
+.duration-inputs input {
+  appearance: textfield;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
 }
 
 .metric-input-row input::-webkit-inner-spin-button,
-.metric-input-row input::-webkit-outer-spin-button {
+.metric-input-row input::-webkit-outer-spin-button,
+.duration-inputs input::-webkit-inner-spin-button,
+.duration-inputs input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
   appearance: none;
   margin: 0;
-}
-
-.metric-input-row input,
-.duration-inputs input {
-  background: var(--surface);
-  color: var(--text-primary);
-  border: 1px solid var(--border);
-}
-
-.metric-input-row input::placeholder,
-.duration-inputs input::placeholder {
-  color: var(--text-secondary);
-}
-
-.metric-input-row input {
-  appearance: textfield;
-}
-
-.metric-input-row input,
-.duration-inputs input {
-  text-align: center;
-}
-
-.metric-input-row input:focus,
-.duration-inputs input:focus,
-.logger-metric select:focus {
-  outline: none;
-  border-color: var(--focus);
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, .15);
+  display: none;
 }
 
 .duration-inputs {
@@ -130,271 +200,328 @@
 }
 
 .duration-inputs input {
-  height: 48px;
-  text-align: center;
-  font-size: 1.1rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-}
-
-.duration-inputs input::-webkit-inner-spin-button,
-.duration-inputs input::-webkit-outer-spin-button {
-  appearance: none;
-}
-
-.duration-inputs input {
-  appearance: textfield;
-}
-
-.logger-metric select {
-  margin-top: var(--space-sm);
-  width: 120px;
-  height: 40px;
-  padding: 0 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  flex: 1;
+  height: 50px;
+  width: 100%;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px solid var(--border);
   background: var(--surface);
+  border-radius: var(--radius-md);
+  color: var(--logger-text);
+  text-align: center;
+  font-size: 1.45rem;
+  font-weight: 700;
 }
 
-.logger-actions {
+.duration-inputs input:focus {
+  outline: none;
+  border-bottom-color: var(--border);
+}
+
+.distance-unit-select {
+  margin-top: 10px;
+  width: 100px;
+}
+
+.logger-error {
+  margin: 4px 0 14px;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+/* Save / Clear / Update / Delete buttons */
+.logger-actions,
+.edit-set-actions {
   display: flex;
-  justify-content: center;
-  gap: var(--space-md);
+  gap: 10px;
+  margin-top: 0;
 }
 
 .save-set-btn,
+.clear-set-btn,
 .update-set-btn,
-.delete-set-btn,
-.clear-set-btn {
-  margin-top: var(--space-xl);
-  height: 48px;
-  width: 100px;
-  font-weight: bold;
+.delete-set-btn {
+  flex: 1;
+  height: 42px;
   border: none;
   border-radius: var(--radius-md);
-  padding: 0 26px;
-  font-size: 1rem;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
   cursor: pointer;
+  color: #ffffff;
 }
 
 .save-set-btn,
-.update-set-btn,
+.update-set-btn {
+  background: var(--primary);
+}
+
+.save-set-btn:hover,
+.update-set-btn:hover {
+  background: var(--surface-hover);
+}
+
+.save-set-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .clear-set-btn {
   background: var(--primary);
-  color: white;
+}
+
+.clear-set-btn:hover {
+  background: var(--surface-hover);
 }
 
 .delete-set-btn {
   background: var(--danger);
-  color: white;
 }
 
-.metric-adjust-btn,
-.save-set-btn,
-.update-set-btn,
-.delete-set-btn,
-.clear-set-btn {
-  transition: var(--transition-fast);
+.delete-set-btn:hover {
+  background: var(--surface-hover);
 }
 
-.metric-adjust-btn:hover,
-.save-set-btn:hover,
-.update-set-btn:hover,
-.clear-set-btn:hover {
-  transform: translateY(-1px);
-}
+/* ---------------------------------------------------------------------- */
+/* Scrollable bottom: logged sets / history / graph                       */
+/* ---------------------------------------------------------------------- */
 
-.metric-adjust-btn:active,
-.save-set-btn:active,
-.update-set-btn:active {
-  transform: scale(.96);
-}
-
-.edit-set-actions {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-md);
-}
-
-.logged-sets {
-  margin-top: var(--space-xl);
-}
-
-.logged-sets-body {
-  max-height: 320px;
+.logger-bottom {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
+  background: var(--surface);
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
 
-.logged-sets-body::-webkit-scrollbar {
+.logger-bottom::-webkit-scrollbar {
   display: none;
 }
 
-
-.logged-sets h3 {
-  margin-bottom: var(--space-lg);
-}
-
-.logged-set-header,
-.set-values {
-  display: grid;
-  justify-content: center;
-  gap: var(--space-md);
-  align-items: center;
-}
-
-.logged-set-header span,
-.set-values span {
-  text-align: center;
-}
-
-.logged-set-header {
-  padding: 12px 18px;
-  background: var(--background);
-  border-radius: var(--radius-md) var(--radius-md) 0 0;
-  font-weight: 600;
+.logged-sets-empty {
+  padding: 24px 18px;
   color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.logged-sets-body {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 14px;
 }
 
 .logged-set {
-  padding: 14px 18px;
-  margin-top: var(--space-sm);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition:
-    background-color var(--transition-fast),
-    border-color var(--transition-fast),
-    transform var(--transition-fast);
+  display: block;
+  gap: 14px;
+  padding: 18px;
   background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  transition: var(--transition-fast);
+  cursor: pointer;
 }
 
 .logged-set:hover {
   background: var(--surface-hover);
   border-color: var(--primary);
-  transform: translateY(-1px);
 }
 
 .logged-set.selected {
+  border-color: var(--primary);
   background: rgba(26, 172, 131, .08);
-  border-color: var(--primary);
-  transform: none;
 }
 
-.set-values span {
-  font-size: 1.2rem;
-  font-weight: 600;
-}
-
-.distance-unit-select {
-  width: 90px;
-}
-
-@media (max-width:640px) {
-
-  .exercise-logger {
-    margin: 0;
-    border-radius: 0;
-    padding: 18px;
-    box-shadow: none;
-  }
-
-  .logger-header {
-    flex-direction: column;
-  }
-
-  .metric-input-row {
-    grid-template-columns: 42px 1fr 42px;
-  }
-
-  .logged-set-header,
-  .set-values {
-    font-size: .82rem;
-    gap: 10px;
-  }
-
-}
-
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-input[type="number"] {
-  appearance: textfield;
-  -moz-appearance: textfield;
-}
-
-.logger-tabs {
-  display: flex;
-  justify-content: center;
-  gap: var(--space-sm);
-  margin-top: var(--space-xl);
-}
-
-.logger-info {
-  flex: 1;
-  width: 100%;
-  min-width: 0;
-}
-
-.logger-tab {
-  flex: 0 0 180px;
-  width: 100px;
-  height: 42px;
+.set-index {
+  font-size: 22px;
   font-weight: 700;
-  font-size: 20px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  background: var(--surface);
   color: var(--text-primary);
-  cursor: pointer;
-  transition: var(--transition-fast);
 }
 
-.logger-tab:hover {
-  background: var(--surface-hover);
-}
-
-.logger-tab.active {
-  background: var(--primary);
-  color: white;
-  border-color: var(--primary);
-}
-
-.exercise-history {
-  margin-top: var(--space-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  max-height: 500px;
-  overflow-y: auto;
-  padding-right: var(--space-sm);
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.exercise-history::-webkit-scrollbar {
-  display: none;
-}
-
-
-.exercise-content {
-  min-height: 700px;
-  position: relative;
+.set-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
 }
 
 .set-value {
   display: flex;
-  justify-content: center;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
+}
+
+.set-value-number {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.set-value-unit {
+  font-size: 15px;
+  color: var(--text-secondary);
 }
 
 .prs-trophy {
-  width: 18px;
+  width: 22px;
   display: inline-flex;
   justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.exercise-history {
+  padding: 16px 18px;
+}
+
+@media (max-width: 600px) {
+
+  .exercise-logger {
+    height: calc(100vh - 165px);
+    border-radius: 0;
+  }
+
+  /* ---------- Header ---------- */
+
+  .logger-header {
+    padding: 5px 12px 4px;
+    gap: 5px;
+  }
+
+  .back-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+  }
+
+  .exercise-info h2 {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+
+  .exercise-info p {
+    font-size: .8rem;
+    margin-top: 0;
+  }
+
+  /* ---------- Tabs ---------- */
+
+  .logger-tabs {
+    padding: 0 16px;
+  }
+
+  .logger-tab {
+    padding: 4px 0;
+    font-size: .90rem;
+  }
+
+  /* ---------- Inputs ---------- */
+
+  .logger-inputs {
+    padding: 6px 16px;
+  }
+
+  .logger-metric {
+    margin-bottom: 8px;
+  }
+
+  .logger-metric-label {
+    font-size: .9rem;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+  }
+
+  /* ---------- Distance ---------- */
+
+  .metric-input-row {
+    grid-template-columns: 46px 1fr 46px;
+    gap: 8px;
+  }
+
+  .metric-adjust-btn {
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+  }
+
+  .metric-input-row input {
+    height: 46px;
+    font-size: 1.7rem;
+  }
+
+  .distance-unit-select {
+    margin-top: 8px;
+    width: 90px;
+  }
+
+  /* ---------- Duration ---------- */
+
+  .duration-inputs {
+    gap: 8px;
+  }
+
+  .duration-inputs input {
+    height: 46px;
+    font-size: 1.45rem;
+  }
+
+  /* ---------- Buttons ---------- */
+
+  .logger-actions,
+  .edit-set-actions {
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .save-set-btn,
+  .clear-set-btn,
+  .update-set-btn,
+  .delete-set-btn {
+    height: 36px;
+    font-size: .95rem;
+  }
+
+  /* ---------- Sets ---------- */
+
+  .logged-sets-body {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .logged-set {
+    padding: 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .set-values {
+    gap: 12px 16px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .set-value {
+    gap: 4px;
+  }
+
+  .set-value-number {
+    font-size: 1.15rem;
+  }
+
+  .set-value-unit {
+    font-size: .9rem;
+  }
+
+  .prs-trophy {
+    width: 18px;
+    font-size: .9rem;
+  }
+
 }

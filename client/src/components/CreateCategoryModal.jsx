@@ -12,6 +12,9 @@ function CreateCategoryModal({
   const [metrics, setMetrics] = useState([]);
   const [error, setError] = useState("");
 
+  const shouldAutoFocus =
+    !window.matchMedia("(pointer: coarse)").matches;
+
   if (!isOpen) {
     return null;
   }
@@ -86,7 +89,7 @@ function CreateCategoryModal({
         <input
           value={categoryName}
           maxLength={40}
-          autoFocus
+          autoFocus={shouldAutoFocus}
           onChange={(event) => {
             setCategoryName(event.target.value);
             setError("");

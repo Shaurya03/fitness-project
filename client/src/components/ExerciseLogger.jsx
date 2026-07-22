@@ -9,7 +9,6 @@ import { API_BASE_URL } from "../services/api";
 import { toast } from "react-toastify";
 import { UNITS, DISTANCE_SYSTEMS } from "../utils/units";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
-import { getDisplayDistanceUnit } from "../utils/getDisplayDistanceUnit";
 import { getDisplaySet } from "../utils/getDisplaySet";
 import { useSettings } from "../hooks/useSettings";
 import { FiMinus, FiPlus, FiArrowLeft } from "react-icons/fi";
@@ -21,6 +20,23 @@ import { isSameDay } from "date-fns";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import Select from "react-select";
 import "./ExerciseLogger.css";
+
+// Splits a formatted metric string like "110.0 kgs" into a { number, unit }
+// pair so the number can be rendered large/bold and the unit small, the way
+// FitNotes displays logged sets.
+function splitMetricDisplay(formatted) {
+  if (typeof formatted !== "string") {
+    return { number: formatted, unit: "" };
+  }
+
+  const match = formatted.match(/^([\d.,:]+)\s*(.*)$/);
+
+  if (!match) {
+    return { number: formatted, unit: "" };
+  }
+
+  return { number: match[1], unit: match[2] };
+}
 
 function ExerciseLogger({
   exercise,
@@ -117,13 +133,11 @@ function ExerciseLogger({
   let activeWorkout;
 
   if (workoutId) {
-    // Editing an existing workout
     activeWorkout = workouts.find(
       workout => workout._id === workoutId
     );
   }
   else if (workoutDate) {
-    // Creating/editing a workout for a specific date
     activeWorkout = workouts.find(workout =>
       isSameDay(
         new Date(workout.date),
@@ -132,7 +146,6 @@ function ExerciseLogger({
     );
   }
   else {
-    // Exercise page -> use today's workout
     activeWorkout = workouts.find(workout =>
       isSameDay(
         new Date(workout.date),
@@ -513,9 +526,15 @@ function ExerciseLogger({
       setError(null);
       initializeInputs(newSet);
 
-      requestAnimationFrame(() => {
-        firstInputRef.current?.focus();
-      });
+      const isTouchDevice =
+        "ontouchstart" in window ||
+        navigator.maxTouchPoints > 0;
+
+      if (!isTouchDevice) {
+        requestAnimationFrame(() => {
+          firstInputRef.current?.focus();
+        });
+      }
 
     } catch (error) {
 
@@ -769,253 +788,209 @@ function ExerciseLogger({
   return (
     <div className="exercise-logger">
 
-      <button
-        className="back-btn"
-        onClick={() => {
-          if (mode === "edit") {
-            navigate("/workouts", {
-              state: {
-                selectedDate: workoutDate
+      {/* ---- Fixed top section: header, tabs, and (on the Track tab) the
+          metric inputs. This section never scrolls. ---- */}
+      <div className="logger-top">
+        <div className="logger-header">
+          <button
+            className="back-btn"
+            onClick={() => {
+              if (mode === "edit") {
+                navigate("/workouts", {
+                  state: {
+                    selectedDate: workoutDate
+                  }
+                });
+              } else {
+                onBack();
               }
-            });
-          } else {
-            onBack();
-          }
-        }}
-      >
-        <FiArrowLeft />
-      </button>
+            }}
+          >
+            <FiArrowLeft />
+          </button>
 
-      <div className="logger-header">
-
-        <div className="logger-info">
-
-          <h2>
-            {exercise.name}
-          </h2>
-
-          <p>
-            {exercise.categoryId?.name}
-          </p>
-
-          <div className="logger-tabs">
-
-            <button
-              className={`logger-tab ${activeTab === "logger" ? "active" : ""
-                }`}
-              onClick={() => setActiveTab("logger")}
-            >
-              Track
-            </button>
-
-            <button
-              className={`logger-tab ${activeTab === "history" ? "active" : ""
-                }`}
-              onClick={() => setActiveTab("history")}
-            >
-              History
-            </button>
-
+          <div className="exercise-info">
+            <h2>{exercise.name}</h2>
+            <p>{exercise.categoryId?.name}</p>
           </div>
-
         </div>
 
-      </div>
+        <div className="logger-tabs">
+          <button
+            className={`logger-tab ${activeTab === "logger" ? "active" : ""}`}
+            onClick={() => setActiveTab("logger")}
+          >
+            Track
+          </button>
 
-      <div className="exercise-content">
+          <button
+            className={`logger-tab ${activeTab === "history" ? "active" : ""}`}
+            onClick={() => setActiveTab("history")}
+          >
+            History
+          </button>
+        </div>
 
         {activeTab === "logger" && (
+          <div className="logger-inputs">
+            {exercise.metrics.map((metric, index) => {
+              const config = getMetricConfig(metric);
 
-          <>
+              return (
+                <div
+                  key={metric}
+                  className="logger-metric"
+                >
+                  <div className="logger-metric-label">
+                    <span>
+                      {METRIC_LABELS[metric]}
 
-            <div className="logger-inputs">
-
-              {exercise.metrics.map(
-                (metric, index) => {
-
-                  const config =
-                    getMetricConfig(metric);
-
-                  return (
-
-                    <div
-                      key={metric}
-                      className="logger-metric"
-                    >
-
-                      <label>
-                        {METRIC_LABELS[metric]}
-
-                        {metricValues.inputUnits[metric] && (
-                          <span className="metric-unit">
-                            {" "}
-                            ({metricValues.inputUnits[metric]})
-                          </span>
-                        )}
-                      </label>
-
-
-
-                      {metric === "duration" ? (
-
-                        <div className="duration-inputs">
-
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            placeholder="hh"
-                            value={metricValues.metrics.duration?.hours ?? ""}
-                            onChange={e =>
-                              handleMetricChange(
-                                "duration",
-                                {
-                                  hours:
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value)
-                                }
-                              )
-                            }
-                          />
-
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            placeholder="mm"
-                            value={metricValues.metrics.duration?.minutes ?? ""}
-                            onChange={e =>
-                              handleMetricChange(
-                                "duration",
-                                {
-                                  minutes:
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value)
-                                }
-                              )
-                            }
-                          />
-
-                          <input
-                            type="number"
-                            inputMode="decimal"
-                            placeholder="ss"
-                            value={metricValues.metrics.duration?.seconds ?? ""}
-                            onChange={e =>
-                              handleMetricChange(
-                                "duration",
-                                {
-                                  seconds:
-                                    e.target.value === ""
-                                      ? ""
-                                      : Number(e.target.value)
-                                }
-                              )
-                            }
-                          />
-
-                        </div>
-
-                      ) : (
-
-                        <div className="metric-input-row">
-
-                          <button
-                            type="button"
-                            className="metric-adjust-btn"
-                            onClick={() =>
-                              adjustMetricValue(
-                                metric,
-                                -1
-                              )
-                            }
-                          >
-                            <FiMinus />
-                          </button>
-
-                          <input
-                            ref={
-                              index === 0
-                                ? firstInputRef
-                                : null
-                            }
-                            type="number"
-                            inputMode="decimal"
-                            value={
-                              metricValues.metrics[metric] ?? ""
-                            }
-                            min={config.min}
-                            max={config.max}
-                            step={
-                              metric === "weight"
-                                ? UNITS.weight[
-                                  weightUnit
-                                ].step
-
-                                : metric === "distance"
-                                  ? UNITS.distance[
-                                    distanceUnit
-                                  ].step
-
-                                  : config.step ?? 1
-                            }
-                            onWheel={e =>
-                              e.currentTarget.blur()
-                            }
-                            onChange={event =>
-                              handleMetricChange(
-                                metric,
-                                event.target.value
-                              )
-                            }
-                          />
-
-                          <button
-                            type="button"
-                            className="metric-adjust-btn"
-                            onClick={() =>
-                              adjustMetricValue(
-                                metric,
-                                1
-                              )
-                            }
-                          >
-                            <FiPlus />
-                          </button>
-
-                        </div>
-
+                      {metricValues.inputUnits[metric] && (
+                        <span className="metric-unit">
+                          {" "}
+                          ({metricValues.inputUnits[metric]})
+                        </span>
                       )}
+                    </span>
+                  </div>
 
-                      {metric === "distance" && (
-
-                        <div className="distance-unit-select">
-                          <Select
-                            value={{
-                              value: distanceUnit,
-                              label: distanceUnit
-                            }}
-                            options={DISTANCE_SYSTEMS[settings.distanceSystem].map(unit => ({
-                              value: unit,
-                              label: unit
-                            }))}
-                            styles={reactSelectStyles}
-                            isSearchable={false}
-                            onChange={(option) =>
-                              handleUnitChange("distance", option.value)
+                  {metric === "duration" ? (
+                    <div className="duration-inputs">
+                      <input
+                        type="number"
+                        inputMode="decimal"
+                        placeholder="hh"
+                        value={metricValues.metrics.duration?.hours ?? ""}
+                        onChange={e =>
+                          handleMetricChange(
+                            "duration",
+                            {
+                              hours:
+                                e.target.value === ""
+                                  ? ""
+                                  : Number(e.target.value)
                             }
-                          />
-                        </div>
+                          )
+                        }
+                      />
 
-                      )}
+                      <input
+                        type="number"
+                        inputMode="decimal"
+                        placeholder="mm"
+                        value={metricValues.metrics.duration?.minutes ?? ""}
+                        onChange={e =>
+                          handleMetricChange(
+                            "duration",
+                            {
+                              minutes:
+                                e.target.value === ""
+                                  ? ""
+                                  : Number(e.target.value)
+                            }
+                          )
+                        }
+                      />
 
+                      <input
+                        type="number"
+                        inputMode="decimal"
+                        placeholder="ss"
+                        value={metricValues.metrics.duration?.seconds ?? ""}
+                        onChange={e =>
+                          handleMetricChange(
+                            "duration",
+                            {
+                              seconds:
+                                e.target.value === ""
+                                  ? ""
+                                  : Number(e.target.value)
+                            }
+                          )
+                        }
+                      />
                     </div>
+                  ) : (
+                    <div className="metric-input-row">
+                      <button
+                        type="button"
+                        className="metric-adjust-btn"
+                        onClick={() =>
+                          adjustMetricValue(
+                            metric,
+                            -1
+                          )
+                        }
+                      >
+                        <FiMinus />
+                      </button>
 
-                  );
-                }
-              )}
+                      <input
+                        ref={
+                          index === 0
+                            ? firstInputRef
+                            : null
+                        }
+                        type="number"
+                        inputMode="decimal"
+                        value={metricValues.metrics[metric] ?? ""}
+                        min={config.min}
+                        max={config.max}
+                        step={
+                          metric === "weight"
+                            ? UNITS.weight[weightUnit].step
+                            : metric === "distance"
+                              ? UNITS.distance[distanceUnit].step
+                              : config.step ?? 1
+                        }
+                        onWheel={e =>
+                          e.currentTarget.blur()
+                        }
+                        onChange={event =>
+                          handleMetricChange(
+                            metric,
+                            event.target.value
+                          )
+                        }
+                      />
 
-            </div>
+                      <button
+                        type="button"
+                        className="metric-adjust-btn"
+                        onClick={() =>
+                          adjustMetricValue(
+                            metric,
+                            1
+                          )
+                        }
+                      >
+                        <FiPlus />
+                      </button>
+                    </div>
+                  )}
+
+                  {metric === "distance" && (
+                    <div className="distance-unit-select">
+                      <Select
+                        value={{
+                          value: distanceUnit,
+                          label: distanceUnit
+                        }}
+                        options={DISTANCE_SYSTEMS[settings.distanceSystem].map(unit => ({
+                          value: unit,
+                          label: unit
+                        }))}
+                        styles={reactSelectStyles}
+                        isSearchable={false}
+                        onChange={(option) =>
+                          handleUnitChange("distance", option.value)
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
 
             {error && (
               <p className="logger-error">
@@ -1024,9 +999,7 @@ function ExerciseLogger({
             )}
 
             {selectedSetIndex === null ? (
-
               <div className="logger-actions">
-
                 <button
                   className="save-set-btn"
                   onClick={handleSaveSet}
@@ -1042,12 +1015,9 @@ function ExerciseLogger({
                 >
                   Clear
                 </button>
-
               </div>
-
             ) : (
               <div className="edit-set-actions">
-
                 <button
                   className="update-set-btn"
                   onClick={handleUpdateSet}
@@ -1061,147 +1031,85 @@ function ExerciseLogger({
                 >
                   Delete
                 </button>
-
               </div>
             )}
+          </div>
+        )}
+      </div>
 
-            <div className="logged-sets">
-
-              <h3>
-                Sets
-              </h3>
-
-              {loggedSetsWithPRs.length === 0 && (
-                <p>
-                  No sets logged yet.
-                </p>
-              )}
-
-              {loggedSetsWithPRs.length > 0 && (() => {
-
-                const metrics = getDisplayMetrics(
-                  loggedSetsWithPRs[0].metrics
-                );
-
-                return (
-
-                  <div
-                    className="logged-set-header"
-                    style={{
-                      gridTemplateColumns: `repeat(${metrics.length}, minmax(140px, 1fr))`
-                    }}
-                  >
-
-                    {metrics.map(({ key }) => {
-
-                      const config = getMetricConfig(key);
-
-                      const unit =
-                        key === "distance"
-                          ? getDisplayDistanceUnit(
-                            loggedSetsWithPRs[0].inputUnits?.distance ??
-                            DEFAULT_DISTANCE_UNIT,
-                            settings.distanceSystem
-                          )
-                          : key === "weight"
-                            ? DEFAULT_WEIGHT_UNIT
-                            : config.unit;
-
-                      return (
-                        <span key={key}>
-                          {config.label}
-                          {config.showUnit ? ` (${unit})` : ""}
-                        </span>
-                      );
-
-                    })}
-
-                  </div>
-
-                );
-
-              })()}
-
+      {/* ---- Scrollable bottom section. Only this part scrolls; the
+          section above is always visible. ---- */}
+      <div className="logger-bottom">
+        {activeTab === "logger" && (
+          <div className="logged-sets">
+            {loggedSetsWithPRs.length === 0 ? (
+              <p className="logged-sets-empty">No sets logged yet.</p>
+            ) : (
               <div className="logged-sets-body">
+                {loggedSetsWithPRs.map((set, index) => {
+                  const displayMetrics =
+                    getDisplayMetrics(
+                      set.metrics,
+                      settings.distanceSystem
+                    );
 
-                {loggedSetsWithPRs.map(
-                  (set, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className={`logged-set ${selectedSetIndex === index
+                        ? "selected"
+                        : ""
+                        }`}
+                      onClick={() => handleSelectSet(set, index)}
+                    >
 
-                    const displayMetrics =
-                      getDisplayMetrics(
-                        set.metrics
-                      );
+                      <div className="set-values">
+                        {displayMetrics.map(({ key, value }) => {
+                          const formatted = formatMetric(
+                            key,
+                            value,
+                            settings,
+                            set.inputUnits,
+                            true
+                          );
 
-                    return (
+                          const { number, unit } =
+                            splitMetricDisplay(formatted);
 
-                      <div
-                        key={index}
-                        className={`logged-set ${selectedSetIndex === index
-                          ? "selected"
-                          : ""
-                          }`}
-                        onClick={() => handleSelectSet(set, index)}
-                      >
-
-                        <div
-                          className="set-values"
-                          style={{
-                            gridTemplateColumns: `repeat(${displayMetrics.length}, minmax(140px, 1fr))`
-                          }}
-                        >
-
-                          {displayMetrics.map(({ key, value }) => (
-
+                          return (
                             <span
                               className="set-value"
                               key={key}
                             >
-
-                              <span>
-                                {formatMetric(
-                                  key,
-                                  value,
-                                  settings,
-                                  set.inputUnits,
-                                  false
-                                )}
+                              <span className="set-value-number">
+                                {number}
                               </span>
+                              {unit && (
+                                <span className="set-value-unit">
+                                  {" "}{unit}
+                                </span>
+                              )}
 
-                              <span className="prs-trophy">
-                                {set.personalRecords?.[key] ? "🏆" : ""}
-                              </span>
-
+                              {set.personalRecords?.[key] && (
+                                <span className="prs-trophy">🏆</span>
+                              )}
                             </span>
-
-                          ))}
-
-                        </div>
-
+                          );
+                        })}
                       </div>
-                    );
-                  }
-                )}
-
+                    </div>
+                  );
+                })}
               </div>
-
-            </div>
-
-          </>
-
+            )}
+          </div>
         )}
 
         {activeTab === "history" && (
-
           <div className="exercise-history">
-
             {exerciseHistory.length === 0 ? (
-
-              <p>
-                No history yet.
-              </p>
-
+              <p className="logged-sets-empty">No history yet.</p>
             ) : (
-
               historyWithPRs.map(workout => (
                 <HistoryWorkoutCard
                   key={workout._id}
@@ -1209,14 +1117,12 @@ function ExerciseLogger({
                 />
               ))
             )}
-
           </div>
-
         )}
 
       </div>
     </div>
   );
-};
+}
 
 export default ExerciseLogger;

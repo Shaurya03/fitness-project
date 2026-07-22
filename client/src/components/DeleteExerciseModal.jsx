@@ -96,8 +96,9 @@ function DeleteExerciseModal({
           </p>
         )}
 
-        <label className="delete-confirmation">
+        <div className="delete-confirmation">
           <input
+            id="confirm-delete"
             type="checkbox"
             checked={confirmed}
             onChange={(event) =>
@@ -105,8 +106,10 @@ function DeleteExerciseModal({
             }
           />
 
-          I understand this action is permanent.
-        </label>
+          <label htmlFor="confirm-delete">
+            I understand this action is permanent.
+          </label>
+        </div>
 
         <div className="modal-actions">
 

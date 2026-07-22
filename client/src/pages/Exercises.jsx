@@ -80,9 +80,24 @@ function Exercises() {
 
   /* eslint-enable react-hooks/set-state-in-effect */
 
+  useEffect(() => {
+    if (selectedExercise) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [selectedExercise]);
+
   return (
     <div className="exercises-page">
-      <div className="exercises-container">
+      <div
+        className={`exercises-container ${selectedExercise ? "logger-mode" : ""
+          }`}
+      >
 
         {!selectedCategory && (
           <CategoryList
