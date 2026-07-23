@@ -1,7 +1,7 @@
-import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
 import { FiPlus } from "react-icons/fi";
+import MetricValue from "./MetricValue";
 import "./WorkoutDetails.css";
 
 function WorkoutDetails({
@@ -38,7 +38,7 @@ function WorkoutDetails({
         </p>
       </div>
 
-      <div className="exercise-list">
+      <div className="workout-exercise-list">
 
         {workout.exercises?.length > 0 ? (
 
@@ -56,7 +56,7 @@ function WorkoutDetails({
             return (
 
               <div
-                className="exercise-item"
+                className="workout-exercise-item"
                 key={`${exercise.exerciseId?._id}-${index}`}
                 onClick={() =>
                   onSelectedExercise(workout, exercise)
@@ -85,17 +85,16 @@ function WorkoutDetails({
                           className="set-metric"
                         >
 
-                          {formatMetric(
-                            metric.key,
-                            metric.value,
-                            settings,
-                            set.inputUnits,
-                            true
-                          )}
+                          <MetricValue
+                            metric={metric.key}
+                            value={metric.value}
+                            settings={settings}
+                            inputUnits={set.inputUnits}
+                          />
 
                           {set.personalRecords?.[metric.key] && (
                             <span className="pr-trophies">
-                              {" "}🏆
+                              🏆
                             </span>
                           )}
 

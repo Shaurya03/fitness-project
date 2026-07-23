@@ -55,9 +55,6 @@
   display: flex;
   align-items: center;
   gap: 2px;
-
-  color: var(--text-primary);
-  font-weight: 600;
 }
 
 .pr-trophies {

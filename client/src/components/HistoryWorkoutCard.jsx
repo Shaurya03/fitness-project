@@ -1,7 +1,7 @@
 import { format } from "date-fns";
-import { formatMetric } from "../utils/metricFormatter";
 import { useSettings } from "../hooks/useSettings";
 import { getDisplayMetrics } from "../utils/derivedMetrics";
+import MetricValue from "./MetricValue";
 import "./HistoryWorkoutCard.css";
 
 function HistoryWorkoutCard({ workout }) {
@@ -55,14 +55,12 @@ function HistoryWorkoutCard({ workout }) {
                     key={metric}
                   >
 
-                    <span>
-                      {formatMetric(
-                        metric,
-                        value,
-                        settings,
-                        set.inputUnits
-                      )}
-                    </span>
+                    <MetricValue
+                      metric={metric}
+                      value={value}
+                      settings={settings}
+                      inputUnits={set.inputUnits}
+                    />
 
                     {set.personalRecords?.[metric] && (
                       <span className="pr-trophy">

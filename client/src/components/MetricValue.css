@@ -1,0 +1,16 @@
+.metric-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.metric-value-number {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.metric-value-unit {
+  font-size: .9rem;
+  color: var(--text-secondary);
+}

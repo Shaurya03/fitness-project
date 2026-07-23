@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { METRIC_LABELS } from "../utils/metrics";
 import { getMetricConfig } from "../utils/metricConfig";
 import { DEFAULT_UNITS } from "../utils/settings";
-import { formatMetric } from "../utils/metricFormatter";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
 import { useAuthContext } from "../hooks/useAuthContext";
 import { API_BASE_URL } from "../services/api";
@@ -17,26 +16,10 @@ import { useNavigate } from "react-router-dom";
 import { reactSelectStyles } from "../styles/reactSelectStyles";
 import { getInitialSet } from "../utils/getInitialSet";
 import { isSameDay } from "date-fns";
+import MetricValue from "./MetricValue";
 import HistoryWorkoutCard from "./HistoryWorkoutCard";
 import Select from "react-select";
 import "./ExerciseLogger.css";
-
-// Splits a formatted metric string like "110.0 kgs" into a { number, unit }
-// pair so the number can be rendered large/bold and the unit small, the way
-// FitNotes displays logged sets.
-function splitMetricDisplay(formatted) {
-  if (typeof formatted !== "string") {
-    return { number: formatted, unit: "" };
-  }
-
-  const match = formatted.match(/^([\d.,:]+)\s*(.*)$/);
-
-  if (!match) {
-    return { number: formatted, unit: "" };
-  }
-
-  return { number: match[1], unit: match[2] };
-}
 
 function ExerciseLogger({
   exercise,
@@ -1064,38 +1047,30 @@ function ExerciseLogger({
                     >
 
                       <div className="set-values">
-                        {displayMetrics.map(({ key, value }) => {
-                          const formatted = formatMetric(
-                            key,
-                            value,
-                            settings,
-                            set.inputUnits,
-                            true
-                          );
+                        {displayMetrics.map(({ key, value }) => (
 
-                          const { number, unit } =
-                            splitMetricDisplay(formatted);
+                          <span
+                            className="set-value"
+                            key={key}
+                          >
 
-                          return (
-                            <span
-                              className="set-value"
-                              key={key}
-                            >
-                              <span className="set-value-number">
-                                {number}
+                            <MetricValue
+                              metric={key}
+                              value={value}
+                              settings={settings}
+                              inputUnits={set.inputUnits}
+                              className="logger-metric-value"
+                            />
+
+                            {set.personalRecords?.[key] && (
+                              <span className="prs-trophy">
+                                🏆
                               </span>
-                              {unit && (
-                                <span className="set-value-unit">
-                                  {" "}{unit}
-                                </span>
-                              )}
+                            )}
 
-                              {set.personalRecords?.[key] && (
-                                <span className="prs-trophy">🏆</span>
-                              )}
-                            </span>
-                          );
-                        })}
+                          </span>
+
+                        ))}
                       </div>
                     </div>
                   );

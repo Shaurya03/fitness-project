@@ -36,8 +36,6 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 1.05rem;
-  font-weight: 600;
 }
 
 .pr-trophy {
@@ -67,10 +65,6 @@
   .history-values {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
     gap: 14px 20px;
-  }
-
-  .history-value {
-    font-size: 1rem;
   }
 
 }

@@ -7,7 +7,8 @@ export const METRIC_CONFIG = {
 
   reps: {
     label: "Reps",
-    showUnit: false,
+    unit: "reps",
+    showUnit: true,
     step: 1,
     min: 0
   },
@@ -44,7 +45,8 @@ export const METRIC_CONFIG = {
 
   rpe: {
     label: "RPE",
-    showUnit: false,
+    unit: "RPE",
+    showUnit: true,
     step: 1,
     min: 1,
     max: 10
@@ -52,7 +54,8 @@ export const METRIC_CONFIG = {
 
   laps: {
     label: "Laps",
-    showUnit: false,
+    unit: "laps",
+    showUnit: true,
     step: 1,
     min: 0
   },

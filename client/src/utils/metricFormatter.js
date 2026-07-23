@@ -1,6 +1,7 @@
 import { DEFAULT_UNITS } from "./settings";
 import { UNITS } from "./units";
 import { getDisplayDistanceUnit } from "./getDisplayDistanceUnit";
+import { getMetricConfig } from "./metricConfig";
 
 const pad = number =>
   String(number).padStart(2, "0");
@@ -116,7 +117,17 @@ export const formatMetric = (
       return `${value.toFixed(1)} ${unit}`;
     }
 
-    default:
-      return value;
+    default: {
+
+      if (value == null) {
+        return "";
+      }
+
+      const config = getMetricConfig(metric);
+
+      return config.showUnit && showUnit
+        ? `${value} ${config.unit}`
+        : String(value);
+    }
   }
 };

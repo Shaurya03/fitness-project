@@ -1,5 +1,5 @@
 import { getDisplayMetrics } from "../utils/derivedMetrics";
-import { formatMetric } from "../utils/metricFormatter";
+import MetricValue from "./MetricValue";
 import { useSettings } from "../hooks/useSettings";
 
 import "./WorkoutPreviewContent.css";
@@ -60,13 +60,12 @@ function WorkoutPreviewContent({ workout }) {
                         className="preview-metric"
                       >
 
-                        {formatMetric(
-                          metric.key,
-                          metric.value,
-                          settings,
-                          set.inputUnits,
-                          true
-                        )}
+                        <MetricValue
+                          metric={metric.key}
+                          value={metric.value}
+                          settings={settings}
+                          inputUnits={set.inputUnits}
+                        />
 
                         {set.personalRecords?.[metric.key] && (
                           <span className="pr-trophies">

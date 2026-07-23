@@ -359,17 +359,6 @@
   white-space: nowrap;
 }
 
-.set-value-number {
-  font-size: 1.4rem;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.set-value-unit {
-  font-size: 15px;
-  color: var(--text-secondary);
-}
-
 .prs-trophy {
   width: 22px;
   display: inline-flex;
@@ -509,14 +498,6 @@
 
   .set-value {
     gap: 4px;
-  }
-
-  .set-value-number {
-    font-size: 1.15rem;
-  }
-
-  .set-value-unit {
-    font-size: .9rem;
   }
 
   .prs-trophy {
