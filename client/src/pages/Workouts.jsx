@@ -5,7 +5,8 @@ import {
   subDays,
   isSameDay,
   startOfDay,
-  isAfter
+  isAfter,
+  isYesterday
 } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useWorkoutContext } from "../hooks/useWorkoutContext";
@@ -110,75 +111,86 @@ function Workouts() {
     );
   }
 
+  const workoutDateLabel = isSameDay(selectedDate, new Date())
+    ? "Today"
+    : isYesterday(selectedDate)
+      ? "Yesterday"
+      : format(selectedDate, "EEEE, MMM d");
+
   return (
     <div className="workouts-page">
 
-      <div className="page-header">
-        <h2>Workouts</h2>
-      </div>
+      <div className="workouts-header">
 
-      <div className="workout-navigation">
+        <div className="page-header">
+          <h2>Workouts</h2>
+        </div>
 
-        <button
-          onClick={handlePrevious}
-          className="nav-btn"
-        >
-          <FiChevronLeft />
-        </button>
-
-        <h3 className="workout-date">
-          {format(
-            selectedDate,
-            "EEEE, d MMM yyyy"
-          )}
-        </h3>
-
-        <button
-          className="nav-btn"
-          onClick={() => setIsCalendarOpen(true)}
-        >
-          <FiCalendar />
-        </button>
-
-        <button
-          onClick={handleNext}
-          className="nav-btn"
-          disabled={isSameDay(selectedDate, new Date())}
-        >
-          <FiChevronRight />
-        </button>
-
-      </div>
-
-      {!currentWorkout ? (
-
-        <div className="empty-workout-log">
-
-          <h2>No workout logged</h2>
+        <div className="workout-navigation">
 
           <button
-            className="primary-btn"
-            onClick={() =>
-              navigate("/exercises", {
-                state: {
-                  workoutDate: selectedDate
-                }
-              })
-            }
+            onClick={handlePrevious}
+            className="nav-btn"
           >
-            Start Workout
+            <FiChevronLeft />
+          </button>
+
+          <h3 className="workout-date">
+            {workoutDateLabel}
+          </h3>
+
+          <button
+            className="nav-btn"
+            onClick={() => setIsCalendarOpen(true)}
+          >
+            <FiCalendar />
+          </button>
+
+          <button
+            onClick={handleNext}
+            className="nav-btn"
+            disabled={isSameDay(selectedDate, new Date())}
+          >
+            <FiChevronRight />
           </button>
 
         </div>
 
-      ) : (
+      </div>
 
-        <WorkoutDetails
-          workout={currentWorkout}
-          onSelectedExercise={handleExerciseClick}
-          onAddExercise={handleAddExercise}
-        />
-      )}
+      <div className="workouts-body">
+
+        {!currentWorkout ? (
+
+          <div className="empty-workout-log">
+
+            <h2>No workout logged</h2>
+
+            <button
+              className="primary-btn"
+              onClick={() =>
+                navigate("/exercises", {
+                  state: {
+                    workoutDate: selectedDate
+                  }
+                })
+              }
+            >
+              Start Workout
+            </button>
+
+          </div>
+
+        ) : (
+
+          <WorkoutDetails
+            workout={currentWorkout}
+            onSelectedExercise={handleExerciseClick}
+            onAddExercise={handleAddExercise}
+          />
+        )}
+
+      </div>
 
       <WorkoutCalendarModal
         isOpen={isCalendarOpen}

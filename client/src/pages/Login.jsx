@@ -55,6 +55,8 @@ function Login() {
 
           <PiBarbellDuotone className="auth-logo" />
 
+          <h2 className="auth-title">ForgeFit</h2>
+
           <h2>Welcome back</h2>
 
           <p>

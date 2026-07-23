@@ -1,32 +1,22 @@
 .dashboard-tabs {
   display: inline-flex;
   gap: .4rem;
-
-  margin-bottom: var(--space-xl);
-
-  padding: 4px;
-
+  margin-bottom: var(--space-sm);
+  padding: 2px;
   background: var(--surface);
-
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
 }
 
 .dashboard-tabs button {
   padding: .55rem 1rem;
-
   border: none;
   border-radius: var(--radius-sm);
-
   background: transparent;
-
   color: var(--text-secondary);
-
   font: inherit;
   font-weight: 600;
-
   cursor: pointer;
-
   transition: var(--transition-fast);
 }
 

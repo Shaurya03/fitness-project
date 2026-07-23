@@ -4,8 +4,8 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
 
-  margin: var(--space-xl) 0;
-  padding: var(--space-lg);
+  margin: var(--space-md) 0;
+  padding: var(--space-md);
 }
 
 .filter-toolbar {
@@ -156,8 +156,8 @@
   }
 
   .dashboard-filter {
-    padding: var(--space-md);
-    margin: var(--space-lg) 0;
+    padding: var(--space-sm);
+    margin: var(--space-md) 0;
   }
 
   .dashboard-filter select {

@@ -2,7 +2,7 @@
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  padding: var(--card-padding);
+  padding: var(--space-lg);
   box-shadow: var(--shadow-md);
 }
 
@@ -12,7 +12,7 @@
 }
 
 .workout-summary {
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-md);
   font-weight: 600;
   color: var(--text-primary);
 }
@@ -20,11 +20,11 @@
 .workout-exercise-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .workout-exercise-item {
-  padding: var(--space-lg);
+  padding: var(--space-md) var(--space-lg);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -55,7 +55,7 @@
 .sets-list {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  gap: var(--space-sm);
 }
 
 .sets-list {
@@ -67,9 +67,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
   gap: 16px;
-
-  padding: 10px 0;
-
+  padding: 8px 0;
   border-bottom: 1px solid var(--divider);
 }
 
@@ -90,7 +88,7 @@
 
 .add-exercise-workout-btn {
   position: fixed;
-  left: 75%;
+  left: 95%;
   bottom: 24px;
   padding: .75rem 1rem;
   border: none;
@@ -115,17 +113,21 @@
 @media (max-width: 600px) {
 
   .workout-details {
-    padding: var(--space-lg);
+    padding: var(--space-sm) var(--space-md);
   }
 
   .workout-exercise-item {
-    padding: var(--space-lg);
+    padding: var(--space-md);
   }
 
   .set-row {
     grid-template-columns: repeat(2, 1fr);
-    row-gap: 12px;
-    column-gap: 20px;
+    row-gap: 8px;
+    column-gap: 15px;
+  }
+
+  .add-exercise-workout-btn {
+    left: 82%;
   }
 
 }

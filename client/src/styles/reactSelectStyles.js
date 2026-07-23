@@ -46,10 +46,14 @@ export const reactSelectStyles = {
     marginTop: 6,
     borderRadius: 10,
     overflow: "hidden",
-    zIndex: 10000,
     backgroundColor: "var(--surface)",
     border: "1px solid var(--border)",
     boxShadow: "var(--shadow-md)"
+  }),
+
+  menuPortal: (base) => ({
+    ...base,
+    zIndex: 9999
   }),
 
   menuList: (base) => ({

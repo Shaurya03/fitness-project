@@ -33,7 +33,7 @@ export const getPeriodLabel = (selectedPeriod, selectedDate) => {
         return "Yesterday";
       }
 
-      return format(selectedDate, "d MMM yyyy");
+      return format(selectedDate, "EEEE, MMM d");
 
     case "week": {
       if (isThisWeek(selectedDate, { weekStartsOn: 1 })) {

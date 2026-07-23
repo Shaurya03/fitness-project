@@ -53,6 +53,8 @@ function Signup() {
 
           <PiBarbellDuotone className="auth-logo" />
 
+          <h2 className="auth-title">ForgeFit</h2>
+
           <h2>Create your account</h2>
 
           <p>

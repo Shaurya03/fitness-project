@@ -1,11 +1,36 @@
 .settings-page {
-  max-width: 800px;
+  max-width: 1400px;
+  height: calc(100vh - 73px);
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-page-header {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+  padding: var(--space-md);
+}
+
+.settings-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
   padding: var(--space-xl);
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.dashboard-body::-webkit-scrollbar {
+  display: none;
 }
 
 .settings-page .page-header {
-  margin-bottom: var(--space-xl);
+  margin-bottom: var(--space-sm);
 }
 
 .settings-page .page-header h2 {
@@ -186,7 +211,15 @@
 @media (max-width: 600px) {
 
   .settings-page {
-    padding: var(--space-lg);
+    height: calc(100vh - 130px);
+  }
+
+  .settings-page-header {
+    padding: var(--space-md);
+  }
+
+  .settings-body {
+    padding: var(--space-md);
   }
 
   .settings-section {

@@ -179,7 +179,7 @@ function CategoryBreakdownChart({ workouts }) {
 
       <ResponsiveContainer
         width="100%"
-        height={350}
+        height={260}
       >
         <PieChart>
           <Pie
